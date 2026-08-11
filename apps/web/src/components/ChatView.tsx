@@ -1419,7 +1419,9 @@ function ChatViewContent(props: ChatViewProps) {
     Record<string, LocalThreadErrorEntry>
   >({});
   const [isConnecting, _setIsConnecting] = useState(false);
-  const [isRevertingCheckpoint, setIsRevertingCheckpoint] = useState(false);
+  const [revertingCheckpointThreadKeys, setRevertingCheckpointThreadKeys] = useState<
+    ReadonlySet<string>
+  >(() => new Set());
   const [pendingRevertedMessageRestore, setPendingRevertedMessageRestore] =
     useState<PendingRevertedMessageRestore | null>(null);
   const pendingRevertedMessageRestoreRef = useRef(pendingRevertedMessageRestore);
@@ -2388,7 +2390,12 @@ function ChatViewContent(props: ChatViewProps) {
     activePendingUserInput: activePendingUserInput?.requestId ?? null,
     threadError,
   });
-  const isWorking = phase === "running" || isSendBusy || isConnecting || isRevertingCheckpoint;
+  const isRevertingCheckpoint = revertingCheckpointThreadKeys.has(routeThreadKey);
+  const isRestoringRevertedMessage =
+    pendingRevertedMessageRestore !== null &&
+    scopedThreadKey(pendingRevertedMessageRestore.threadRef) === routeThreadKey;
+  const isRevertComposerBusy = isRevertingCheckpoint || isRestoringRevertedMessage;
+  const isWorking = phase === "running" || isSendBusy || isConnecting || isRevertComposerBusy;
   const activeWorkStartedAt = deriveActiveWorkStartedAt(
     activeLatestTurn,
     activeThread?.session ?? null,
@@ -4190,20 +4197,48 @@ function ChatViewContent(props: ChatViewProps) {
       (stripInlineTerminalContextPlaceholders(currentDraft.prompt).trim().length > 0 ||
         currentDraft.images.length > 0),
     );
+    const hasDraftContextToClear = Boolean(
+      currentDraft &&
+      (currentDraft.terminalContexts.length > 0 ||
+        currentDraft.elementContexts.length > 0 ||
+        currentDraft.previewAnnotations.length > 0 ||
+        currentDraft.reviewComments.length > 0),
+    );
+    const clearDraftContexts = () => {
+      setComposerDraftTerminalContexts(composerDraftTarget, []);
+      setComposerDraftElementContexts(composerDraftTarget, []);
+      setComposerDraftPreviewAnnotations(composerDraftTarget, []);
+      setComposerDraftReviewComments(composerDraftTarget, []);
+    };
     if (hasDraftToStash && composerRef.current?.stashCurrentPrompt() !== true) {
+      if (hasDraftContextToClear) clearDraftContexts();
       writeRevertedMessageToComposer();
       toastManager.add({
         type: "warning",
         title: "Reverted message appended",
-        description:
-          "Your current draft could not be stashed, so the reverted message was added after it instead.",
+        description: hasDraftContextToClear
+          ? "Your current draft could not be stashed, so the reverted message was appended and attached context was cleared."
+          : "Your current draft could not be stashed, so the reverted message was added after it instead.",
         data: { hideCopyButton: true },
       });
       return;
     }
 
+    // Context attachments are session-bound and cannot be round-tripped by
+    // the stash. Clear them before replacing the composer so they cannot be
+    // sent accidentally with the reverted prompt.
+    clearComposerDraftContent(composerDraftTarget);
     writeRevertedMessageToComposer();
-    if (hasDraftToStash) {
+    if (hasDraftContextToClear) {
+      toastManager.add({
+        type: "warning",
+        title: hasDraftToStash ? "Draft stashed without attached context" : "Draft context cleared",
+        description: hasDraftToStash
+          ? "Your draft text and images were stashed. Its attached context cannot be reused after a rewind."
+          : "Attached context cannot be safely reused after a rewind.",
+        data: { hideCopyButton: true },
+      });
+    } else if (hasDraftToStash) {
       toastManager.add({
         type: "info",
         title: "Current draft stashed",
@@ -4213,12 +4248,17 @@ function ChatViewContent(props: ChatViewProps) {
     }
   }, [
     addComposerDraftImages,
+    clearComposerDraftContent,
     composerDraftTarget,
     pendingRevertedMessageRestore,
     revertObservedActivities,
     revertObservedMessages,
     revertObservedThreadId,
+    setComposerDraftElementContexts,
+    setComposerDraftPreviewAnnotations,
     setComposerDraftPrompt,
+    setComposerDraftReviewComments,
+    setComposerDraftTerminalContexts,
   ]);
 
   useEffect(() => {
@@ -5078,7 +5118,11 @@ function ChatViewContent(props: ChatViewProps) {
         return;
       }
 
-      setIsRevertingCheckpoint(true);
+      setRevertingCheckpointThreadKeys((current) => {
+        const next = new Set(current);
+        next.add(sourceThreadKey);
+        return next;
+      });
       setThreadError(threadId, null);
       const draft = await draftPromise;
       if (!chatViewMountedRef.current) {
@@ -5087,7 +5131,11 @@ function ChatViewContent(props: ChatViewProps) {
       }
       if (routeThreadKeyRef.current !== sourceThreadKey) {
         releaseRevertedMessageDraft(draft);
-        setIsRevertingCheckpoint(false);
+        setRevertingCheckpointThreadKeys((current) => {
+          const next = new Set(current);
+          next.delete(sourceThreadKey);
+          return next;
+        });
         return;
       }
       const pendingRestore: PendingRevertedMessageRestore = {
@@ -5125,7 +5173,11 @@ function ChatViewContent(props: ChatViewProps) {
           );
         }
       }
-      setIsRevertingCheckpoint(false);
+      setRevertingCheckpointThreadKeys((current) => {
+        const next = new Set(current);
+        next.delete(sourceThreadKey);
+        return next;
+      });
     },
     [
       activeThread,
@@ -5164,6 +5216,7 @@ function ChatViewContent(props: ChatViewProps) {
       !activeThread ||
       isSendBusy ||
       isConnecting ||
+      isRevertComposerBusy ||
       threadDetailLoading ||
       sendInFlightRef.current
     ) {
@@ -6672,7 +6725,7 @@ function ChatViewContent(props: ChatViewProps) {
                             projectSelectionRequired={isLocalDraftThread && activeProject === null}
                             phase={phase}
                             isConnecting={isConnecting}
-                            isSendBusy={isSendBusy}
+                            isSendBusy={isSendBusy || isRevertComposerBusy}
                             sendDisabledReason={threadDetailLoading ? "Messages loading" : null}
                             isPreparingWorktree={isPreparingWorktree}
                             environmentUnavailable={activeEnvironmentUnavailableState}
