@@ -3,7 +3,7 @@ id: alpha-distribution-identity
 status: active
 risk: red
 introduced_by: alpha-distribution-identity
-last_reconciled_with: 9885a845c97325b1099b095011da8385485616f5
+last_reconciled_with: 74f7b434865c2d758c7b1cd5f52f4c96b76d03fb
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -52,3 +52,5 @@ identity.
 
 - 2026-08-15, upstream `9885a845c97325b1099b095011da8385485616f5`: created the isolated
   Alpha distribution identity on top of upstream's `DesktopEnvironment` and build configuration.
+- 2026-08-15, upstream `74f7b434865c2d758c7b1cd5f52f4c96b76d03fb`: `unaffected`; incoming
+  changes do not touch desktop identity, protocols, state paths, server origins, or artifact names.

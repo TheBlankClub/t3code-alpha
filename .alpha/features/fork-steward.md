@@ -3,7 +3,7 @@ id: fork-steward
 status: active
 risk: green
 introduced_by: alpha-foundation
-last_reconciled_with: 9885a845c97325b1099b095011da8385485616f5
+last_reconciled_with: 74f7b434865c2d758c7b1cd5f52f4c96b76d03fb
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -42,3 +42,5 @@ retiring fork code when upstream provides an equivalent or better implementation
 
 - 2026-08-15, upstream `9885a845c97325b1099b095011da8385485616f5`: created the initial
   repository-owned stewardship foundation. Product identity and release behavior remain unchanged.
+- 2026-08-15, upstream `74f7b434865c2d758c7b1cd5f52f4c96b76d03fb`: `unaffected`; retained
+  the stewardship workflow while adopting upstream Git, AUR packaging, and theme fixes unchanged.
