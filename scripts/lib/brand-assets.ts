@@ -23,6 +23,16 @@ export const BRAND_ASSET_PATHS = {
   nightlyWebFavicon32Png: "assets/nightly/nightly-web-favicon-32x32.png",
   nightlyWebAppleTouchIconPng: "assets/nightly/nightly-web-apple-touch-180.png",
 
+  alphaIconComposerProject: "assets/alpha/app-icon.icon",
+  alphaIosIconPng: "assets/alpha/alpha-ios-1024.png",
+  alphaMacIconPng: "assets/alpha/alpha-macos-1024.png",
+  alphaLinuxIconPng: "assets/alpha/alpha-universal-1024.png",
+  alphaWindowsIconIco: "assets/alpha/alpha-windows.ico",
+  alphaWebFaviconIco: "assets/alpha/alpha-web-favicon.ico",
+  alphaWebFavicon16Png: "assets/alpha/alpha-web-favicon-16x16.png",
+  alphaWebFavicon32Png: "assets/alpha/alpha-web-favicon-32x32.png",
+  alphaWebAppleTouchIconPng: "assets/alpha/alpha-web-apple-touch-180.png",
+
   developmentDesktopIconPng: "assets/dev/blueprint-macos-1024.png",
   developmentWindowsIconIco: "assets/dev/blueprint-windows.ico",
   developmentWebFaviconIco: "assets/dev/blueprint-web-favicon.ico",
@@ -31,17 +41,19 @@ export const BRAND_ASSET_PATHS = {
   developmentWebAppleTouchIconPng: "assets/dev/blueprint-web-apple-touch-180.png",
 } as const;
 
-export type WebAssetBrand = "development" | "nightly" | "production";
+export type WebAssetBrand = "alpha" | "development" | "nightly" | "production";
 
-export const WEB_ASSET_CHANNELS = ["latest", "nightly"] as const;
+export const WEB_ASSET_CHANNELS = ["alpha", "latest", "nightly"] as const;
 
 export type WebAssetChannel = (typeof WEB_ASSET_CHANNELS)[number];
 
 export function resolveWebAssetBrandForChannel(channel: WebAssetChannel): WebAssetBrand {
+  if (channel === "alpha") return "alpha";
   return channel === "nightly" ? "nightly" : "production";
 }
 
 export function resolveWebAssetBrandForPackageVersion(version: string): WebAssetBrand {
+  if (version.includes("-alpha.")) return "alpha";
   return version.includes("-nightly.") ? "nightly" : "production";
 }
 
@@ -58,6 +70,12 @@ const WEB_ICON_TARGET_FILENAMES = {
 } as const;
 
 const WEB_ICON_SOURCE_PATHS_BY_BRAND = {
+  alpha: {
+    faviconIco: BRAND_ASSET_PATHS.alphaWebFaviconIco,
+    favicon16Png: BRAND_ASSET_PATHS.alphaWebFavicon16Png,
+    favicon32Png: BRAND_ASSET_PATHS.alphaWebFavicon32Png,
+    appleTouchIconPng: BRAND_ASSET_PATHS.alphaWebAppleTouchIconPng,
+  },
   development: {
     faviconIco: BRAND_ASSET_PATHS.developmentWebFaviconIco,
     favicon16Png: BRAND_ASSET_PATHS.developmentWebFavicon16Png,

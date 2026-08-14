@@ -214,7 +214,9 @@ function normalizeDesktopSettingsDocument(
   const isLegacySettings = parsed.updateChannelConfiguredByUser === undefined;
   const updateChannelConfiguredByUser =
     parsed.updateChannelConfiguredByUser === true ||
-    (isLegacySettings && Option.contains(parsedUpdateChannel, "nightly"));
+    (isLegacySettings &&
+      (Option.contains(parsedUpdateChannel, "alpha") ||
+        Option.contains(parsedUpdateChannel, "nightly")));
 
   // Newer form wins when both are present; otherwise fall back to the legacy
   // `wslMode === "wsl"` signal so users coming off the swap-mode build keep

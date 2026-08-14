@@ -1,0 +1,12 @@
+export const ALPHA_DISTRIBUTION = {
+  productName: "T3 Code Alpha",
+  desktopAppId: "com.theblankclub.t3code.alpha",
+  desktopProtocolScheme: "t3code-alpha",
+  desktopHomeDirName: ".t3-alpha",
+  desktopUserDataDirName: "t3code-alpha",
+  linuxExecutableName: "t3code-alpha",
+  linuxDesktopEntryName: "t3code-alpha.desktop",
+  linuxUrlHandlerDesktopEntryName: "t3code-alpha-url-handler.desktop",
+  linuxWmClass: "t3code-alpha",
+  artifactName: "T3-Code-Alpha-${version}-${arch}.${ext}",
+} as const;

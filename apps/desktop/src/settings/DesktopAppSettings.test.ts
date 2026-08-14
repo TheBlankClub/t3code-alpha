@@ -28,7 +28,7 @@ const DesktopSettingsPatch = Schema.Struct({
   serverExposureMode: Schema.optionalKey(Schema.Literals(["local-only", "network-accessible"])),
   tailscaleServeEnabled: Schema.optionalKey(Schema.Boolean),
   tailscaleServePort: Schema.optionalKey(Schema.Number),
-  updateChannel: Schema.optionalKey(Schema.Literals(["latest", "nightly"])),
+  updateChannel: Schema.optionalKey(Schema.Literals(["alpha", "latest", "nightly"])),
   updateChannelConfiguredByUser: Schema.optionalKey(Schema.Boolean),
   wslBackendEnabled: Schema.optionalKey(Schema.Boolean),
   wslMode: Schema.optionalKey(Schema.Literals(["local", "wsl"])),
@@ -117,6 +117,13 @@ describe("DesktopSettings", () => {
         wslOnly: false,
         wslDistro: null,
       } satisfies DesktopAppSettings.DesktopSettings,
+    );
+  });
+
+  it("defaults packaged Alpha builds to the Alpha update channel", () => {
+    assert.equal(
+      DesktopAppSettings.resolveDefaultDesktopSettings("0.0.34-alpha.20260815.1").updateChannel,
+      "alpha",
     );
   });
 

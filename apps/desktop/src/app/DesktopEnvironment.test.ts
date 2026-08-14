@@ -69,6 +69,8 @@ describe("DesktopEnvironment", () => {
       assert.equal(environment.backendEntryPath, "/repo/apps/server/dist/bin.mjs");
       assert.equal(environment.backendCwd, "/repo");
       assert.equal(environment.appUserModelId, "com.t3tools.t3code.dev");
+      assert.equal(environment.linuxDesktopEntryName, "t3code-dev.desktop");
+      assert.equal(environment.linuxUrlHandlerDesktopEntryName, "t3code-dev-url-handler.desktop");
       assert.equal(environment.linuxWmClass, "t3code-dev");
       assert.deepEqual(
         Option.map(environment.devServerUrl, (url) => url.href),
@@ -117,7 +119,7 @@ describe("DesktopEnvironment", () => {
     }),
   );
 
-  it.effect("keeps implicit development state separate from production state", () =>
+  it.effect("keeps implicit development state separate from Alpha production state", () =>
     Effect.gen(function* () {
       const development = yield* makeEnvironment(
         {},
@@ -126,7 +128,15 @@ describe("DesktopEnvironment", () => {
       const production = yield* makeEnvironment();
 
       assert.equal(development.stateDir, "/Users/alice/.t3/dev");
-      assert.equal(production.stateDir, "/Users/alice/.t3/userdata");
+      assert.equal(production.baseDir, "/Users/alice/.t3-alpha");
+      assert.equal(production.stateDir, "/Users/alice/.t3-alpha/userdata");
+      assert.equal(production.displayName, "T3 Code Alpha");
+      assert.equal(production.appUserModelId, "com.theblankclub.t3code.alpha");
+      assert.equal(production.userDataDirName, "t3code-alpha");
+      assert.equal(production.legacyUserDataDirName, "t3code-alpha");
+      assert.equal(production.linuxDesktopEntryName, "t3code-alpha.desktop");
+      assert.equal(production.linuxUrlHandlerDesktopEntryName, "t3code-alpha-url-handler.desktop");
+      assert.equal(production.linuxWmClass, "t3code-alpha");
     }),
   );
 

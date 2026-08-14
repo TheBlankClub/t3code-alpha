@@ -51,6 +51,20 @@ describe("DesktopEarlyElectronStartup", () => {
     assert.equal(preference, "auto");
   });
 
+  it("reads implicit packaged settings from the isolated Alpha home", () => {
+    const preference = resolveEarlyLinuxPasswordStorePreference({
+      env: {},
+      homeDirectory: "/home/user",
+      joinPath,
+      readFileString: (path) => {
+        assert.equal(path, "/home/user/.t3-alpha/userdata/desktop-settings.json");
+        return JSON.stringify({ linuxPasswordStore: "kwallet6" });
+      },
+    });
+
+    assert.equal(preference, "kwallet6");
+  });
+
   it("preserves absolute root paths when resolving early settings", () => {
     const preference = resolveEarlyLinuxPasswordStorePreference({
       env: { T3CODE_HOME: "/" },
@@ -84,6 +98,17 @@ describe("DesktopEarlyElectronStartup", () => {
       linuxWmClass: "t3code-dev",
       passwordStore: "gnome-libsecret",
     });
+  });
+
+  it("uses the isolated Alpha window class for packaged startup", () => {
+    const options = resolveEarlyLinuxElectronOptions({
+      env: {},
+      homeDirectory: "/home/user",
+      joinPath,
+      readFileString: () => JSON.stringify({ linuxPasswordStore: "auto" }),
+    });
+
+    assert.equal(options.linuxWmClass, "t3code-alpha");
   });
 
   it("keeps implicit development state under ~/.t3/dev when T3CODE_HOME is unset", () => {

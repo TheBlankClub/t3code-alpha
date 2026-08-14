@@ -72,6 +72,15 @@ describe("branding", () => {
 });
 
 describe("branding logic", () => {
+  it("returns Alpha for Alpha primary server versions", () => {
+    expect(
+      resolveServerBackedAppStageLabel({
+        primaryServerVersion: "0.0.34-alpha.20260815.1",
+        fallbackStageLabel: "Latest",
+      }),
+    ).toBe("Alpha");
+  });
+
   it("returns Nightly for nightly primary server versions", () => {
     expect(
       resolveServerBackedAppStageLabel({

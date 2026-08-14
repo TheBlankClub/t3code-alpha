@@ -218,6 +218,10 @@
     "./usageFormat": {
       "types": "./src/usageFormat.ts",
       "import": "./src/usageFormat.ts"
+    },
+    "./alphaDistribution": {
+      "types": "./src/alphaDistribution.ts",
+      "import": "./src/alphaDistribution.ts"
     }
   },
   "scripts": {

@@ -23,6 +23,13 @@ describe("ElectronProtocol", () => {
     unhandleMock.mockReset();
   });
 
+  it("uses an isolated Alpha renderer origin outside development", () => {
+    assert.equal(ElectronProtocol.getDesktopScheme(false), "t3code-alpha");
+    assert.equal(ElectronProtocol.getDesktopOrigin(false), "t3code-alpha://app");
+    assert.equal(ElectronProtocol.getDesktopUrl(false), "t3code-alpha://app/");
+    assert.equal(ElectronProtocol.getDesktopScheme(true), "t3code-dev");
+  });
+
   it.effect("proxies the stable renderer origin to the current app server", () =>
     Effect.gen(function* () {
       let handler: ((request: Request) => Promise<Response>) | undefined;

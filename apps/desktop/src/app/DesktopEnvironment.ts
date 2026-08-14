@@ -10,6 +10,7 @@ import * as Effect from "effect/Effect";
 import * as Layer from "effect/Layer";
 import * as Option from "effect/Option";
 import * as Path from "effect/Path";
+import { ALPHA_DISTRIBUTION } from "@t3tools/shared/alphaDistribution";
 
 import * as DesktopAppSettings from "../settings/DesktopAppSettings.ts";
 import * as DesktopConfig from "./DesktopConfig.ts";
@@ -73,6 +74,7 @@ export class DesktopEnvironment extends Context.Service<
     readonly displayName: string;
     readonly appUserModelId: string;
     readonly linuxDesktopEntryName: string;
+    readonly linuxUrlHandlerDesktopEntryName: string;
     readonly linuxWmClass: string;
     readonly linuxApplicationsDir: string;
     readonly appImagePath: Option.Option<string>;
@@ -107,7 +109,8 @@ function resolveDesktopAppBranding(input: {
   return {
     baseName: APP_BASE_NAME,
     stageLabel,
-    displayName: `${APP_BASE_NAME} (${stageLabel})`,
+    displayName:
+      stageLabel === "Alpha" ? ALPHA_DISTRIBUTION.productName : `${APP_BASE_NAME} (${stageLabel})`,
   };
 }
 
@@ -161,6 +164,7 @@ const make = Effect.fn("desktop.environment.make")(function* (
     homeDirectory,
     joinPath: path.join,
     t3Home: config.t3Home,
+    defaultBaseDirName: isDevelopment ? ".t3" : ALPHA_DISTRIBUTION.desktopHomeDirName,
   });
   const rootDir = path.resolve(input.dirname, "../../..");
   const appRoot = input.isPackaged ? input.appPath : rootDir;
@@ -179,8 +183,9 @@ const make = Effect.fn("desktop.environment.make")(function* (
     joinPath: path.join,
     t3Home: config.t3Home,
   });
-  const userDataDirName = isDevelopment ? "t3code-dev" : "t3code";
-  const legacyUserDataDirName = isDevelopment ? "T3 Code (Dev)" : "T3 Code (Alpha)";
+  const userDataDirName = isDevelopment ? "t3code-dev" : ALPHA_DISTRIBUTION.desktopUserDataDirName;
+  // Alpha must not adopt the official app's legacy productName-derived path.
+  const legacyUserDataDirName = isDevelopment ? "T3 Code (Dev)" : userDataDirName;
   const linuxApplicationsDir = path.join(
     Option.getOrElse(config.xdgDataHome, () => path.join(homeDirectory, ".local", "share")),
     "applications",
@@ -225,10 +230,15 @@ const make = Effect.fn("desktop.environment.make")(function* (
     branding,
     displayName,
     appUserModelId: Option.getOrElse(config.appUserModelIdOverride, () =>
-      isDevelopment ? "com.t3tools.t3code.dev" : "com.t3tools.t3code",
+      isDevelopment ? "com.t3tools.t3code.dev" : ALPHA_DISTRIBUTION.desktopAppId,
     ),
-    linuxDesktopEntryName: isDevelopment ? "t3code-dev.desktop" : "t3code.desktop",
-    linuxWmClass: isDevelopment ? "t3code-dev" : "t3code",
+    linuxDesktopEntryName: isDevelopment
+      ? "t3code-dev.desktop"
+      : ALPHA_DISTRIBUTION.linuxDesktopEntryName,
+    linuxUrlHandlerDesktopEntryName: isDevelopment
+      ? "t3code-dev-url-handler.desktop"
+      : ALPHA_DISTRIBUTION.linuxUrlHandlerDesktopEntryName,
+    linuxWmClass: isDevelopment ? "t3code-dev" : ALPHA_DISTRIBUTION.linuxWmClass,
     linuxApplicationsDir,
     appImagePath: config.appImagePath,
     userDataDirName,

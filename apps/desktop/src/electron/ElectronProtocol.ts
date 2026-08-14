@@ -5,11 +5,12 @@ import * as NodeTimersPromises from "node:timers/promises";
 import * as Ref from "effect/Ref";
 import * as Schema from "effect/Schema";
 import * as Scope from "effect/Scope";
+import { ALPHA_DISTRIBUTION } from "@t3tools/shared/alphaDistribution";
 
 import * as Electron from "electron";
 
 export const DESKTOP_HOST = "app";
-export const DESKTOP_PRODUCTION_SCHEME = "t3code";
+export const DESKTOP_PRODUCTION_SCHEME = ALPHA_DISTRIBUTION.desktopProtocolScheme;
 export const DESKTOP_DEVELOPMENT_SCHEME = "t3code-dev";
 
 export function getDesktopScheme(isDevelopment: boolean): string {
