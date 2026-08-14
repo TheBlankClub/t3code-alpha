@@ -1,0 +1,4 @@
+interface:
+  display_name: "Maintain Alpha Fork"
+  short_description: "Reconcile Alpha with upstream T3 Code safely"
+  default_prompt: "Use $maintain-alpha-fork to reconcile the alpha branch with upstream main, preserve active fork behavior, and identify obsolete fork deltas."
