@@ -9,4 +9,9 @@ export const ALPHA_DISTRIBUTION = {
   linuxUrlHandlerDesktopEntryName: "t3code-alpha-url-handler.desktop",
   linuxWmClass: "t3code-alpha",
   artifactName: "T3-Code-Alpha-${version}-${arch}.${ext}",
+  serverPackageName: "t3code-alpha",
+  serverBinaryName: "t3-alpha",
+  serverNpmDistTag: "alpha",
+  serverHomeDirName: ".t3-alpha",
+  serverSystemdUnitName: "t3code-alpha.service",
 } as const;

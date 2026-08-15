@@ -7,6 +7,7 @@ import {
   buildVersionMismatchDismissalKey,
   dismissVersionMismatch,
   isVersionMismatchDismissed,
+  manualServerUpdateCommand,
   resolveServerConfigVersionMismatch,
   resolveServerSelfUpdateCapability,
   resolveVersionMismatch,
@@ -106,5 +107,9 @@ describe("versionSkew", () => {
     expect(serverUpdateGuidance(null, "Local server")).toBe(
       "Relaunch the Local server with the copied command to sync them.",
     );
+  });
+
+  it("copies an exact Alpha server package command", () => {
+    expect(manualServerUpdateCommand("0.0.33-alpha.1")).toBe("npx t3code-alpha@0.0.33-alpha.1");
   });
 });

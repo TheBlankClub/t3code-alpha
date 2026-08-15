@@ -40,6 +40,9 @@ import {
   resolveServerUpdateProgressResult,
   serverUpdateStateForProgressEvent,
   serverUpdateStateForServerVersion,
+  ServerUpdateProgressIncompleteError,
+  ServerUpdateResumeTimeoutError,
+  ServerUpdateTerminalError,
   validateServerUpdateReadyEvent,
 } from "./server.ts";
 
@@ -75,6 +78,24 @@ function session(client: WsRpcProtocolClient): RpcSession {
     closed: Effect.never,
   };
 }
+
+it("names the Alpha package in server update failures", () => {
+  expect(
+    new ServerUpdateResumeTimeoutError({
+      environmentId: "environment-1",
+      targetVersion: "0.0.33-alpha.1",
+    }).message,
+  ).toContain("t3code-alpha@0.0.33-alpha.1");
+  expect(
+    new ServerUpdateProgressIncompleteError({ targetVersion: "0.0.33-alpha.1" }).message,
+  ).toContain("t3code-alpha@0.0.33-alpha.1");
+  expect(
+    new ServerUpdateTerminalError({
+      targetVersion: "0.0.33-alpha.1",
+      status: "rolled-back",
+    }).message,
+  ).toContain("t3code-alpha@0.0.33-alpha.1");
+});
 
 describe("update restart reconnect nudges", () => {
   it.effect("retries once per backoff entry instead of only the first", () =>

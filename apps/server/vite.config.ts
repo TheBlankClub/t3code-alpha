@@ -21,7 +21,11 @@ import {
 export { shouldBundleCliDependency };
 
 const repoEnv = loadRepoEnv();
-const cliBuildChannel = packageJson.version.includes("-nightly.") ? "nightly" : "latest";
+const cliBuildChannel = packageJson.version.includes("-alpha.")
+  ? "alpha"
+  : packageJson.version.includes("-nightly.")
+    ? "nightly"
+    : "latest";
 
 export default mergeConfig(
   baseConfig,

@@ -12,6 +12,7 @@ import {
   EnvironmentHttpInternalServerError,
   EnvironmentHttpUnauthorizedError,
 } from "@t3tools/contracts";
+import { ALPHA_DISTRIBUTION } from "@t3tools/shared/alphaDistribution";
 import {
   RelayCloudEnvironmentHealthProofPayload,
   RelayCloudEnvironmentHealthRequest,
@@ -558,7 +559,7 @@ const reconcileDesiredCloudLinkWith = Effect.fn("environment.cloud.reconcileDesi
           onNone: () =>
             Effect.fail(
               new EnvironmentHttpUnauthorizedError({
-                message: "Run `t3 connect link` to authorize this environment.",
+                message: `Run \`${ALPHA_DISTRIBUTION.serverBinaryName} connect link\` to authorize this environment.`,
               }),
             ),
           onSome: Effect.succeed,
@@ -649,7 +650,7 @@ export const pendingServiceUpdateExists = Effect.gen(function* () {
 });
 
 // A pending update alone is not proof a replacement server is coming: an
-// explicit launcher stop (`t3 service uninstall`, `systemctl stop`) during
+// explicit launcher stop (`t3-alpha service uninstall`, `systemctl stop`) during
 // the pending window also tears this server down. The launcher marks that case
 // just before it signals the child, so pending + no marker is the handoff.
 const pendingUpdateHandoffExists = Effect.gen(function* () {

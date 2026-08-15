@@ -1,7 +1,17 @@
 import * as NodeOS from "node:os";
-import { assert, it } from "vite-plus/test";
+import * as NodeServices from "@effect/platform-node/NodeServices";
+import { assert, it } from "@effect/vitest";
+import * as Effect from "effect/Effect";
+import * as Path from "effect/Path";
 
-import { hydratePosixHome } from "./os-jank.ts";
+import { hydratePosixHome, resolveBaseDir } from "./os-jank.ts";
+
+it.effect("defaults Alpha server state to its isolated home", () =>
+  Effect.gen(function* () {
+    const path = yield* Path.Path;
+    assert.equal(yield* resolveBaseDir(undefined), path.join(NodeOS.homedir(), ".t3-alpha"));
+  }).pipe(Effect.provide(NodeServices.layer)),
+);
 
 it("hydrates HOME for minimal service environments from the user account", () => {
   const env: NodeJS.ProcessEnv = {};

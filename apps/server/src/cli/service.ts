@@ -4,6 +4,7 @@ import * as Layer from "effect/Layer";
 import * as Terminal from "effect/Terminal";
 import { Command, GlobalFlag, Prompt } from "effect/unstable/cli";
 
+import { ALPHA_DISTRIBUTION } from "@t3tools/shared/alphaDistribution";
 import packageJson from "../../package.json" with { type: "json" };
 import * as BootService from "../cloud/bootService.ts";
 import type * as ServerConfig from "../config.ts";
@@ -48,17 +49,21 @@ export function formatServiceStatus(
   cliVersion: string,
 ): string {
   if (!status.supported) {
-    return "T3 Code service\n  Status: unavailable on this machine\n  Supported on: Linux with systemd";
+    return "T3 Code Alpha service\n  Status: unavailable on this machine\n  Supported on: Linux with systemd";
   }
   if (!status.installed) {
-    return "T3 Code service\n  Status: not installed\n  Next: Run `t3 service install`.";
+    return `T3 Code Alpha service\n  Status: not installed\n  Next: Run \`${ALPHA_DISTRIBUTION.serverBinaryName} service install\`.`;
   }
   return [
-    "T3 Code service",
-    `  Status: ${status.current ? `installed · t3@${cliVersion}` : "needs an update or repair"}`,
+    "T3 Code Alpha service",
+    `  Status: ${status.current ? `installed · ${ALPHA_DISTRIBUTION.serverPackageName}@${cliVersion}` : "needs an update or repair"}`,
     `  Unit: ${status.unitPath}`,
     `  Logs: ${status.logPath}`,
-    ...(status.current ? [] : ["  Next: Run `npx t3@latest service update`."]),
+    ...(status.current
+      ? []
+      : [
+          `  Next: Run \`npx ${ALPHA_DISTRIBUTION.serverPackageName}@${ALPHA_DISTRIBUTION.serverNpmDistTag} service update\`.`,
+        ]),
   ].join("\n");
 }
 
@@ -72,7 +77,7 @@ const runServiceCommand = Effect.fn("cli.service.run")(function* <A, E>(
 });
 
 const serviceInstallCommand = Command.make("install", projectLocationFlags).pipe(
-  Command.withDescription("Install T3 Code as a background service for this user."),
+  Command.withDescription("Install T3 Code Alpha as a background service for this user."),
   Command.withHandler((flags) =>
     runServiceCommand(
       flags,
@@ -80,12 +85,12 @@ const serviceInstallCommand = Command.make("install", projectLocationFlags).pipe
         const result = yield* reconcileService();
         if (!result.changed) {
           yield* Console.log(
-            `T3 Code service is already installed with t3@${packageJson.version}.`,
+            `T3 Code Alpha service is already installed with ${ALPHA_DISTRIBUTION.serverPackageName}@${packageJson.version}.`,
           );
           return;
         }
         yield* Console.log(
-          `${result.previouslyInstalled ? "Updated" : "Installed"} T3 Code service with t3@${packageJson.version}.\nLogs: ${result.plan.logPath}`,
+          `${result.previouslyInstalled ? "Updated" : "Installed"} T3 Code Alpha service with ${ALPHA_DISTRIBUTION.serverPackageName}@${packageJson.version}.\nLogs: ${result.plan.logPath}`,
         );
       }),
     ),
@@ -94,7 +99,7 @@ const serviceInstallCommand = Command.make("install", projectLocationFlags).pipe
 
 const serviceUpdateCommand = Command.make("update", projectLocationFlags).pipe(
   Command.withDescription(
-    "Update or repair the background service using this CLI version. Use `npx t3@latest service update` for the latest release.",
+    `Update or repair the background service using this CLI version. Use \`npx ${ALPHA_DISTRIBUTION.serverPackageName}@${ALPHA_DISTRIBUTION.serverNpmDistTag} service update\` for the latest Alpha release.`,
   ),
   Command.withHandler((flags) =>
     runServiceCommand(
@@ -102,11 +107,13 @@ const serviceUpdateCommand = Command.make("update", projectLocationFlags).pipe(
       Effect.gen(function* () {
         const result = yield* reconcileService();
         if (!result.changed) {
-          yield* Console.log(`T3 Code service is already using t3@${packageJson.version}.`);
+          yield* Console.log(
+            `T3 Code Alpha service is already using ${ALPHA_DISTRIBUTION.serverPackageName}@${packageJson.version}.`,
+          );
           return;
         }
         yield* Console.log(
-          `${result.previouslyInstalled ? "Updated" : "Installed"} T3 Code service with t3@${packageJson.version}.\nLogs: ${result.plan.logPath}`,
+          `${result.previouslyInstalled ? "Updated" : "Installed"} T3 Code Alpha service with ${ALPHA_DISTRIBUTION.serverPackageName}@${packageJson.version}.\nLogs: ${result.plan.logPath}`,
         );
       }),
     ),
@@ -114,7 +121,7 @@ const serviceUpdateCommand = Command.make("update", projectLocationFlags).pipe(
 );
 
 const serviceUninstallCommand = Command.make("uninstall", projectLocationFlags).pipe(
-  Command.withDescription("Stop and remove the T3 Code background service."),
+  Command.withDescription("Stop and remove the T3 Code Alpha background service."),
   Command.withHandler((flags) =>
     runServiceCommand(
       flags,
@@ -122,7 +129,9 @@ const serviceUninstallCommand = Command.make("uninstall", projectLocationFlags).
         const service = yield* BootService.BootService;
         const removed = yield* service.uninstall;
         yield* Console.log(
-          removed ? "Removed the T3 Code service." : "T3 Code service is not installed.",
+          removed
+            ? "Removed the T3 Code Alpha service."
+            : "T3 Code Alpha service is not installed.",
         );
       }),
     ),
