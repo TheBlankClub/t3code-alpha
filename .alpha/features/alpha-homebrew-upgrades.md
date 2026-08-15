@@ -3,7 +3,7 @@ id: alpha-homebrew-upgrades
 status: active
 risk: red
 introduced_by: alpha-homebrew-upgrades
-last_reconciled_with: ec141c125726ae70f31f392e780afa8de446fdc4
+last_reconciled_with: 20a70420a85aecab0bde1a58921197f423e401cc
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -50,3 +50,5 @@ Apple Developer account or a separate package-hosting service.
   Homebrew cask path for unsigned Alpha macOS upgrades.
 - 2026-08-15, upstream `ec141c125726ae70f31f392e780afa8de446fdc4`: `unaffected`; no incoming
   change replaces the fork-owned cask renderer, tap publication, or unsigned upgrade policy.
+- 2026-08-15, upstream `20a70420a85aecab0bde1a58921197f423e401cc`: `unaffected`; the incoming
+  timestamp formatting fix does not touch Homebrew packaging or publication.

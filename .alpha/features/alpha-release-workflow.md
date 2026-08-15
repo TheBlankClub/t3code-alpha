@@ -3,7 +3,7 @@ id: alpha-release-workflow
 status: active
 risk: red
 introduced_by: alpha-release-workflow
-last_reconciled_with: ec141c125726ae70f31f392e780afa8de446fdc4
+last_reconciled_with: 20a70420a85aecab0bde1a58921197f423e401cc
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -73,3 +73,5 @@ upstream's official release, hosted-web, AUR, or npm publication paths.
   Azure, Clerk, and T3 Connect release gates.
 - 2026-08-15, upstream `ec141c125726ae70f31f392e780afa8de446fdc4`: `unaffected`; retained the
   Alpha-only release graph while adopting the incoming product changes through merge ancestry.
+- 2026-08-15, upstream `20a70420a85aecab0bde1a58921197f423e401cc`: `unaffected`; the incoming
+  timestamp formatting fix does not touch the Alpha release graph.

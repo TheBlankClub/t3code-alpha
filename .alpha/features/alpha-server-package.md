@@ -3,7 +3,7 @@ id: alpha-server-package
 status: active
 risk: red
 introduced_by: alpha-server-package
-last_reconciled_with: ec141c125726ae70f31f392e780afa8de446fdc4
+last_reconciled_with: 20a70420a85aecab0bde1a58921197f423e401cc
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -74,3 +74,5 @@ official T3 Code without publishing to or executing the upstream `t3` package.
 - 2026-08-15, upstream `ec141c125726ae70f31f392e780afa8de446fdc4`: `mechanical-conflict`;
   adopted upstream's remote startup timeout, install validation, and empty-log diagnostics while
   teaching that validation to resolve Alpha's `t3-alpha` binary from `t3code-alpha@latest`.
+- 2026-08-15, upstream `20a70420a85aecab0bde1a58921197f423e401cc`: `unaffected`; the incoming
+  timestamp formatting fix does not touch Alpha server packaging or remote bootstrap behavior.

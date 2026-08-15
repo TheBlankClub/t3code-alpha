@@ -3,7 +3,7 @@ id: alpha-distribution-identity
 status: active
 risk: red
 introduced_by: alpha-distribution-identity
-last_reconciled_with: ec141c125726ae70f31f392e780afa8de446fdc4
+last_reconciled_with: 20a70420a85aecab0bde1a58921197f423e401cc
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -59,3 +59,5 @@ identity.
 - 2026-08-15, upstream `ec141c125726ae70f31f392e780afa8de446fdc4`: `mechanical-conflict`;
   adopted upstream's OS-locale desktop timestamp contract while retaining Alpha's isolated app,
   protocol, state, and packaging identity.
+- 2026-08-15, upstream `20a70420a85aecab0bde1a58921197f423e401cc`: `unaffected`; adopted
+  upstream's same-locale date and time formatting without changing Alpha distribution identity.
