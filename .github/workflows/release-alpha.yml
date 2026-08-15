@@ -2,8 +2,15 @@ name: Alpha Release
 
 on:
   schedule:
-    - cron: "30 3 * * *"
+    - cron: "47 3 * * *"
   workflow_dispatch:
+  workflow_run:
+    workflows:
+      - CI
+    types:
+      - completed
+    branches:
+      - alpha
 
 concurrency:
   group: alpha-release
@@ -14,12 +21,14 @@ permissions:
   id-token: none
 
 jobs:
-  check_changes:
-    name: Check for changes since last Alpha
-    if: github.repository == 'TheBlankClub/t3code-alpha' && github.event_name == 'schedule'
+  release_gate:
+    name: Resolve releasable Alpha head
+    if: github.repository == 'TheBlankClub/t3code-alpha'
     runs-on: ubuntu-24.04
     outputs:
-      has_changes: ${{ steps.check.outputs.has_changes }}
+      should_release: ${{ steps.gate.outputs.should_release }}
+      source_sha: ${{ steps.gate.outputs.source_sha }}
+      reason: ${{ steps.gate.outputs.reason }}
     steps:
       - name: Checkout Alpha
         uses: actions/checkout@v6
@@ -31,35 +40,49 @@ jobs:
             !/.repos/
           sparse-checkout-cone-mode: false
 
-      - id: check
-        name: Compare Alpha to the last release tag
+      - id: gate
+        name: Reject failed, stale, or already released commits
         shell: bash
+        env:
+          TRIGGER_EVENT: ${{ github.event_name }}
+          WORKFLOW_CONCLUSION: ${{ github.event.workflow_run.conclusion }}
+          WORKFLOW_EVENT: ${{ github.event.workflow_run.event }}
+          WORKFLOW_HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
         run: |
           set -euo pipefail
-          last_alpha_tag="$(git tag --list 'v*-alpha.*' --sort=-version:refname | head -n 1 || true)"
-          if [[ -z "$last_alpha_tag" ]]; then
-            echo "No previous Alpha tag found. Proceeding with release."
-            echo "has_changes=true" >> "$GITHUB_OUTPUT"
-            exit 0
+          source_sha="$(git rev-parse HEAD)"
+          echo "source_sha=$source_sha" >> "$GITHUB_OUTPUT"
+
+          if [[ "$TRIGGER_EVENT" == "workflow_run" ]]; then
+            if [[ "$WORKFLOW_EVENT" != "push" || "$WORKFLOW_CONCLUSION" != "success" ]]; then
+              echo "Ignoring a CI run that was not a successful Alpha push."
+              echo "should_release=false" >> "$GITHUB_OUTPUT"
+              echo "reason=triggering CI was not a successful push" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+            if [[ "$WORKFLOW_HEAD_SHA" != "$source_sha" ]]; then
+              echo "Ignoring stale CI for $WORKFLOW_HEAD_SHA; Alpha is now $source_sha."
+              echo "should_release=false" >> "$GITHUB_OUTPUT"
+              echo "reason=triggering CI SHA is stale" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
           fi
 
-          last_alpha_sha="$(git rev-parse "$last_alpha_tag^{commit}")"
-          head_sha="$(git rev-parse HEAD)"
-          if [[ "$last_alpha_sha" == "$head_sha" ]]; then
-            echo "No changes on Alpha since $last_alpha_tag. Skipping."
-            echo "has_changes=false" >> "$GITHUB_OUTPUT"
-          else
-            echo "Changes detected since $last_alpha_tag. Proceeding."
-            echo "has_changes=true" >> "$GITHUB_OUTPUT"
+          existing_tag="$(git tag --points-at "$source_sha" --list 'v*-alpha.*' | head -n 1 || true)"
+          if [[ -n "$existing_tag" ]]; then
+            echo "Alpha $source_sha is already released as $existing_tag."
+            echo "should_release=false" >> "$GITHUB_OUTPUT"
+            echo "reason=source commit already has an Alpha release tag" >> "$GITHUB_OUTPUT"
+            exit 0
           fi
+          echo "Alpha $source_sha passed the release gate."
+          echo "should_release=true" >> "$GITHUB_OUTPUT"
+          echo "reason=source commit is current, CI-approved when applicable, and unreleased" >> "$GITHUB_OUTPUT"
 
   preflight:
     name: Preflight
-    needs: [check_changes]
-    if: |
-      github.repository == 'TheBlankClub/t3code-alpha' &&
-      !failure() && !cancelled() &&
-      (github.event_name != 'schedule' || needs.check_changes.outputs.has_changes == 'true')
+    needs: [release_gate]
+    if: needs.release_gate.outputs.should_release == 'true'
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     outputs:
@@ -67,12 +90,12 @@ jobs:
       tag: ${{ steps.release_meta.outputs.tag }}
       release_name: ${{ steps.release_meta.outputs.name }}
       previous_tag: ${{ steps.previous_tag.outputs.previous_tag }}
-      ref: ${{ steps.source.outputs.ref }}
+      ref: ${{ needs.release_gate.outputs.source_sha }}
     steps:
       - name: Checkout Alpha
         uses: actions/checkout@v6
         with:
-          ref: alpha
+          ref: ${{ needs.release_gate.outputs.source_sha }}
           fetch-depth: 0
           sparse-checkout: |
             /*
@@ -96,17 +119,12 @@ jobs:
             t3code-alpha
             homebrew-tap
 
-      - id: source
-        name: Resolve source commit
-        shell: bash
-        run: echo "ref=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
-
       - id: release_meta
         name: Resolve Alpha version
         shell: bash
         env:
           ALPHA_RUN_NUMBER: ${{ github.run_number }}
-          ALPHA_SHA: ${{ steps.source.outputs.ref }}
+          ALPHA_SHA: ${{ needs.release_gate.outputs.source_sha }}
         run: |
           alpha_date="$(date -u +%Y%m%d)"
           node scripts/resolve-alpha-release.ts \
@@ -564,3 +582,86 @@ jobs:
         run: |
           set -euo pipefail
           git -C homebrew-tap push origin HEAD:main
+
+  report_status:
+    name: Report Alpha release status
+    needs:
+      - release_gate
+      - preflight
+      - build_wsl_node_pty
+      - build
+      - publish_cli
+      - release
+      - publish_homebrew
+    if: >-
+      always() &&
+      (needs.release_gate.result == 'failure' || needs.release_gate.outputs.should_release == 'true')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      issues: write
+    steps:
+      - id: result
+        name: Resolve release result
+        shell: bash
+        env:
+          NEEDS_JSON: ${{ toJSON(needs) }}
+        run: |
+          set -euo pipefail
+          if jq -e '[.[].result] | any(. == "failure" or . == "cancelled")' \
+            <<< "$NEEDS_JSON" >/dev/null; then
+            echo "failed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "failed=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create or update release failure issue
+        if: steps.result.outputs.failed == 'true'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SOURCE_SHA: ${{ needs.release_gate.outputs.source_sha }}
+        run: |
+          set -euo pipefail
+          body_file="$RUNNER_TEMP/alpha-release-failure.md"
+          {
+            echo "Alpha release automation did not complete."
+            echo
+            echo "- Source: \`${SOURCE_SHA:-unknown}\`"
+            echo "- Run: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+            echo
+            echo "The source commit remains on \`alpha\`; no rollback or replacement release was attempted."
+          } > "$body_file"
+          existing_issue="$(gh issue list \
+            --repo "$GITHUB_REPOSITORY" \
+            --state open \
+            --search 'Alpha release is blocked in:title' \
+            --json number \
+            --jq '.[0].number // empty')"
+          if [[ -n "$existing_issue" ]]; then
+            gh issue comment "$existing_issue" --repo "$GITHUB_REPOSITORY" --body-file "$body_file"
+          else
+            gh issue create \
+              --repo "$GITHUB_REPOSITORY" \
+              --title "Alpha release is blocked" \
+              --body-file "$body_file"
+          fi
+
+      - name: Resolve previous release failure
+        if: steps.result.outputs.failed == 'false' && needs.publish_homebrew.result == 'success'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          existing_issue="$(gh issue list \
+            --repo "$GITHUB_REPOSITORY" \
+            --state open \
+            --search 'Alpha release is blocked in:title' \
+            --json number \
+            --jq '.[0].number // empty')"
+          if [[ -n "$existing_issue" ]]; then
+            gh issue close "$existing_issue" \
+              --repo "$GITHUB_REPOSITORY" \
+              --comment "Alpha release and Homebrew publication completed in $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID."
+          fi

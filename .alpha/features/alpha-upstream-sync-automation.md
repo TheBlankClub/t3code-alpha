@@ -10,24 +10,30 @@ surfaces:
   - ci
   - operations
 tests:
-  - actionlint .github/workflows/sync-upstream.yml .github/workflows/ci.yml .github/workflows/mobile-fingerprint-check.yml
+  - actionlint .github/workflows/sync-upstream.yml .github/workflows/finalize-upstream-sync.yml .github/workflows/ci.yml .github/workflows/mobile-fingerprint-check.yml
+  - vp test run scripts/classify-alpha-sync.test.ts scripts/record-alpha-safe-sync.test.ts
 ---
 
 # Intent
 
-Detect upstream changes every day and prepare a reviewable merge-ancestry sync without allowing
-automation to make unverified semantic reconciliation claims about Alpha-only features.
+Detect upstream changes every six hours and automatically integrate only policy-safe,
+CI-validated merge-ancestry candidates without allowing automation to make unverified semantic
+reconciliation claims about Alpha-only features.
 
 # Behavioral invariants
 
 - Sync candidates always start from the current `alpha` branch and merge official
   `pingdotgg/t3code` `main` with a merge commit.
-- A clean merge updates one reusable automation branch and one pull request; it never auto-merges
-  into Alpha.
+- Incoming paths are compared with the current Alpha delta and a protected-surface policy. Exact
+  overlaps and identity, persistence, contract, packaging, updater, SSH, or release changes require
+  human review even when Git merges cleanly.
+- A policy-safe merge updates one reusable automation branch and pull request, updates active
+  feature records as unaffected, and becomes eligible for automatic merge only after required CI.
 - A textual merge conflict creates or updates a visible blocker issue containing the exact Alpha
   base, upstream commit, and conflicted paths.
-- The PR cannot be merged under the fork policy until every active feature is classified, retained
-  behavior is tested, feature records are updated, and a reconciliation journal entry is added.
+- A successful first CI pass causes the finalizer to append a journal entry tied to the tested
+  candidate and CI run. A second CI pass over that journaled head is required before auto-merge.
+- Review-required candidates remain open with an issue and never auto-merge or trigger a release.
 - Fork CI runs on standard GitHub-hosted runners and validates pushes to `alpha` plus pull requests.
 - Sync mutations use a narrowly installed GitHub App so automation-created pull requests trigger
   CI without per-run approval.
@@ -36,6 +42,10 @@ automation to make unverified semantic reconciliation claims about Alpha-only fe
 
 - `.github/workflows/sync-upstream.yml` performs scheduled divergence checks and maintains the
   `automation/upstream-main` sync PR.
+- `.github/workflows/finalize-upstream-sync.yml` journals tested safe candidates and enables their
+  merge only after the journaled head also passes CI.
+- `.alpha/auto-sync-policy.json` and `scripts/classify-alpha-sync.ts` define the conservative
+  automatic-versus-review boundary.
 - The fork's core CI and mobile fingerprint check use public GitHub-hosted runner labels rather
   than upstream's repository-specific Blacksmith runners.
 - The local `maintain-alpha-fork` skill remains the authority for semantic conflict resolution and

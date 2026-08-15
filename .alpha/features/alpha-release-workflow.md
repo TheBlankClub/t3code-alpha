@@ -13,7 +13,7 @@ surfaces:
   - server
 tests:
   - actionlint .github/workflows/release-alpha.yml
-  - vp test run scripts/resolve-alpha-release.test.ts scripts/resolve-nightly-release.test.ts
+  - vp test run scripts/resolve-alpha-release.test.ts scripts/resolve-nightly-release.test.ts scripts/classify-alpha-sync.test.ts scripts/record-alpha-safe-sync.test.ts
   - node scripts/resolve-alpha-release.ts --date 20260815 --run-number 27 --sha abcdef1234567890
 ---
 
@@ -27,7 +27,10 @@ upstream's official release, hosted-web, AUR, or npm publication paths.
 - The workflow always checks out and releases the `alpha` branch, even when manually dispatched.
 - The upstream release workflow is repository-gated and cannot react to Alpha tags or schedules in
   the fork.
-- Scheduled runs skip when the Alpha branch still points to the most recent Alpha tag.
+- A successful CI run for a push to `alpha` starts publication only when its exact SHA is still the
+  branch head and does not already have an Alpha release tag.
+- A daily scheduled run retries an unreleased Alpha head after transient publication failures.
+- Manual and scheduled runs also skip an already tagged source SHA, preventing duplicate releases.
 - Versions use `X.Y.Z-alpha.YYYYMMDD.RUN`; GitHub releases are prereleases and never become latest.
 - macOS arm64/x64, Linux x64, and Windows x64 artifacts use upstream's desktop builder and Alpha
   artifact identities.
@@ -47,7 +50,8 @@ upstream's official release, hosted-web, AUR, or npm publication paths.
 # Current delta
 
 - `.github/workflows/release-alpha.yml` adapts the upstream release build graph to standard GitHub
-  hosted runners and fork-owned release destinations.
+  hosted runners and fork-owned release destinations, with CI-success, stale-SHA, duplicate-tag,
+  and failure-escalation gates.
 - `docs/operations/alpha-release.md` records the one-time npm, GitHub App, Homebrew,
   branch-protection, and first-release gates.
 - `scripts/resolve-alpha-release.ts` reuses upstream's next-patch version calculation and adds the

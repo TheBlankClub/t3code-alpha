@@ -1,6 +1,6 @@
 ---
 name: maintain-alpha-fork
-description: Maintain the T3 Code Alpha integration branch against official upstream main while preserving intentional fork behavior and retiring deltas that upstream supersedes. Use when inspecting upstream divergence, performing a daily sync, resolving merge or semantic conflicts, reconciling fork features, deciding whether an Alpha-only patch is still needed, preparing an Alpha release candidate, or auditing the fork's update readiness.
+description: Maintain the T3 Code Alpha integration branch against official upstream main while preserving intentional fork behavior and retiring deltas that upstream supersedes. Use when inspecting upstream divergence, performing a scheduled sync, resolving merge or semantic conflicts, reconciling fork features, deciding whether an Alpha-only patch is still needed, preparing an Alpha release candidate, or auditing the fork's update readiness.
 ---
 
 # Maintain Alpha Fork
