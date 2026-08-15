@@ -2,7 +2,7 @@ name: Sync Upstream
 
 on:
   schedule:
-    - cron: "30 2 * * *"
+    - cron: "37 2,8,14,20 * * *"
   workflow_dispatch:
 
 concurrency:
@@ -17,7 +17,7 @@ jobs:
     name: Prepare upstream merge
     if: github.repository == 'TheBlankClub/t3code-alpha'
     runs-on: ubuntu-24.04
-    timeout-minutes: 10
+    timeout-minutes: 20
     env:
       SYNC_BRANCH: automation/upstream-main
       UPSTREAM_REPOSITORY: pingdotgg/t3code
@@ -37,6 +37,12 @@ jobs:
           ref: alpha
           fetch-depth: 0
           token: ${{ steps.app_token.outputs.token }}
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: package.json
+          package-manager-cache: false
 
       - name: Fetch upstream main
         shell: bash
@@ -63,6 +69,26 @@ jobs:
             echo "Alpha needs upstream/main at $upstream_sha."
             echo "needs_sync=true" >> "$GITHUB_OUTPUT"
           fi
+
+      - id: classify
+        name: Classify Alpha overlap risk
+        if: steps.divergence.outputs.needs_sync == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          merge_base="$(git merge-base HEAD upstream/main)"
+          alpha_paths="$RUNNER_TEMP/alpha-delta-paths.txt"
+          upstream_paths="$RUNNER_TEMP/incoming-upstream-paths.txt"
+          report="$RUNNER_TEMP/alpha-sync-classification.md"
+          git diff --name-only "$merge_base"..HEAD | sort -u > "$alpha_paths"
+          git diff --name-only "$merge_base"..upstream/main | sort -u > "$upstream_paths"
+          node scripts/classify-alpha-sync.ts \
+            --alpha-paths-file "$alpha_paths" \
+            --upstream-paths-file "$upstream_paths" \
+            --policy .alpha/auto-sync-policy.json \
+            --report "$report" \
+            --github-output "$GITHUB_OUTPUT"
+          cat "$report" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Prepare merge branch
         if: steps.divergence.outputs.needs_sync == 'true'
@@ -101,7 +127,7 @@ jobs:
           existing_issue="$(gh issue list \
             --repo "$GITHUB_REPOSITORY" \
             --state open \
-            --search 'Daily upstream sync is blocked in:title' \
+            --search 'Upstream sync is blocked in:title' \
             --json number \
             --jq '.[0].number // empty')"
           if [[ -n "$existing_issue" ]]; then
@@ -109,10 +135,24 @@ jobs:
           else
             gh issue create \
               --repo "$GITHUB_REPOSITORY" \
-              --title "Daily upstream sync is blocked" \
+              --title "Upstream sync is blocked" \
               --body-file "$issue_body"
           fi
           exit 1
+
+      - name: Record safe reconciliation candidate
+        if: steps.divergence.outputs.needs_sync == 'true' && steps.classify.outputs.safe == 'true'
+        shell: bash
+        env:
+          UPSTREAM_SHA: ${{ steps.divergence.outputs.upstream_sha }}
+        run: |
+          set -euo pipefail
+          node scripts/record-alpha-safe-sync.ts prepare \
+            --root "$GITHUB_WORKSPACE" \
+            --upstream-sha "$UPSTREAM_SHA" \
+            --date "$(date -u +%F)"
+          git add .alpha/features
+          git commit -m "chore(alpha): record automated upstream reconciliation"
 
       - name: Push merge branch
         if: steps.divergence.outputs.needs_sync == 'true'
@@ -136,6 +176,8 @@ jobs:
             echo
             echo "- Alpha base: \`${{ steps.divergence.outputs.alpha_sha }}\`"
             echo "- Upstream main: \`${{ steps.divergence.outputs.upstream_sha }}\`"
+            echo
+            cat "${{ steps.classify.outputs.report }}"
             echo
             echo "Before merging:"
             echo
@@ -173,8 +215,70 @@ jobs:
           echo "url=$pr_url" >> "$GITHUB_OUTPUT"
           echo "Prepared $pr_url"
 
-      - name: Resolve previous conflict notice
+      - name: Apply automation safety labels
         if: steps.pull_request.outputs.number != ''
+        shell: bash
+        env:
+          GH_TOKEN: ${{ steps.app_token.outputs.token }}
+          PR_NUMBER: ${{ steps.pull_request.outputs.number }}
+          SAFE: ${{ steps.classify.outputs.safe }}
+        run: |
+          set -euo pipefail
+          gh label create alpha-auto-sync \
+            --repo "$GITHUB_REPOSITORY" \
+            --color "1f883d" \
+            --description "Safe upstream reconciliation eligible for automatic merge" \
+            --force
+          gh label create alpha-review-required \
+            --repo "$GITHUB_REPOSITORY" \
+            --color "d1242f" \
+            --description "Upstream reconciliation requires semantic review" \
+            --force
+
+          if [[ "$SAFE" == "true" ]]; then
+            gh pr edit "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --add-label alpha-auto-sync
+            gh api --method DELETE \
+              "/repos/$GITHUB_REPOSITORY/issues/$PR_NUMBER/labels/alpha-review-required" >/dev/null 2>&1 || true
+          else
+            gh pr edit "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --add-label alpha-review-required
+            gh api --method DELETE \
+              "/repos/$GITHUB_REPOSITORY/issues/$PR_NUMBER/labels/alpha-auto-sync" >/dev/null 2>&1 || true
+          fi
+
+      - name: Report review-required upstream overlap
+        if: steps.pull_request.outputs.number != '' && steps.classify.outputs.safe != 'true'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ steps.app_token.outputs.token }}
+        run: |
+          set -euo pipefail
+          issue_body="$RUNNER_TEMP/upstream-review-required.md"
+          {
+            echo "The six-hour upstream sync prepared a clean Git merge, but Alpha safety policy requires semantic review."
+            echo
+            echo "- Pull request: ${{ steps.pull_request.outputs.url }}"
+            echo "- Alpha base: \`${{ steps.divergence.outputs.alpha_sha }}\`"
+            echo "- Upstream main: \`${{ steps.divergence.outputs.upstream_sha }}\`"
+            echo
+            cat "${{ steps.classify.outputs.report }}"
+          } > "$issue_body"
+          existing_issue="$(gh issue list \
+            --repo "$GITHUB_REPOSITORY" \
+            --state open \
+            --search 'Upstream sync is blocked in:title' \
+            --json number \
+            --jq '.[0].number // empty')"
+          if [[ -n "$existing_issue" ]]; then
+            gh issue comment "$existing_issue" --repo "$GITHUB_REPOSITORY" --body-file "$issue_body"
+          else
+            gh issue create \
+              --repo "$GITHUB_REPOSITORY" \
+              --title "Upstream sync is blocked" \
+              --body-file "$issue_body"
+          fi
+
+      - name: Resolve previous conflict notice
+        if: steps.pull_request.outputs.number != '' && steps.classify.outputs.safe == 'true'
         shell: bash
         env:
           GH_TOKEN: ${{ steps.app_token.outputs.token }}
@@ -183,11 +287,11 @@ jobs:
           existing_issue="$(gh issue list \
             --repo "$GITHUB_REPOSITORY" \
             --state open \
-            --search 'Daily upstream sync is blocked in:title' \
+            --search 'Upstream sync is blocked in:title' \
             --json number \
             --jq '.[0].number // empty')"
           if [[ -n "$existing_issue" ]]; then
             gh issue close "$existing_issue" \
               --repo "$GITHUB_REPOSITORY" \
-              --comment "A clean upstream merge is now prepared in ${{ steps.pull_request.outputs.url }}."
+              --comment "A policy-safe upstream merge is now prepared in ${{ steps.pull_request.outputs.url }}."
           fi

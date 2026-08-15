@@ -5,8 +5,11 @@
 - `upstream/main` is the canonical product baseline.
 - `alpha` is the release integration branch owned by TheBlankClub.
 - Feature branches contain one Alpha concern and merge into `alpha`.
-- Daily upstream reconciliation happens on `sync/upstream-<date>` and merges into `alpha` only after
-  focused validation.
+- Upstream reconciliation runs every six hours on one automation branch and merges into `alpha`
+  only after policy classification, an evidence-backed journal entry, and required CI.
+- Automatic reconciliation is limited to incoming paths that neither overlap the current Alpha
+  delta nor match protected identity, persistence, contract, packaging, updater, SSH, or release
+  surfaces. Every other candidate remains review-only.
 - Do not rebase or force-push released `alpha` history. Merge ancestry makes provenance and release
   tags auditable.
 

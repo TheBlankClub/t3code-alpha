@@ -65,8 +65,9 @@ Add its credentials only to `TheBlankClub/t3code-alpha` as repository Actions se
 - `ALPHA_AUTOMATION_APP_ID`
 - `ALPHA_AUTOMATION_APP_PRIVATE_KEY`
 
-The daily upstream sync uses the installation token to update its merge branch, manage its pull
-request, and report conflicts. The release workflow uses the same App to update the cask in
+The six-hour upstream sync uses the installation token to update its merge branch, manage its pull
+request, journal policy-safe candidates, auto-merge them after required CI, and report blockers. The
+release workflow uses the same App to update the cask in
 `homebrew-tap`. Preflight verifies that the App can mint a token scoped to both repositories before
 building or publishing anything.
 
@@ -90,6 +91,14 @@ release workflow audits it on macOS. Its own `Test` workflow audits every cask c
 
 Before merging an upstream reconciliation PR, confirm that its exact head contains the intended
 upstream SHA, every active `.alpha/features/*.md` record is reconciled, and all four jobs pass.
+
+Policy-safe automated syncs perform this in two CI passes: the first validates the reconciled
+candidate, the finalizer appends the evidence-backed journal entry, and the second validates the
+journaled head before auto-merge. Any Alpha-delta overlap or protected path remains review-only.
+
+Every successful CI run for a push to the current `alpha` head starts a release when that exact SHA
+does not already have an Alpha tag. A daily scheduled run retries an unreleased head after transient
+registry, artifact, or Homebrew failures. Stale CI runs and already tagged commits are skipped.
 
 ## 4. macOS installation and upgrades
 
@@ -118,8 +127,9 @@ unsigned installer; Linux users replace the AppImage.
 
 ## 5. First release proof
 
-Run `Alpha Release` manually once after the GitHub App is installed and before relying on the daily
-schedule. On the exact released SHA:
+The first successful `alpha` CI run starts the initial release after the GitHub App is installed. A
+manual `Alpha Release` dispatch is also available, but duplicate-tag protection prevents publishing
+the same SHA twice. On the exact released SHA:
 
 1. Confirm preflight, every platform build, npm publish, GitHub release, and Homebrew publication
    jobs pass.

@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "reviewRequiredPatterns": [
+    { "pattern": ".github/workflows/**", "reason": "workflow and release automation" },
+    { "pattern": "package.json", "reason": "workspace runtime and release dependency policy" },
+    { "pattern": "pnpm-lock.yaml", "reason": "workspace dependency graph" },
+    { "pattern": "pnpm-workspace.yaml", "reason": "workspace package and build policy" },
+    { "pattern": "apps/desktop/package.json", "reason": "desktop package and artifact identity" },
+    {
+      "pattern": "apps/desktop/src/app/DesktopEnvironment.ts",
+      "reason": "desktop distribution identity"
+    },
+    { "pattern": "apps/desktop/src/app/DesktopStatePaths.ts", "reason": "desktop state isolation" },
+    { "pattern": "apps/desktop/src/updates/**", "reason": "Alpha update channel behavior" },
+    { "pattern": "apps/server/package.json", "reason": "Alpha npm package identity" },
+    { "pattern": "apps/server/scripts/cli.ts", "reason": "Alpha npm publication" },
+    { "pattern": "apps/server/src/cloud/**", "reason": "remote install and self-update behavior" },
+    {
+      "pattern": "apps/server/src/orchestration/**",
+      "reason": "persisted event and projection behavior"
+    },
+    { "pattern": "apps/server/src/persistence/**", "reason": "database compatibility" },
+    { "pattern": "apps/server/src/serviceLauncher.ts", "reason": "Alpha service identity" },
+    { "pattern": "packages/contracts/**", "reason": "multi-surface wire contracts" },
+    { "pattern": "packages/shared/src/alphaDistribution.ts", "reason": "central Alpha identity" },
+    { "pattern": "packages/ssh/**", "reason": "remote Alpha bootstrap behavior" },
+    { "pattern": "scripts/build-desktop-artifact.ts", "reason": "desktop packaging and signing" },
+    {
+      "pattern": "scripts/update-release-package-versions.ts",
+      "reason": "release version alignment"
+    }
+  ]
+}

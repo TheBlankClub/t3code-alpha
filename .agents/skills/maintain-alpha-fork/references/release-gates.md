@@ -15,11 +15,12 @@ artifacts.
 
 - Publish from the Alpha repository or another public-read feed owned by TheBlankClub.
 - Use monotonically increasing SemVer versions and one deliberate Alpha channel.
-- Publish every platform installer, macOS ZIP, updater YAML manifest, and blockmap expected by
-  `electron-updater`.
-- Sign and notarize production macOS builds. Configure Windows signing when Windows is shipped.
-- Verify install, update discovery, download, restart/install, and rollback guidance using a previous
-  Alpha release.
+- When automatic Electron updates are enabled, publish every expected ZIP, updater YAML manifest,
+  and blockmap, sign and notarize macOS, and configure Windows signing before shipping Windows.
+- While Alpha artifacts remain unsigned, disable automatic Electron updates, publish manual
+  installers only, use the fork-owned Homebrew cask for macOS upgrades, and document quarantine and
+  rollback behavior explicitly.
+- Verify the active upgrade path from a previous Alpha release before calling it operational.
 - Never embed a GitHub token in the distributed client.
 
 The existing `T3CODE_DESKTOP_UPDATE_REPOSITORY` hook can point packaged builds at the Alpha release
@@ -51,8 +52,8 @@ Require, in order:
 1. completed upstream reconciliation;
 2. focused validation and package checks;
 3. version and channel resolution;
-4. signed artifact builds;
+4. artifact builds matching the recorded signed or unsigned distribution policy;
 5. Alpha CLI publication when applicable;
-6. GitHub prerelease publication and updater manifests;
+6. GitHub prerelease publication and the artifacts required by the active upgrade policy;
 7. install/update smoke verification;
 8. release journal entry tied to the exact tag and SHA.
