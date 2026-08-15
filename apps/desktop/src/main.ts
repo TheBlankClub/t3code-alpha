@@ -1,3 +1,4 @@
+// @effect-diagnostics nodeBuiltinImport:off - Electron profile selection must run synchronously before the Effect runtime starts.
 for (const stream of [process.stdout, process.stderr]) {
   stream.on("error", (err: NodeJS.ErrnoException) => {
     if (err.code !== "EPIPE") throw err;
@@ -7,7 +8,9 @@ for (const stream of [process.stdout, process.stderr]) {
 import * as NodeHttpClient from "@effect/platform-node/NodeHttpClient";
 import * as NodeRuntime from "@effect/platform-node/NodeRuntime";
 import * as NodeServices from "@effect/platform-node/NodeServices";
+import * as NodeFS from "node:fs";
 import * as NodeOS from "node:os";
+import * as NodePath from "node:path";
 import * as Effect from "effect/Effect";
 import * as Layer from "effect/Layer";
 import * as Option from "effect/Option";
@@ -42,6 +45,7 @@ import * as DesktopBackendPool from "./backend/DesktopBackendPool.ts";
 import * as DesktopLocalEnvironmentAuth from "./backend/DesktopLocalEnvironmentAuth.ts";
 import * as DesktopNetworkInterfaces from "./backend/DesktopNetworkInterfaces.ts";
 import * as DesktopEnvironment from "./app/DesktopEnvironment.ts";
+import { configureEarlyDesktopUserData } from "./app/DesktopEarlyUserData.ts";
 import * as DesktopLifecycle from "./app/DesktopLifecycle.ts";
 import * as DesktopLinuxUrlHandler from "./app/DesktopLinuxUrlHandler.ts";
 import * as DesktopShutdown from "./app/DesktopShutdown.ts";
@@ -63,6 +67,17 @@ import * as DesktopWindow from "./window/DesktopWindow.ts";
 import * as DesktopWslBackend from "./wsl/DesktopWslBackend.ts";
 import * as DesktopWslEnvironment from "./wsl/DesktopWslEnvironment.ts";
 import * as DesktopWslServerTree from "./wsl/DesktopWslServerTree.ts";
+
+// Electron can launch GPU helpers before the Effect layer graph reaches the
+// Clerk/single-instance setup. Set the profile synchronously so every helper,
+// including the first GPU process, starts inside Alpha's isolated directory.
+configureEarlyDesktopUserData(Electron.app, {
+  environment: process.env,
+  exists: NodeFS.existsSync,
+  homeDirectory: NodeOS.homedir(),
+  joinPath: NodePath.join,
+  platform: process.platform,
+});
 
 const desktopEnvironmentLayer = Layer.unwrap(
   Effect.gen(function* () {

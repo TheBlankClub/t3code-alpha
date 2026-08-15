@@ -11,7 +11,8 @@ surfaces:
   - server
   - packaging
 tests:
-  - vp test run apps/desktop/src/app/DesktopEnvironment.test.ts apps/desktop/src/app/DesktopEarlyElectronStartup.test.ts apps/desktop/src/app/DesktopAppIdentity.test.ts apps/desktop/src/app/DesktopClerk.test.ts apps/desktop/src/app/DesktopLinuxUrlHandler.test.ts apps/desktop/src/electron/ElectronProtocol.test.ts apps/desktop/scripts/electron-launcher.test.mjs
+  - vp test run apps/desktop/src/app/DesktopEnvironment.test.ts apps/desktop/src/app/DesktopEarlyElectronStartup.test.ts apps/desktop/src/app/DesktopEarlyUserData.test.ts apps/desktop/src/app/DesktopAppIdentity.test.ts apps/desktop/src/app/DesktopClerk.test.ts apps/desktop/src/app/DesktopLinuxUrlHandler.test.ts apps/desktop/src/electron/ElectronProtocol.test.ts apps/desktop/scripts/electron-launcher.test.mjs
+  - vp test run apps/server/scripts/migrate-nightly-data-to-alpha.test.ts
   - vp test run scripts/build-desktop-artifact.test.ts -t "product names|platform-specific packaging|passkey signing|Alpha renderer protocol"
   - vp test run apps/server/src/server.test.ts -t "allows credentialed preflights"
 ---
@@ -27,6 +28,8 @@ identity.
 - Packaged Alpha state defaults to `~/.t3-alpha`; an explicit `T3CODE_HOME` still wins.
 - Electron user data and its single-instance lock use `t3code-alpha`, never an official product
   name or `t3code` path.
+- Electron selects the Alpha user-data directory synchronously before its first GPU, network, or
+  renderer helper can launch.
 - Packaged Alpha uses the application ID `com.theblankclub.t3code.alpha` and renderer protocol
   `t3code-alpha://app`.
 - Linux uses Alpha-specific executable, desktop entry, window class, and URL-handler identities.
@@ -39,10 +42,14 @@ identity.
 - `packages/shared/src/alphaDistribution.ts` is the canonical registry for installed Alpha
   identity values shared by runtime and packaging code.
 - Desktop environment and pre-ready startup select Alpha defaults only outside development.
+- The desktop main process synchronously selects the Alpha Electron profile before constructing the
+  asynchronous runtime layer graph.
 - Electron, Clerk, Linux URL handling, and desktop packaging consume the centralized identity.
 - Upstream's source-asset desktop launcher model resolves its non-development icon from Alpha's
   canonical artwork while retaining Alpha's bundle identifier and URL protocol.
 - The server recognizes `t3code-alpha://app` as a desktop renderer origin.
+- `migrate:nightly-to-alpha` provides a backup-first, SQLite-consistent migration with explicit
+  switch and clone identity policies; origin-scoped Chromium profiles remain isolated.
 
 # Retirement conditions
 
