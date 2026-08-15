@@ -1,4 +1,4 @@
-// @effect-diagnostics nodeBuiltinImport:off - Electron profile selection must run synchronously before the Effect runtime starts.
+// @effect-diagnostics nodeBuiltinImport:off - Electron profile selection must run synchronously before desktop layers are constructed.
 for (const stream of [process.stdout, process.stderr]) {
   stream.on("error", (err: NodeJS.ErrnoException) => {
     if (err.code !== "EPIPE") throw err;
@@ -76,7 +76,7 @@ configureEarlyDesktopUserData(Electron.app, {
   exists: NodeFS.existsSync,
   homeDirectory: NodeOS.homedir(),
   joinPath: NodePath.join,
-  platform: process.platform,
+  platform: Effect.runSync(HostProcessPlatform),
 });
 
 const desktopEnvironmentLayer = Layer.unwrap(
