@@ -43,12 +43,33 @@ cask "t3code-alpha" do
 
   app "T3 Code Alpha.app"
 
-  caveats <<~EOS
-    T3 Code Alpha is currently unsigned. Install and upgrade it without macOS
-    quarantine only if you trust TheBlankClub's release artifacts:
+  postflight do
+    target = "#{appdir}/T3 Code Alpha.app"
 
-      brew install --cask --no-quarantine theblankclub/tap/t3code-alpha
-      brew upgrade --cask --no-quarantine t3code-alpha
+    Dir.glob("#{target}/Contents/Frameworks/*.{app,framework}").each do |nested|
+      system_command "/usr/bin/codesign",
+                     args: ["--force", "--sign", "-", nested],
+                     sudo: false
+    end
+
+    system_command "/usr/bin/codesign",
+                   args: ["--force", "--deep", "--sign", "-", target],
+                   sudo: false
+    system_command "/usr/bin/codesign",
+                   args: ["--verify", "--deep", "--strict", target],
+                   sudo: false
+    system_command "/usr/bin/xattr",
+                   args: ["-dr", "com.apple.quarantine", target],
+                   sudo: false
+  end
+
+  caveats <<~EOS
+    T3 Code Alpha is not signed with an Apple Developer ID. This cask applies
+    an ad-hoc signature and removes quarantine after every install or upgrade.
+    Install it only if you trust TheBlankClub's release artifacts:
+
+      brew install --cask theblankclub/tap/t3code-alpha
+      brew upgrade --cask t3code-alpha
   EOS
 end
 `;

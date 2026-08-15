@@ -297,6 +297,31 @@ jobs:
 
           vp run dist:desktop:artifact "${args[@]}"
 
+      - name: Verify macOS application seal
+        if: matrix.platform == 'mac'
+        shell: bash
+        run: |
+          set -euo pipefail
+          dmg_paths=(release/*.dmg)
+          if [[ ${#dmg_paths[@]} -ne 1 ]]; then
+            echo "Expected exactly one macOS DMG, found ${#dmg_paths[@]}." >&2
+            exit 1
+          fi
+
+          mount_dir="$(mktemp -d)"
+          cleanup() {
+            hdiutil detach "$mount_dir" >/dev/null 2>&1 || true
+          }
+          trap cleanup EXIT
+
+          hdiutil attach -nobrowse -readonly -mountpoint "$mount_dir" "${dmg_paths[0]}" >/dev/null
+          app="$mount_dir/T3 Code Alpha.app"
+          codesign --verify --deep --strict --verbose=2 "$app"
+
+          signature_details="$(codesign -dvvv "$app" 2>&1)"
+          grep -Fq "Identifier=com.theblankclub.t3code.alpha" <<<"$signature_details"
+          grep -Fq "Signature=adhoc" <<<"$signature_details"
+
       - name: Collect release assets
         shell: bash
         run: |

@@ -2079,6 +2079,15 @@ export const createBuildConfig = Effect.fn("createBuildConfig")(function* (
       target: target === "dmg" ? [target, "zip"] : [target],
       icon: "icon.icns",
       category: "public.app-category.developer-tools",
+      ...(!signed && updateChannel === "alpha"
+        ? {
+            // Alpha deliberately ships without Apple credentials. Ask electron-builder to
+            // create a complete ad-hoc seal so manual DMG installs are not malformed; the
+            // Homebrew cask still re-signs after installation and owns quarantine removal.
+            identity: "-",
+            hardenedRuntime: false,
+          }
+        : {}),
       protocols: [
         {
           name: ALPHA_DISTRIBUTION.productName,

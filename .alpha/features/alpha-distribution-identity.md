@@ -3,7 +3,7 @@ id: alpha-distribution-identity
 status: active
 risk: red
 introduced_by: alpha-distribution-identity
-last_reconciled_with: 20a70420a85aecab0bde1a58921197f423e401cc
+last_reconciled_with: ad117235b544e23545fe39143812db2ddd41af1f
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -40,6 +40,8 @@ identity.
   identity values shared by runtime and packaging code.
 - Desktop environment and pre-ready startup select Alpha defaults only outside development.
 - Electron, Clerk, Linux URL handling, and desktop packaging consume the centralized identity.
+- Upstream's source-asset desktop launcher model resolves its non-development icon from Alpha's
+  canonical artwork while retaining Alpha's bundle identifier and URL protocol.
 - The server recognizes `t3code-alpha://app` as a desktop renderer origin.
 
 # Retirement conditions
@@ -61,3 +63,6 @@ identity.
   protocol, state, and packaging identity.
 - 2026-08-15, upstream `20a70420a85aecab0bde1a58921197f423e401cc`: `unaffected`; adopted
   upstream's same-locale date and time formatting without changing Alpha distribution identity.
+- 2026-08-16, upstream `ad117235b544e23545fe39143812db2ddd41af1f`: `mechanical-conflict`;
+  adopted upstream's generated launcher-icon model and removal of checked-in desktop resource
+  icons while retaining Alpha's app ID, protocol, product name, and canonical Alpha icon source.

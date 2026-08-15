@@ -3,7 +3,7 @@ id: alpha-homebrew-upgrades
 status: active
 risk: red
 introduced_by: alpha-homebrew-upgrades
-last_reconciled_with: 20a70420a85aecab0bde1a58921197f423e401cc
+last_reconciled_with: ad117235b544e23545fe39143812db2ddd41af1f
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -29,8 +29,10 @@ Apple Developer account or a separate package-hosting service.
 - arm64 and x64 SHA-256 values are calculated from the artifacts produced by the same workflow run.
 - The tap-owned updater audits the cask before committing it with the tap's repository-scoped
   `GITHUB_TOKEN`.
-- Installation and upgrades use Homebrew's explicit `--no-quarantine` option while Alpha remains
-  unsigned; the cask does not silently remove quarantine attributes.
+- Every install and upgrade ad-hoc signs the nested Electron bundles and outer application, verifies
+  the complete bundle strictly, and removes quarantine only after verification succeeds.
+- Standard `brew install` and `brew upgrade` commands require no recurring manual signing or
+  quarantine repair while Alpha remains outside Apple Developer ID signing and notarization.
 - Replacing the app bundle does not delete Alpha state under `~/.t3-alpha`.
 
 # Current delta
@@ -54,3 +56,6 @@ Apple Developer account or a separate package-hosting service.
   change replaces the fork-owned cask renderer, tap publication, or unsigned upgrade policy.
 - 2026-08-15, upstream `20a70420a85aecab0bde1a58921197f423e401cc`: `unaffected`; the incoming
   timestamp formatting fix does not touch Homebrew packaging or publication.
+- 2026-08-16, upstream `ad117235b544e23545fe39143812db2ddd41af1f`: `mechanical-overlap`; the
+  incoming DMG artwork support extends desktop packaging but does not replace the fork-owned cask
+  repair. Homebrew ad-hoc signs and verifies every installed bundle before removing quarantine.

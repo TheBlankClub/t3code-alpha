@@ -13,18 +13,19 @@ npx t3code-alpha@latest
 
 ## macOS desktop app
 
-Alpha is currently unsigned. If you trust TheBlankClub's release artifacts, install its Homebrew
-cask without macOS quarantine:
+Alpha is not signed with an Apple Developer ID. If you trust TheBlankClub's release artifacts,
+install its Homebrew cask. The cask automatically applies and verifies an ad-hoc signature, then
+removes quarantine after every install or upgrade:
 
 ```sh
-brew install --cask --no-quarantine theblankclub/tap/t3code-alpha
+brew install --cask theblankclub/tap/t3code-alpha
 ```
 
 Upgrade it with:
 
 ```sh
 brew update
-brew upgrade --cask --no-quarantine t3code-alpha
+brew upgrade --cask t3code-alpha
 ```
 
 You can instead download the DMG for your Mac from the

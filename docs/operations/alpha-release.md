@@ -107,18 +107,19 @@ prerelease is complete, the tap's next scheduled run publishes its cask independ
 The recommended macOS path is Homebrew:
 
 ```sh
-brew install --cask --no-quarantine theblankclub/tap/t3code-alpha
+brew install --cask theblankclub/tap/t3code-alpha
 ```
 
 Upgrade with:
 
 ```sh
 brew update
-brew upgrade --cask --no-quarantine t3code-alpha
+brew upgrade --cask t3code-alpha
 ```
 
-`--no-quarantine` is explicit because the app is unsigned. Use it only for release artifacts you
-trust. The cask itself does not silently alter quarantine attributes.
+Alpha is not signed with an Apple Developer ID. The cask ad-hoc signs the nested Electron bundles
+and outer app after every install or upgrade, verifies the complete bundle, and removes quarantine
+only after verification succeeds. Use this path only for release artifacts you trust.
 
 A manual upgrade also works: download the DMG for the Mac's architecture, quit T3 Code Alpha,
 replace `T3 Code Alpha.app` in Applications, and reopen it. macOS may require the user to right-click
@@ -142,7 +143,8 @@ the same SHA twice. On the exact released SHA:
    release and `npm view t3code-alpha dist-tags` points `latest` at it.
 4. Install with `npx t3code-alpha@latest` and confirm the reported CLI version matches the package.
 5. Install the Homebrew cask on both Apple Silicon and Intel where available, then verify
-   `brew upgrade --cask --no-quarantine t3code-alpha` replaces an older Alpha app.
+   `brew upgrade --cask t3code-alpha` replaces an older Alpha app, produces a bundle that passes
+   `codesign --verify --deep --strict`, and leaves no `com.apple.quarantine` attribute.
 6. Confirm the desktop identity, protocol, and state remain isolated from official T3 Code and that
    Settings reports automatic updates as unavailable for unsigned Alpha builds.
 

@@ -3,7 +3,7 @@ id: alpha-update-channel
 status: active
 risk: red
 introduced_by: alpha-update-channel
-last_reconciled_with: 20a70420a85aecab0bde1a58921197f423e401cc
+last_reconciled_with: ad117235b544e23545fe39143812db2ddd41af1f
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -52,6 +52,8 @@ or a manually downloaded installer rather than Electron's automatic updater.
   it reuses the checked-in native Development icon's legacy body and neutral shadow alpha.
 - The icon exporter retries without `--design-generation` when the installed Icon Composer 2 CLI
   reports that argument as unsupported.
+- Desktop launcher and unpackaged non-development asset resolution use the canonical Alpha icon
+  family, and Alpha DMGs use a dedicated dark graphite and ember installer background.
 
 # Retirement conditions
 
@@ -75,3 +77,6 @@ or a manually downloaded installer rather than Electron's automatic updater.
   `alpha` channel, fork-owned release feed, branding, and Homebrew upgrade path.
 - 2026-08-15, upstream `20a70420a85aecab0bde1a58921197f423e401cc`: `unaffected`; adopted the
   upstream timestamp fix without changing Alpha's channel, feed, branding, or upgrade path.
+- 2026-08-16, upstream `ad117235b544e23545fe39143812db2ddd41af1f`: `mechanical-conflict`;
+  adopted upstream's canonical source-asset launcher and themed DMG pipeline, replacing production
+  fallbacks with Alpha artwork and adding an Alpha-specific installer background.
