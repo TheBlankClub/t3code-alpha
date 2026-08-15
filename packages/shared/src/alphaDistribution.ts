@@ -11,7 +11,7 @@ export const ALPHA_DISTRIBUTION = {
   artifactName: "T3-Code-Alpha-${version}-${arch}.${ext}",
   serverPackageName: "t3code-alpha",
   serverBinaryName: "t3-alpha",
-  serverNpmDistTag: "alpha",
+  serverNpmDistTag: "latest",
   serverHomeDirName: ".t3-alpha",
   serverSystemdUnitName: "t3code-alpha.service",
 } as const;

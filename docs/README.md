@@ -10,6 +10,7 @@
 - [Customize a project icon](./user/project-settings.md)
 - [Remote access](./user/remote-access.md)
 - [Keeping app and server in sync](./user/updating.md)
+- [Install and update T3 Code Alpha](./user/alpha.md)
 - [Source control integrations](./user/source-control.md)
 - [Background service (Linux)](./user/background-service.md)
 - Providers: [Codex](./user/providers-codex.md) · [Claude](./user/providers-claude.md)
@@ -39,6 +40,7 @@ policy in [CONTRIBUTING.md](../CONTRIBUTING.md); agent rules in [AGENTS.md](../A
 ### Runbooks
 
 - [Release](./operations/release.md)
+- [Alpha release](./operations/alpha-release.md)
 - [Observability](./operations/observability.md)
 - [Relay observability](./operations/relay-observability.md)
 - [Mobile app store screenshots](./operations/mobile-app-store-screenshots.md)

@@ -23,6 +23,7 @@ import * as DesktopState from "../app/DesktopState.ts";
 import * as DesktopUpdates from "./DesktopUpdates.ts";
 
 interface UpdatesHarnessOptions {
+  readonly appVersion?: string;
   readonly checkForUpdates?: Effect.Effect<
     void,
     ElectronUpdater.ElectronUpdaterCheckForUpdatesError
@@ -138,7 +139,7 @@ function makeHarness(options: UpdatesHarnessOptions = {}) {
     homeDirectory: `/tmp/t3-desktop-updates-home-${process.pid}`,
     platform: "darwin",
     processArch: "x64",
-    appVersion: "1.2.3",
+    appVersion: options.appVersion ?? "1.2.3",
     appPath: "/repo",
     isPackaged: true,
     resourcesPath: "/missing/resources",
@@ -278,6 +279,32 @@ describe("DesktopUpdates", () => {
 
       assert.equal(harness.listenerCount(), 0);
     }).pipe(Effect.provide(Layer.merge(TestClock.layer(), harness.layer)));
+  });
+
+  it.effect("keeps automatic updates disabled for unsigned Alpha builds", () => {
+    const harness = makeHarness({ appVersion: "1.2.4-alpha.20260815.2" });
+
+    return Effect.scoped(
+      Effect.gen(function* () {
+        const updates = yield* DesktopUpdates.DesktopUpdates;
+        yield* updates.configure;
+
+        const state = yield* updates.getState;
+        assert.equal(state.channel, "alpha");
+        assert.equal(state.enabled, false);
+        assert.equal(state.status, "disabled");
+        assert.equal(
+          state.message,
+          "Automatic updates are unavailable for unsigned Alpha builds. Download the latest installer from TheBlankClub/t3code-alpha releases.",
+        );
+        assert.equal(harness.listenerCount(), 0);
+        assert.equal(harness.checkCount(), 0);
+
+        const result = yield* updates.check("manual");
+        assert.equal(result.checked, false);
+        assert.deepEqual(result.state, state);
+      }),
+    ).pipe(Effect.provide(Layer.merge(TestClock.layer(), harness.layer)));
   });
 
   it.effect("updates and broadcasts state from updater events", () => {

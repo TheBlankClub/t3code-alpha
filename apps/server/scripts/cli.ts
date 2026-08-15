@@ -32,6 +32,8 @@ import {
 
 interface PackageJson {
   name: string;
+  description: string;
+  license: string;
   repository: {
     type: string;
     url: string;
@@ -187,6 +189,18 @@ interface PublishCommandConfig {
   readonly dryRun: boolean;
 }
 
+export const createPublishProcessOptions = (
+  repoRoot: string,
+  verbose: boolean,
+  shell: boolean,
+) => ({
+  cwd: repoRoot,
+  stdin: "inherit" as const,
+  stdout: verbose ? ("inherit" as const) : ("ignore" as const),
+  stderr: "inherit" as const,
+  shell,
+});
+
 const createVpPmPublishArgs = (config: PublishCommandConfig): ReadonlyArray<string> => {
   const args = [
     "publish",
@@ -204,6 +218,24 @@ const createVpPmPublishArgs = (config: PublishCommandConfig): ReadonlyArray<stri
 
   return args;
 };
+
+export const createPublishPackageJson = (
+  version: string,
+  dependencies: Record<string, string>,
+  overrides: Record<string, string>,
+): PackageJson => ({
+  name: ALPHA_DISTRIBUTION.serverPackageName,
+  description: serverPackageJson.description,
+  license: serverPackageJson.license,
+  repository: serverPackageJson.repository,
+  bin: serverPackageJson.bin,
+  type: serverPackageJson.type,
+  version,
+  engines: serverPackageJson.engines,
+  files: serverPackageJson.files,
+  dependencies,
+  overrides,
+});
 
 const publishCmd = Command.make(
   "publish",
@@ -242,25 +274,15 @@ const publishCmd = Command.make(
           const workspaceConfig = yield* readWorkspaceConfig();
           const workspaceCatalog = workspaceConfig.catalog ?? {};
           const workspaceOverrides = workspaceConfig.overrides ?? {};
-          const pkg: PackageJson = {
-            name: ALPHA_DISTRIBUTION.serverPackageName,
-            repository: serverPackageJson.repository,
-            bin: serverPackageJson.bin,
-            type: serverPackageJson.type,
+          const pkg = createPublishPackageJson(
             version,
-            engines: serverPackageJson.engines,
-            files: serverPackageJson.files,
-            dependencies: resolveCatalogDependencies(
+            resolveCatalogDependencies(
               serverPackageJson.dependencies,
               workspaceCatalog,
               "apps/server",
             ),
-            overrides: resolveCatalogDependencies(
-              workspaceOverrides,
-              workspaceCatalog,
-              "apps/server",
-            ),
-          };
+            resolveCatalogDependencies(workspaceOverrides, workspaceCatalog, "apps/server"),
+          );
 
           return {
             packageJsonString: yield* encodePackageJson(pkg),
@@ -284,10 +306,7 @@ const publishCmd = Command.make(
             yield* Effect.log(`[cli] Running: vp pm ${args.join(" ")}`);
             yield* runCommand(
               ChildProcess.make(spawnCommand.command, spawnCommand.args, {
-                cwd: repoRoot,
-                stdout: config.verbose ? "inherit" : "ignore",
-                stderr: "inherit",
-                shell: spawnCommand.shell,
+                ...createPublishProcessOptions(repoRoot, config.verbose, spawnCommand.shell),
               }),
             );
           }),
@@ -313,8 +332,10 @@ const cli = Command.make("cli").pipe(
   Command.withSubcommands([buildCmd, publishCmd]),
 );
 
-Command.run(cli, { version: "0.0.0" }).pipe(
-  Effect.scoped,
-  Effect.provide([Logger.layer([Logger.consolePretty()]), NodeServices.layer]),
-  NodeRuntime.runMain,
-);
+if (import.meta.main) {
+  Command.run(cli, { version: "0.0.0" }).pipe(
+    Effect.scoped,
+    Effect.provide([Logger.layer([Logger.consolePretty()]), NodeServices.layer]),
+    NodeRuntime.runMain,
+  );
+}

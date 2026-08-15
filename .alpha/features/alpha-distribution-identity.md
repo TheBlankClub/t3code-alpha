@@ -3,7 +3,7 @@ id: alpha-distribution-identity
 status: active
 risk: red
 introduced_by: alpha-distribution-identity
-last_reconciled_with: 74f7b434865c2d758c7b1cd5f52f4c96b76d03fb
+last_reconciled_with: 20a70420a85aecab0bde1a58921197f423e401cc
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -54,3 +54,10 @@ identity.
   Alpha distribution identity on top of upstream's `DesktopEnvironment` and build configuration.
 - 2026-08-15, upstream `74f7b434865c2d758c7b1cd5f52f4c96b76d03fb`: `unaffected`; incoming
   changes do not touch desktop identity, protocols, state paths, server origins, or artifact names.
+- 2026-08-15, upstream `804cba4305b15f929937833c93e85db0835d8903`: `mechanical-overlap`;
+  adopted remote editor discovery and desktop IPC while retaining Alpha app origins and identity.
+- 2026-08-15, upstream `ec141c125726ae70f31f392e780afa8de446fdc4`: `mechanical-conflict`;
+  adopted upstream's OS-locale desktop timestamp contract while retaining Alpha's isolated app,
+  protocol, state, and packaging identity.
+- 2026-08-15, upstream `20a70420a85aecab0bde1a58921197f423e401cc`: `unaffected`; adopted
+  upstream's same-locale date and time formatting without changing Alpha distribution identity.
