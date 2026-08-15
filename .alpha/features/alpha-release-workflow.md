@@ -33,8 +33,12 @@ upstream's official release, hosted-web, AUR, or npm publication paths.
   artifact/updater identities.
 - macOS signing/notarization and Windows Trusted Signing are mandatory release gates; missing
   inputs fail their platform builds rather than publishing unsigned installers.
+- Public T3 Connect variables are mandatory so an Alpha release does not silently ship a reduced
+  cloud feature set.
 - npm publication uses provenance, the `alpha` dist-tag, and the temporary `t3code-alpha`
   manifest.
+- The first npm publish may use a short-lived bootstrap token; subsequent publishes use npm
+  trusted publishing and no long-lived token.
 - The workflow does not deploy the official hosted web app, publish official AUR packages, mutate
   source package versions, or announce through upstream channels.
 
