@@ -3,7 +3,7 @@ id: alpha-upstream-sync-automation
 status: active
 risk: red
 introduced_by: alpha-upstream-sync-automation
-last_reconciled_with: 20a70420a85aecab0bde1a58921197f423e401cc
+last_reconciled_with: 2f486ab80c748b4d8e3d3b17e49b5a327cb93335
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -66,3 +66,5 @@ reconciliation claims about Alpha-only features.
   fork-owned daily reconciliation workflow and review gates.
 - 2026-08-15, upstream `20a70420a85aecab0bde1a58921197f423e401cc`: `unaffected`; retained the
   fork-owned daily reconciliation workflow and review gates.
+- 2026-08-16, upstream `2f486ab80c748b4d8e3d3b17e49b5a327cb93335`: `unaffected`; retained the
+  six-hour fork sync workflow, protected-surface policy, journal gate, and merge-ancestry model.

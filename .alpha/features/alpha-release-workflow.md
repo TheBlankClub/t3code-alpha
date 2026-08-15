@@ -3,7 +3,7 @@ id: alpha-release-workflow
 status: active
 risk: red
 introduced_by: alpha-release-workflow
-last_reconciled_with: ad117235b544e23545fe39143812db2ddd41af1f
+last_reconciled_with: 2f486ab80c748b4d8e3d3b17e49b5a327cb93335
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -85,3 +85,6 @@ upstream's official release, hosted-web, AUR, or npm publication paths.
 - 2026-08-16, upstream `ad117235b544e23545fe39143812db2ddd41af1f`: `mechanical-overlap`;
   adopted upstream's DMG background pipeline and retained the Alpha-only release graph, adding an
   Alpha background plus strict verification of the ad-hoc application seal before publication.
+- 2026-08-16, upstream `2f486ab80c748b4d8e3d3b17e49b5a327cb93335`: `unaffected`; adopted the
+  incoming web theme behavior through merge ancestry without changing Alpha CI, packaging, npm,
+  GitHub prerelease, or Homebrew publication responsibilities.

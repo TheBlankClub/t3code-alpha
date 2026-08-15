@@ -3,7 +3,7 @@ id: fork-steward
 status: active
 risk: green
 introduced_by: alpha-foundation
-last_reconciled_with: 20a70420a85aecab0bde1a58921197f423e401cc
+last_reconciled_with: 2f486ab80c748b4d8e3d3b17e49b5a327cb93335
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -50,3 +50,6 @@ retiring fork code when upstream provides an equivalent or better implementation
   change replaces the feature ledger, semantic conflict policy, or release gates.
 - 2026-08-15, upstream `20a70420a85aecab0bde1a58921197f423e401cc`: `unaffected`; no incoming
   change replaces the feature ledger, semantic conflict policy, or release gates.
+- 2026-08-16, upstream `2f486ab80c748b4d8e3d3b17e49b5a327cb93335`: `unaffected`; adopted the
+  upstream theme fixes unchanged while retaining the feature ledger, semantic conflict policy,
+  release gates, and reconciliation tooling.

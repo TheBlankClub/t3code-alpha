@@ -3,7 +3,7 @@ id: alpha-server-package
 status: active
 risk: red
 introduced_by: alpha-server-package
-last_reconciled_with: 20a70420a85aecab0bde1a58921197f423e401cc
+last_reconciled_with: 2f486ab80c748b4d8e3d3b17e49b5a327cb93335
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -76,3 +76,6 @@ official T3 Code without publishing to or executing the upstream `t3` package.
   teaching that validation to resolve Alpha's `t3-alpha` binary from `t3code-alpha@latest`.
 - 2026-08-15, upstream `20a70420a85aecab0bde1a58921197f423e401cc`: `unaffected`; the incoming
   timestamp formatting fix does not touch Alpha server packaging or remote bootstrap behavior.
+- 2026-08-16, upstream `2f486ab80c748b4d8e3d3b17e49b5a327cb93335`: `unaffected`; upstream's
+  web theme controls do not touch the Alpha npm package, CLI binary, remote bootstrap, state root,
+  or background service identity.

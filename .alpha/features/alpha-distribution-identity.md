@@ -3,7 +3,7 @@ id: alpha-distribution-identity
 status: active
 risk: red
 introduced_by: alpha-distribution-identity
-last_reconciled_with: ad117235b544e23545fe39143812db2ddd41af1f
+last_reconciled_with: 2f486ab80c748b4d8e3d3b17e49b5a327cb93335
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -66,3 +66,6 @@ identity.
 - 2026-08-16, upstream `ad117235b544e23545fe39143812db2ddd41af1f`: `mechanical-conflict`;
   adopted upstream's generated launcher-icon model and removal of checked-in desktop resource
   icons while retaining Alpha's app ID, protocol, product name, and canonical Alpha icon source.
+- 2026-08-16, upstream `2f486ab80c748b4d8e3d3b17e49b5a327cb93335`: `unaffected`; adopted
+  upstream's restored dark palette and simplified theme controls without changing Alpha's app,
+  protocol, state, server-origin, or packaging identity.

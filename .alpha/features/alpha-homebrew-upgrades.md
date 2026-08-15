@@ -3,7 +3,7 @@ id: alpha-homebrew-upgrades
 status: active
 risk: red
 introduced_by: alpha-homebrew-upgrades
-last_reconciled_with: ad117235b544e23545fe39143812db2ddd41af1f
+last_reconciled_with: 2f486ab80c748b4d8e3d3b17e49b5a327cb93335
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -59,3 +59,6 @@ Apple Developer account or a separate package-hosting service.
 - 2026-08-16, upstream `ad117235b544e23545fe39143812db2ddd41af1f`: `mechanical-overlap`; the
   incoming DMG artwork support extends desktop packaging but does not replace the fork-owned cask
   repair. Homebrew ad-hoc signs and verifies every installed bundle before removing quarantine.
+- 2026-08-16, upstream `2f486ab80c748b4d8e3d3b17e49b5a327cb93335`: `unaffected`; upstream's
+  web theme changes do not touch the fork-owned Homebrew cask, artifact checksums, signing repair,
+  or publication path.
