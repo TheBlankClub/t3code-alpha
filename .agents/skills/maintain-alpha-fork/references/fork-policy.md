@@ -71,7 +71,15 @@ and remove the fork code. This prevents a later agent from reintroducing obsolet
 Append one compact JSON object per completed reconciliation to `.alpha/reconciliation.jsonl`:
 
 ```json
-{"timestamp":"2026-08-15T00:00:00Z","previousAlpha":"<sha>","upstream":"<sha>","candidate":"<sha>","features":{"retained":[],"rewritten":[],"retired":[]},"validation":["vp test run path/to/test.ts"],"outcome":"ready-for-review"}
+{
+  "timestamp": "2026-08-15T00:00:00Z",
+  "previousAlpha": "<sha>",
+  "upstream": "<sha>",
+  "candidate": "<sha>",
+  "features": { "retained": [], "rewritten": [], "retired": [] },
+  "validation": ["vp test run path/to/test.ts"],
+  "outcome": "ready-for-review"
+}
 ```
 
 Do not append speculative entries. Record the actual candidate SHA and actual checks after they
