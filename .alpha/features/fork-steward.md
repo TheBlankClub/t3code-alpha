@@ -3,7 +3,7 @@ id: fork-steward
 status: active
 risk: green
 introduced_by: alpha-foundation
-last_reconciled_with: 804cba4305b15f929937833c93e85db0835d8903
+last_reconciled_with: ec141c125726ae70f31f392e780afa8de446fdc4
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -46,3 +46,5 @@ retiring fork code when upstream provides an equivalent or better implementation
   the stewardship workflow while adopting upstream Git, AUR packaging, and theme fixes unchanged.
 - 2026-08-15, upstream `804cba4305b15f929937833c93e85db0835d8903`: `unaffected`; no upstream
   change replaces the repository-owned reconciliation policy or validation tooling.
+- 2026-08-15, upstream `ec141c125726ae70f31f392e780afa8de446fdc4`: `unaffected`; no incoming
+  change replaces the feature ledger, semantic conflict policy, or release gates.
