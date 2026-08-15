@@ -1,0 +1,34 @@
+<svg width="1080" height="760" viewBox="0 0 540 380" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="alpha-surface" x1="0" y1="0" x2="540" y2="380" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0B0D10"/>
+      <stop offset="1" stop-color="#171A1F"/>
+    </linearGradient>
+    <radialGradient id="alpha-glow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(430 12) rotate(156) scale(280 132)">
+      <stop stop-color="#F07A3A" stop-opacity="0.38"/>
+      <stop offset="0.55" stop-color="#9D4125" stop-opacity="0.12"/>
+      <stop offset="1" stop-color="#111318" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="540" height="380" fill="url(#alpha-surface)"/>
+  <rect width="540" height="112" fill="#111318"/>
+  <rect width="540" height="112" fill="url(#alpha-glow)"/>
+  <path d="M0 111.5H540" stroke="#F4F4F5" stroke-opacity="0.1"/>
+  <path d="M32 28H64" stroke="#F07A3A" stroke-width="2"/>
+
+  <g font-family="-apple-system, BlinkMacSystemFont, sans-serif" fill="#F4F4F5">
+    <text x="32" y="50" font-size="12" font-weight="600" letter-spacing="1.4">T3 CODE ALPHA</text>
+    <text x="32" y="82" font-size="22" font-weight="600" letter-spacing="-0.45">Desktop</text>
+    <text x="508" y="50" text-anchor="end" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="8.5" font-weight="600" letter-spacing="1.2" fill="#F4A06F">ALPHA BUILD</text>
+  </g>
+
+  <path d="M196 224C242 239 307 201 362 220" stroke="#A1A1AA" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="1 7" opacity="0.52"/>
+  <circle cx="362" cy="220" r="2" fill="#F07A3A" opacity="0.8"/>
+  <path d="M176 204V227L182 221L187.5 232L192 229.8L186.5 219H194L176 204Z" fill="#D4D4D8" stroke="#111318" stroke-width="1.5" stroke-linejoin="round"/>
+
+  <g font-family="-apple-system, BlinkMacSystemFont, sans-serif" text-anchor="middle">
+    <text x="270" y="322" font-size="13" font-weight="600" letter-spacing="-0.1" fill="#F4F4F5">Drag T3 Code Alpha to Applications</text>
+    <text x="270" y="345" font-size="9.5" fill="#A1A1AA">Open it from Applications when the copy finishes.</text>
+  </g>
+</svg>
