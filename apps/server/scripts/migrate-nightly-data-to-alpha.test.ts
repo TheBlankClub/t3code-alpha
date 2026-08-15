@@ -2,7 +2,7 @@
 import * as NodeFS from "node:fs";
 import * as NodeOS from "node:os";
 import * as NodePath from "node:path";
-import { DatabaseSync } from "node:sqlite";
+import * as NodeSqlite from "node:sqlite";
 
 import { assert, describe, it } from "@effect/vitest";
 
@@ -19,7 +19,7 @@ function write(path: string, value: string): void {
 
 function makeStateDatabase(path: string): void {
   NodeFS.mkdirSync(NodePath.dirname(path), { recursive: true });
-  const database = new DatabaseSync(path);
+  const database = new NodeSqlite.DatabaseSync(path);
   database.exec(`
     CREATE TABLE effect_sql_migrations (
       migration_id INTEGER PRIMARY KEY,

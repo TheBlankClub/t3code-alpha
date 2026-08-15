@@ -5,7 +5,7 @@ import * as NodeFS from "node:fs";
 import * as NodeFSP from "node:fs/promises";
 import * as NodeOS from "node:os";
 import * as NodePath from "node:path";
-import { backup as backupSqlite, DatabaseSync } from "node:sqlite";
+import * as NodeSqlite from "node:sqlite";
 
 import * as Effect from "effect/Effect";
 import * as SqlClient from "effect/unstable/sql/SqlClient";
@@ -161,7 +161,7 @@ function assertAppsStopped(
 }
 
 function readDatabaseCounts(databasePath: string): Readonly<Record<string, number>> {
-  const database = new DatabaseSync(databasePath, { readOnly: true });
+  const database = new NodeSqlite.DatabaseSync(databasePath, { readOnly: true });
   try {
     return Object.fromEntries(
       DATABASE_COUNT_TABLES.map(([label, table]) => {
@@ -244,9 +244,9 @@ async function migrateAndVerifyDatabase(
   stagingDatabase: string,
   mode: AlphaDataMigrationMode,
 ): Promise<Readonly<Record<string, number>>> {
-  const source = new DatabaseSync(sourceDatabase, { readOnly: true });
+  const source = new NodeSqlite.DatabaseSync(sourceDatabase, { readOnly: true });
   try {
-    await backupSqlite(source, stagingDatabase);
+    await NodeSqlite.backup(source, stagingDatabase);
   } finally {
     source.close();
   }
@@ -263,7 +263,7 @@ async function migrateAndVerifyDatabase(
     }).pipe(Effect.provide(NodeSqliteClient.layer({ filename: stagingDatabase }))),
   );
 
-  const database = new DatabaseSync(stagingDatabase);
+  const database = new NodeSqlite.DatabaseSync(stagingDatabase);
   try {
     const check = database.prepare("PRAGMA quick_check").get() as { readonly quick_check: string };
     if (check.quick_check !== "ok") {
