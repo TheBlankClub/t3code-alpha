@@ -12,8 +12,9 @@ to see the migrated server as the same environment. Do not run Nightly and Alpha
 using this mode: the two homes would contain the same logical environment identity and then diverge.
 
 `clone` keeps Alpha independent. It retains Alpha's existing environment ID and signing keys, clears
-the copied authorization sessions and pairing links, and copies the provider credentials needed by
-the migrated projects. Pair remote clients with Alpha again after the migration.
+the copied authorization sessions and pairing links, re-scopes local project-grouping preferences
+to Alpha's environment ID, and copies the provider credentials needed by the migrated projects.
+Pair remote clients with Alpha again after the migration.
 
 ## Run it
 

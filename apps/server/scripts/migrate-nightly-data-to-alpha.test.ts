@@ -41,6 +41,16 @@ function makeFixture(): {
   makeStateDatabase(NodePath.join(sourceBase, "userdata", "state.sqlite"));
   write(NodePath.join(sourceBase, "userdata", "environment-id"), "nightly-env\n");
   write(
+    NodePath.join(sourceBase, "userdata", "client-settings.json"),
+    JSON.stringify({
+      sidebarProjectGroupingMode: "repository",
+      sidebarProjectGroupingOverrides: {
+        "nightly-env:/projects/t3code": "separate",
+        "remote-env:/projects/remote": "repository-relative",
+      },
+    }),
+  );
+  write(
     NodePath.join(sourceBase, "userdata", "desktop-settings.json"),
     JSON.stringify({
       updateChannel: "nightly",
@@ -112,6 +122,18 @@ describe("migrateNightlyDataToAlpha", () => {
         NodeFS.readFileSync(NodePath.join(targetUserData, "environment-id"), "utf8"),
         "alpha-env\n",
       );
+      assert.deepEqual(
+        JSON.parse(
+          NodeFS.readFileSync(NodePath.join(targetUserData, "client-settings.json"), "utf8"),
+        ),
+        {
+          sidebarProjectGroupingMode: "repository",
+          sidebarProjectGroupingOverrides: {
+            "alpha-env:/projects/t3code": "separate",
+            "remote-env:/projects/remote": "repository-relative",
+          },
+        },
+      );
       assert.equal(
         NodeFS.readFileSync(
           NodePath.join(targetUserData, "secrets", "server-signing-key.bin"),
@@ -176,6 +198,18 @@ describe("migrateNightlyDataToAlpha", () => {
           "utf8",
         ),
         "nightly-server-signing-key.bin",
+      );
+      assert.deepEqual(
+        JSON.parse(
+          NodeFS.readFileSync(NodePath.join(targetUserData, "client-settings.json"), "utf8"),
+        ),
+        {
+          sidebarProjectGroupingMode: "repository",
+          sidebarProjectGroupingOverrides: {
+            "nightly-env:/projects/t3code": "separate",
+            "remote-env:/projects/remote": "repository-relative",
+          },
+        },
       );
     } finally {
       NodeFS.rmSync(fixture.root, { force: true, recursive: true });

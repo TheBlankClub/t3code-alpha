@@ -226,6 +226,52 @@ async function preserveAlphaIdentity(
   }
 }
 
+function isJsonObject(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+async function rekeyAlphaClientSettings(
+  sourceUserData: string,
+  targetUserData: string,
+  stagingUserData: string,
+): Promise<void> {
+  const settingsPath = NodePath.join(stagingUserData, "client-settings.json");
+  if (!NodeFS.existsSync(settingsPath)) return;
+
+  const parsed: unknown = JSON.parse(await NodeFSP.readFile(settingsPath, "utf8"));
+  if (!isJsonObject(parsed) || !isJsonObject(parsed.sidebarProjectGroupingOverrides)) return;
+
+  const sourceEnvironmentId = (
+    await NodeFSP.readFile(NodePath.join(sourceUserData, "environment-id"), "utf8")
+  ).trim();
+  const targetEnvironmentId = (
+    await NodeFSP.readFile(NodePath.join(targetUserData, "environment-id"), "utf8")
+  ).trim();
+  if (!sourceEnvironmentId || !targetEnvironmentId || sourceEnvironmentId === targetEnvironmentId) {
+    return;
+  }
+
+  const sourcePrefix = `${sourceEnvironmentId}:`;
+  const overrides = parsed.sidebarProjectGroupingOverrides;
+  const nextOverrides = { ...overrides };
+  let changed = false;
+
+  for (const [key, value] of Object.entries(overrides)) {
+    if (!key.startsWith(sourcePrefix)) continue;
+
+    const targetKey = `${targetEnvironmentId}:${key.slice(sourcePrefix.length)}`;
+    delete nextOverrides[key];
+    if (!Object.prototype.hasOwnProperty.call(nextOverrides, targetKey)) {
+      nextOverrides[targetKey] = value;
+    }
+    changed = true;
+  }
+
+  if (!changed) return;
+  parsed.sidebarProjectGroupingOverrides = nextOverrides;
+  await NodeFSP.writeFile(settingsPath, `${JSON.stringify(parsed)}\n`);
+}
+
 async function normalizeAlphaDesktopSettings(stagingUserData: string): Promise<void> {
   const settingsPath = NodePath.join(stagingUserData, "desktop-settings.json");
   if (!NodeFS.existsSync(settingsPath)) return;
@@ -324,6 +370,7 @@ export async function runAlphaDataMigration(
     await NodeFSP.mkdir(stagingUserData, { recursive: true });
     if (plan.mode === "clone") {
       await preserveAlphaIdentity(plan.targetUserData, stagingUserData);
+      await rekeyAlphaClientSettings(plan.sourceUserData, plan.targetUserData, stagingUserData);
     }
     await normalizeAlphaDesktopSettings(stagingUserData);
     const databaseCounts = await migrateAndVerifyDatabase(
