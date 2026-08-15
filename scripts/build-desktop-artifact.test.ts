@@ -444,6 +444,15 @@ it.layer(NodeServices.layer)("build-desktop-artifact", (it) => {
         undefined,
         undefined,
       );
+      const alphaMac = yield* createBuildConfig(
+        "mac",
+        "dmg",
+        "0.0.34-alpha.20260816.1",
+        false,
+        false,
+        undefined,
+        undefined,
+      );
       const linux = yield* createBuildConfig(
         "linux",
         "AppImage",
@@ -491,7 +500,18 @@ it.layer(NodeServices.layer)("build-desktop-artifact", (it) => {
         "**/node_modules/.bin/**",
       ]);
       assert.deepStrictEqual(mac.dmg, {
-        title: "T3 Code (Alpha) 1.2.3 Installer",
+        title: "T3 Code Alpha 1.2.3 Installer",
+        background: "dmg/dmg-background-latest.png",
+        window: { width: 540, height: 412 },
+        contents: [
+          { x: 130, y: 220, type: "file" },
+          { x: 410, y: 220, type: "link", path: "/Applications" },
+        ],
+        iconSize: 80,
+        iconTextSize: 12,
+      });
+      assert.deepStrictEqual(alphaMac.dmg, {
+        title: "T3 Code Alpha 0.0.34-alpha.20260816.1 Installer",
         background: "dmg/dmg-background-alpha.png",
         window: { width: 540, height: 412 },
         contents: [
