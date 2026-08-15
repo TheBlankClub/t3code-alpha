@@ -20,18 +20,22 @@ tests:
 
 # Intent
 
-Give T3 Code Alpha a dedicated prerelease upgrade channel with the same check, download, restart,
-and install flow as Nightly, while keeping publication and branding under TheBlankClub's control.
+Give T3 Code Alpha a dedicated prerelease identity while keeping publication and branding under
+TheBlankClub's control. Until Alpha releases are signed, upgrades are performed through Homebrew
+or a manually downloaded installer rather than Electron's automatic updater.
 
 # Behavioral invariants
 
 - Versions use `X.Y.Z-alpha.YYYYMMDD.RUN` and resolve to the `alpha` updater channel.
-- Alpha enables prerelease discovery, downgrade-compatible channel transitions, and full changelog
-  release notes just like Nightly.
+- The `alpha` channel remains part of version recognition, settings, packaging identity, and future
+  signed-updater compatibility.
 - Version/channel mismatch checks prevent Stable or Nightly versions from being accepted as Alpha
   updates.
-- Electron Builder publishes Alpha as a GitHub prerelease with an explicit `alpha` channel.
-- Desktop Settings presents Alpha as a fixed track and does not direct users to official feeds.
+- Packaged Alpha versions disable automatic update checks and explain that the latest installer is
+  available from TheBlankClub's releases.
+- GitHub releases omit updater metadata and publish only manual installer artifacts.
+- Homebrew upgrades replace the app bundle while preserving Alpha state in `~/.t3-alpha`.
+- Desktop Settings presents Alpha as a fixed track and never directs users to official feeds.
 - Bundled web and desktop icons resolve to the Alpha artwork family for Alpha versions.
 - Hosted Alpha web remains out of scope until separate hosting infrastructure exists.
 
@@ -39,6 +43,8 @@ and install flow as Nightly, while keeping publication and branding under TheBla
 
 - Contracts, desktop settings, updater runtime, version recognition, web branding, and build
   configuration recognize `alpha`.
+- The updater runtime detects Alpha versions and remains disabled while the distribution is
+  unsigned.
 - `assets/alpha/app-icon.icon` provides a dark graphite and ember blueprint source that preserves
   the upstream T3 geometry while remaining distinct from Dev, Nightly, and production.
 - iOS, Linux, Windows, web, and macOS Alpha renditions are generated. The macOS icon uses a
@@ -62,3 +68,5 @@ and install flow as Nightly, while keeping publication and branding under TheBla
   Alpha updater and branding behavior. Upstream's AUR publication remains official-channel-only.
 - 2026-08-15, upstream `804cba4305b15f929937833c93e85db0835d8903`: `mechanical-overlap`;
   adopted upstream's optional remote-editor IPC contract while retaining the `alpha` updater channel.
+- 2026-08-15, upstream `804cba4305b15f929937833c93e85db0835d8903`: retained the channel as an
+  identity boundary but disabled automatic installation for the current unsigned release policy.

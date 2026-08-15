@@ -4,12 +4,14 @@
 > [Release Checklist](release.md).
 
 Alpha releases are produced only from the `alpha` branch by
-`.github/workflows/release-alpha.yml`. The workflow publishes signed desktop artifacts to this
-repository, publishes exact matching server versions to the public `t3code-alpha` npm package, and
-creates GitHub prereleases on the Electron `alpha` updater channel.
+`.github/workflows/release-alpha.yml`. The workflow publishes unsigned desktop installers to this
+repository, publishes the exact matching server version to the public `t3code-alpha` npm package,
+creates a GitHub prerelease, and updates the `t3code-alpha` cask in
+`TheBlankClub/homebrew-tap`.
 
-Do not enable the scheduled workflow until every gate below is complete. A partially configured
-release intentionally fails during preflight instead of publishing unsigned or reduced builds.
+This release model does not require Apple, Azure, Clerk, or T3 Connect configuration. It deliberately
+does not publish Electron updater manifests: automatic desktop updates are disabled in packaged
+Alpha builds while the artifacts are unsigned.
 
 ## 1. npm trusted publishing
 
@@ -22,18 +24,16 @@ The package must have this one trusted publisher:
 - Environment: none
 - Allowed action: `npm publish`
 
-The publish job runs on a GitHub-hosted runner, grants `id-token: write`, uses Node 24, and does not
-use an npm token. The temporary publish manifest must keep its repository URL pointed at
+The publish job runs on a GitHub-hosted runner, grants `id-token: write`, and does not use an npm
+token. The temporary publish manifest keeps its repository URL pointed at
 `https://github.com/TheBlankClub/t3code-alpha`.
 
-With npm 11.17 or newer, an owner can configure and verify the relationship with:
+The package and trusted publisher are already reserved and configured. They can be verified with
+npm 11.17 or newer:
 
 ```sh
-npm trust github t3code-alpha \
-  --file release-alpha.yml \
-  --repo TheBlankClub/t3code-alpha \
-  --allow-publish
 npm trust list t3code-alpha
+npm view t3code-alpha dist-tags repository bin
 ```
 
 After the first automated Alpha release moves `latest` to the real release, remove the temporary
@@ -43,71 +43,36 @@ reservation tag:
 npm dist-tag rm t3code-alpha bootstrap
 ```
 
-`latest` is deliberate here: `t3code-alpha` is already a separate package identity. Desktop update
-metadata and GitHub releases continue to use the `alpha` channel.
+`latest` is deliberate: `t3code-alpha` is a separate package identity.
 
-## 2. Daily upstream sync GitHub App
+## 2. Alpha automation GitHub App
 
-Create a private GitHub App dedicated to the sync workflow, install it only on
-`TheBlankClub/t3code-alpha`, and grant the minimum repository permissions required by the workflow:
+Create one private GitHub App dedicated to Alpha automation. Install it on exactly these
+TheBlankClub repositories:
+
+- `t3code-alpha`
+- `homebrew-tap`
+
+Grant these repository permissions:
 
 - Contents: read and write
 - Issues: read and write
 - Pull requests: read and write
 - Workflows: read and write
 
-Add its credentials as repository Actions secrets:
+Add its credentials only to `TheBlankClub/t3code-alpha` as repository Actions secrets:
 
 - `ALPHA_AUTOMATION_APP_ID`
 - `ALPHA_AUTOMATION_APP_PRIVATE_KEY`
 
-`.github/workflows/sync-upstream.yml` uses the installation token to update
-`automation/upstream-main`, open or update a PR into `alpha`, and report conflicts. The App token is
-required so the automation-created PR receives normal CI without a long-lived personal token.
+The daily upstream sync uses the installation token to update its merge branch, manage its pull
+request, and report conflicts. The release workflow uses the same App to update the cask in
+`homebrew-tap`. Preflight verifies that the App can mint a token scoped to both repositories before
+building or publishing anything.
 
-## 3. Release repository variables
+No repository Actions variables and no other Actions secrets are required for Alpha releases.
 
-Add these repository Actions variables:
-
-- `APPLE_TEAM_ID`
-- `T3CODE_CLERK_PUBLISHABLE_KEY`
-- `T3CODE_CLERK_JWT_TEMPLATE`
-- `T3CODE_CLERK_CLI_OAUTH_CLIENT_ID`
-- `T3CODE_RELAY_URL`
-- `T3CODE_CLERK_PASSKEY_RP_DOMAINS`
-
-Use the fork's production T3 Connect configuration. The preflight treats every value as mandatory so
-Alpha cannot silently ship a reduced cloud feature set.
-
-## 4. Signing and notarization secrets
-
-Add these repository Actions secrets for macOS:
-
-- `CSC_LINK`
-- `CSC_KEY_PASSWORD`
-- `APPLE_API_KEY`
-- `APPLE_API_KEY_ID`
-- `APPLE_API_ISSUER`
-- `MACOS_PROVISIONING_PROFILE`
-
-The Developer ID certificate, provisioning profile, notarization key, and `APPLE_TEAM_ID` must all
-belong to the same Apple developer team. The provisioning profile must cover Alpha's bundle ID,
-`com.theblankclub.t3code.alpha`.
-
-Add these repository Actions secrets for Windows Trusted Signing:
-
-- `AZURE_TENANT_ID`
-- `AZURE_CLIENT_ID`
-- `AZURE_CLIENT_SECRET`
-- `AZURE_TRUSTED_SIGNING_ENDPOINT`
-- `AZURE_TRUSTED_SIGNING_ACCOUNT_NAME`
-- `AZURE_TRUSTED_SIGNING_CERTIFICATE_PROFILE_NAME`
-- `AZURE_TRUSTED_SIGNING_PUBLISHER_NAME`
-
-Both signing platforms are mandatory. Missing configuration stops the release before any npm or
-GitHub publication.
-
-## 5. Branch protection and CI
+## 3. Branch protection and CI
 
 Protect `alpha` with pull requests and require the four jobs from `.github/workflows/ci.yml`:
 
@@ -120,22 +85,54 @@ Do not require linear history: upstream reconciliation intentionally retains mer
 default `GITHUB_TOKEN` permission read-only; individual workflows declare their narrower write
 permissions.
 
+The `homebrew-tap` repository intentionally accepts the App's direct cask commit after the Alpha
+release workflow audits it on macOS. Its own `Test` workflow audits every cask change again.
+
 Before merging an upstream reconciliation PR, confirm that its exact head contains the intended
 upstream SHA, every active `.alpha/features/*.md` record is reconciled, and all four jobs pass.
 
-## 6. First release proof
+## 4. macOS installation and upgrades
 
-Run `Alpha Release` manually once before relying on its daily schedule. On the exact released SHA:
+The recommended macOS path is Homebrew:
 
-1. Confirm all preflight, platform build, npm publish, and GitHub release jobs pass.
-2. Confirm `npm view t3code-alpha@<version> version description license repository bin` matches the
+```sh
+brew install --cask --no-quarantine theblankclub/tap/t3code-alpha
+```
+
+Upgrade with:
+
+```sh
+brew update
+brew upgrade --cask --no-quarantine t3code-alpha
+```
+
+`--no-quarantine` is explicit because the app is unsigned. Use it only for release artifacts you
+trust. The cask itself does not silently alter quarantine attributes.
+
+A manual upgrade also works: download the DMG for the Mac's architecture, quit T3 Code Alpha,
+replace `T3 Code Alpha.app` in Applications, and reopen it. macOS may require the user to right-click
+the app and choose Open. Both methods preserve application state under `~/.t3-alpha`.
+
+Windows and Linux remain manual-install targets. Windows may show a SmartScreen warning for the
+unsigned installer; Linux users replace the AppImage.
+
+## 5. First release proof
+
+Run `Alpha Release` manually once after the GitHub App is installed and before relying on the daily
+schedule. On the exact released SHA:
+
+1. Confirm preflight, every platform build, npm publish, GitHub release, and Homebrew publication
+   jobs pass.
+2. Confirm the GitHub release is a prerelease, is not the repository's latest release, and contains
+   two DMGs, one AppImage, and one Windows installer. It must not contain updater YAML, blockmaps, or
+   macOS ZIP payloads.
+3. Confirm `npm view t3code-alpha@<version> version description license repository bin` matches the
    release and `npm view t3code-alpha dist-tags` points `latest` at it.
-3. Install with `npx t3code-alpha@latest` and confirm the reported CLI version matches the package.
-4. Install each desktop target and confirm its Alpha identity, protocol, and state remain isolated
-   from official T3 Code.
-5. From the previous Alpha desktop release, verify update discovery, download, restart/install, and
-   connection to the exact matching `t3code-alpha@<version>` server.
-6. Confirm the GitHub release is a prerelease and is not marked as the repository's latest release.
+4. Install with `npx t3code-alpha@latest` and confirm the reported CLI version matches the package.
+5. Install the Homebrew cask on both Apple Silicon and Intel where available, then verify
+   `brew upgrade --cask --no-quarantine t3code-alpha` replaces an older Alpha app.
+6. Confirm the desktop identity, protocol, and state remain isolated from official T3 Code and that
+   Settings reports automatic updates as unavailable for unsigned Alpha builds.
 
 Only after this proof should the temporary npm `bootstrap` tag be removed and the scheduled release
 be treated as operational.

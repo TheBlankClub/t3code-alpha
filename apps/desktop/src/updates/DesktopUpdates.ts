@@ -28,7 +28,7 @@ import * as ElectronWindow from "../electron/ElectronWindow.ts";
 import * as IpcChannels from "../ipc/channels.ts";
 import * as DesktopAppSettings from "../settings/DesktopAppSettings.ts";
 import { normalizeDesktopUpdateReleaseNotes } from "./releaseNotes.ts";
-import { resolveDefaultDesktopUpdateChannel } from "./updateChannels.ts";
+import { isAlphaDesktopVersion, resolveDefaultDesktopUpdateChannel } from "./updateChannels.ts";
 import {
   createInitialDesktopUpdateState,
   reduceDesktopUpdateStateOnCheckFailure,
@@ -187,11 +187,13 @@ function createBaseUpdateState(
   channel: DesktopUpdateChannel,
   enabled: boolean,
   environment: DesktopEnvironment.DesktopEnvironment["Service"],
+  disabledReason: string | null,
 ): DesktopUpdateState {
   return {
     ...createInitialDesktopUpdateState(environment.appVersion, environment.runtimeInfo, channel),
     enabled,
     status: enabled ? "idle" : "disabled",
+    message: enabled ? null : disabledReason,
   };
 }
 
@@ -220,16 +222,20 @@ function shouldBroadcastDownloadProgress(
 function getAutoUpdateDisabledReason(args: {
   isDevelopment: boolean;
   isPackaged: boolean;
+  appVersion: string;
   platform: NodeJS.Platform;
   appImage?: string | undefined;
   disabledByEnv: boolean;
   hasUpdateFeedConfig: boolean;
 }): string | null {
-  if (!args.hasUpdateFeedConfig) {
-    return "Automatic updates are not available because no update feed is configured.";
-  }
   if (args.isDevelopment || !args.isPackaged) {
     return "Automatic updates are only available in packaged production builds.";
+  }
+  if (isAlphaDesktopVersion(args.appVersion)) {
+    return "Automatic updates are unavailable for unsigned Alpha builds. Download the latest installer from TheBlankClub/t3code-alpha releases.";
+  }
+  if (!args.hasUpdateFeedConfig) {
+    return "Automatic updates are not available because no update feed is configured.";
   }
   if (args.disabledByEnv) {
     return "Automatic updates are disabled by the T3CODE_DISABLE_AUTO_UPDATE setting.";
@@ -305,6 +311,7 @@ export const make = Effect.gen(function* () {
       getAutoUpdateDisabledReason({
         isDevelopment: environment.isDevelopment,
         isPackaged: environment.isPackaged,
+        appVersion: environment.appVersion,
         platform: environment.platform,
         appImage: Option.getOrUndefined(config.appImagePath),
         disabledByEnv: config.disableAutoUpdate,
@@ -343,8 +350,6 @@ export const make = Effect.gen(function* () {
       fullChangelog: allowsPrerelease,
     });
   });
-
-  const shouldEnableAutoUpdates = resolveDisabledReason.pipe(Effect.map(Option.isNone));
 
   const checkForUpdates = Effect.fn("desktop.updates.checkForUpdates")(function* (reason: string) {
     yield* Effect.annotateCurrentSpan({ reason });
@@ -724,8 +729,16 @@ export const make = Effect.gen(function* () {
       }
 
       const settings = yield* desktopSettings.get;
-      const enabled = yield* shouldEnableAutoUpdates;
-      yield* setState(createBaseUpdateState(settings.updateChannel, enabled, environment));
+      const disabledReason = yield* resolveDisabledReason;
+      const enabled = Option.isNone(disabledReason);
+      yield* setState(
+        createBaseUpdateState(
+          settings.updateChannel,
+          enabled,
+          environment,
+          Option.getOrNull(disabledReason),
+        ),
+      );
       if (!enabled) {
         return;
       }
@@ -794,8 +807,11 @@ export const make = Effect.gen(function* () {
           ),
         );
 
-      const enabled = yield* shouldEnableAutoUpdates;
-      yield* setState(createBaseUpdateState(nextChannel, enabled, environment));
+      const disabledReason = yield* resolveDisabledReason;
+      const enabled = Option.isNone(disabledReason);
+      yield* setState(
+        createBaseUpdateState(nextChannel, enabled, environment, Option.getOrNull(disabledReason)),
+      );
 
       if (!enabled || !(yield* Ref.get(updaterConfiguredRef))) {
         return yield* Ref.get(updateStateRef);
