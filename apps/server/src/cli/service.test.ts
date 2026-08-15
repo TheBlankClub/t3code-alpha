@@ -25,7 +25,7 @@ it("reports the installed service version and host paths", () => {
 it("gives a direct repair command for a stale service", () => {
   assert.include(
     formatServiceStatus({ ...status, current: false }, "0.0.29"),
-    "Next: Run `npx t3code-alpha@alpha service update`.",
+    "Next: Run `npx t3code-alpha@latest service update`.",
   );
 });
 

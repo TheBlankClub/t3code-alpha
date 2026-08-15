@@ -3,7 +3,7 @@ id: alpha-update-channel
 status: active
 risk: red
 introduced_by: alpha-update-channel
-last_reconciled_with: 74f7b434865c2d758c7b1cd5f52f4c96b76d03fb
+last_reconciled_with: 804cba4305b15f929937833c93e85db0835d8903
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -60,3 +60,5 @@ and install flow as Nightly, while keeping publication and branding under TheBla
   channel and deterministic cross-platform artwork, including the macOS 27 legacy-render fallback.
 - 2026-08-15, upstream `74f7b434865c2d758c7b1cd5f52f4c96b76d03fb`: `unaffected`; retained
   Alpha updater and branding behavior. Upstream's AUR publication remains official-channel-only.
+- 2026-08-15, upstream `804cba4305b15f929937833c93e85db0835d8903`: `mechanical-overlap`;
+  adopted upstream's optional remote-editor IPC contract while retaining the `alpha` updater channel.

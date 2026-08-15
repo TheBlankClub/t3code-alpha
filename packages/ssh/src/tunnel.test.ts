@@ -95,9 +95,9 @@ describe("ssh tunnel scripts", () => {
 
     assert.include(script, "T3_NODE_SCRIPT_PATH=''");
     assert.include(script, 'exec t3-alpha "$@"');
-    assert.include(script, "exec npx --yes 't3code-alpha@alpha' \"$@\"");
-    assert.include(script, "exec npm exec --yes 't3code-alpha@alpha' -- \"$@\"");
-    assert.include(script, "could not install 't3code-alpha@alpha'");
+    assert.include(script, "exec npx --yes 't3code-alpha@latest' \"$@\"");
+    assert.include(script, "exec npm exec --yes 't3code-alpha@latest' -- \"$@\"");
+    assert.include(script, "could not install 't3code-alpha@latest'");
     assert.include(script, 'prepend_path_if_dir "$HOME/.local/bin"');
     assert.include(script, `T3_NODE_ENGINE_RANGE='${TEST_NODE_ENGINE_RANGE}'`);
     assert.include(script, "remote_node_satisfies_engine()");

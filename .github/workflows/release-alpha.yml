@@ -543,11 +543,7 @@ jobs:
           done
 
       - name: Publish Alpha CLI package
-        env:
-          # Only needed to reserve the package on its first publish. Remove the
-          # secret after configuring npm trusted publishing for this workflow.
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: node apps/server/scripts/cli.ts publish --tag alpha --app-version "${{ needs.preflight.outputs.version }}" --provenance --verbose
+        run: node apps/server/scripts/cli.ts publish --tag latest --app-version "${{ needs.preflight.outputs.version }}" --provenance --verbose
 
   release:
     name: Publish GitHub prerelease

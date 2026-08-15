@@ -3,7 +3,7 @@ id: alpha-release-workflow
 status: active
 risk: red
 introduced_by: alpha-release-workflow
-last_reconciled_with: 74f7b434865c2d758c7b1cd5f52f4c96b76d03fb
+last_reconciled_with: 804cba4305b15f929937833c93e85db0835d8903
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -35,10 +35,10 @@ upstream's official release, hosted-web, AUR, or npm publication paths.
   inputs fail their platform builds rather than publishing unsigned installers.
 - Public T3 Connect variables are mandatory so an Alpha release does not silently ship a reduced
   cloud feature set.
-- npm publication uses provenance, the `alpha` dist-tag, and the temporary `t3code-alpha`
-  manifest.
-- The first npm publish may use a short-lived bootstrap token; subsequent publishes use npm
-  trusted publishing and no long-lived token.
+- npm publication uses provenance, the canonical `latest` tag, and the temporary `t3code-alpha`
+  manifest. Desktop/GitHub updater releases remain on the `alpha` channel.
+- npm publishes use GitHub OIDC trusted publishing and no long-lived npm token. The package was
+  reserved interactively before enabling the automated release workflow.
 - The workflow does not deploy the official hosted web app, publish official AUR packages, mutate
   source package versions, or announce through upstream channels.
 
@@ -46,6 +46,8 @@ upstream's official release, hosted-web, AUR, or npm publication paths.
 
 - `.github/workflows/release-alpha.yml` adapts the upstream release build graph to standard GitHub
   hosted runners and fork-owned release destinations.
+- `docs/operations/alpha-release.md` records the one-time npm, automation, signing, variables,
+  branch-protection, and first-release gates.
 - `scripts/resolve-alpha-release.ts` reuses upstream's next-patch version calculation and adds the
   Alpha prerelease metadata contract.
 - Public T3 Connect build configuration is read from fork repository variables; release secrets
@@ -62,3 +64,5 @@ upstream's official release, hosted-web, AUR, or npm publication paths.
 - 2026-08-15, upstream `74f7b434865c2d758c7b1cd5f52f4c96b76d03fb`: created the Alpha-only
   release workflow from upstream's current packaging, resource-monitor, WSL, signing, and updater
   assembly sequence.
+- 2026-08-15, upstream `804cba4305b15f929937833c93e85db0835d8903`: `unaffected`; retained the
+  Alpha-only release graph and adopted upstream remote-editor support independently.

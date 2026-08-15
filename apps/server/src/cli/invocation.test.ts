@@ -34,12 +34,12 @@ it("detects package runners from their cache entry paths", () => {
     "bunx",
   );
   assert.equal(
-    detectCliRunner("/tmp/bunx-1000-t3code-alpha@alpha/node_modules/t3code-alpha/dist/bin.mjs"),
+    detectCliRunner("/tmp/bunx-1000-t3code-alpha@latest/node_modules/t3code-alpha/dist/bin.mjs"),
     "bunx",
   );
   assert.equal(
     detectCliRunner(
-      "C:\\Users\\theo\\AppData\\Local\\Temp\\bunx-0-t3code-alpha@alpha\\node_modules\\t3code-alpha\\dist\\bin.mjs",
+      "C:\\Users\\theo\\AppData\\Local\\Temp\\bunx-0-t3code-alpha@latest\\node_modules\\t3code-alpha\\dist\\bin.mjs",
     ),
     "bunx",
   );
@@ -55,8 +55,8 @@ it("treats stable installs as direct invocations", () => {
 });
 
 it("re-suggests the Alpha channel for package-runner invocations", () => {
-  assert.equal(suggestedPackageSpec("0.0.31-alpha.20260729"), "t3code-alpha@alpha");
-  assert.equal(suggestedPackageSpec("0.0.31"), "t3code-alpha@alpha");
+  assert.equal(suggestedPackageSpec("0.0.31-alpha.20260729"), "t3code-alpha@latest");
+  assert.equal(suggestedPackageSpec("0.0.31"), "t3code-alpha@latest");
 });
 
 it("formats serve suggestions to match the launching command", () => {
@@ -66,15 +66,15 @@ it("formats serve suggestions to match the launching command", () => {
       entryPath: "/home/theo/.npm/_npx/abc/node_modules/t3code-alpha/dist/bin.mjs",
       version: "0.0.31-alpha.20260729",
     }),
-    "npx t3code-alpha@alpha serve",
+    "npx t3code-alpha@latest serve",
   );
   assert.equal(
     formatCliCommand({
       subcommand: "serve",
-      entryPath: "/tmp/bunx-1000-t3code-alpha@alpha/node_modules/t3code-alpha/dist/bin.mjs",
+      entryPath: "/tmp/bunx-1000-t3code-alpha@latest/node_modules/t3code-alpha/dist/bin.mjs",
       version: "0.0.31",
     }),
-    "bunx t3code-alpha@alpha serve",
+    "bunx t3code-alpha@latest serve",
   );
   assert.equal(
     formatCliCommand({

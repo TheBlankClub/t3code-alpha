@@ -1,6 +1,7 @@
 {
   "name": "t3",
   "version": "0.0.33",
+  "description": "T3 Code Alpha server and CLI.",
   "license": "MIT",
   "repository": {
     "type": "git",

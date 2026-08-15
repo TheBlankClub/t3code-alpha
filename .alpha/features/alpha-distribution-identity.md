@@ -3,7 +3,7 @@ id: alpha-distribution-identity
 status: active
 risk: red
 introduced_by: alpha-distribution-identity
-last_reconciled_with: 74f7b434865c2d758c7b1cd5f52f4c96b76d03fb
+last_reconciled_with: 804cba4305b15f929937833c93e85db0835d8903
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -54,3 +54,5 @@ identity.
   Alpha distribution identity on top of upstream's `DesktopEnvironment` and build configuration.
 - 2026-08-15, upstream `74f7b434865c2d758c7b1cd5f52f4c96b76d03fb`: `unaffected`; incoming
   changes do not touch desktop identity, protocols, state paths, server origins, or artifact names.
+- 2026-08-15, upstream `804cba4305b15f929937833c93e85db0835d8903`: `mechanical-overlap`;
+  adopted remote editor discovery and desktop IPC while retaining Alpha app origins and identity.
