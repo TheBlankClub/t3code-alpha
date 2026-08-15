@@ -37,6 +37,7 @@ import {
   resolveBuildOptions,
   resolveDesktopBuildIconAssets,
   resolveDesktopProductName,
+  resolveDesktopStagePackageName,
   resolveDesktopUpdateChannel,
   resolveDesktopWebAssetBrand,
   resolveResourceMonitorRustTargets,
@@ -158,6 +159,12 @@ it.layer(NodeServices.layer)("build-desktop-artifact", (it) => {
   it("switches desktop packaging product names to nightly for nightly builds", () => {
     assert.equal(resolveDesktopProductName("0.0.17"), "T3 Code Alpha");
     assert.equal(resolveDesktopProductName("0.0.17-nightly.20260413.42"), "T3 Code (Nightly)");
+  });
+
+  it("isolates Electron Safe Storage for Alpha packages", () => {
+    assert.equal(resolveDesktopStagePackageName("0.0.34-alpha.20260815.1"), "t3code-alpha");
+    assert.equal(resolveDesktopStagePackageName("0.0.17-nightly.20260413.42"), "t3code");
+    assert.equal(resolveDesktopStagePackageName("0.0.17"), "t3code");
   });
 
   it("switches desktop packaging icons for Alpha and Nightly versions", () => {
@@ -1092,6 +1099,25 @@ it.layer(NodeServices.layer)("build-desktop-artifact", (it) => {
     }).pipe(Effect.provide(ConfigProvider.layer(ConfigProvider.fromEnv({ env: {} })))),
   );
 
+  it.effect("uses the persistent Alpha release identity when provided", () =>
+    Effect.gen(function* () {
+      const config = yield* createBuildConfig(
+        "mac",
+        "dmg",
+        "1.2.3-alpha.20260815.27",
+        false,
+        false,
+        undefined,
+        undefined,
+        "T3 Code Alpha Release Signing",
+      );
+
+      const mac = config.mac as Record<string, unknown>;
+      assert.equal(mac.identity, "T3 Code Alpha Release Signing");
+      assert.equal(mac.hardenedRuntime, false);
+    }).pipe(Effect.provide(ConfigProvider.layer(ConfigProvider.fromEnv({ env: {} })))),
+  );
+
   it.effect("does not ad-hoc sign non-Alpha unsigned macOS builds", () =>
     Effect.gen(function* () {
       const config = yield* createBuildConfig(
@@ -1256,6 +1282,7 @@ it.layer(NodeServices.layer)("build-desktop-artifact", (it) => {
         mockUpdates: Option.none(),
         mockUpdateServerPort: Option.none(),
         wslPrebuild: Option.none(),
+        macSigningIdentity: Option.none(),
       }).pipe(
         Effect.provide(
           Layer.mergeAll(
@@ -1296,6 +1323,7 @@ it.layer(NodeServices.layer)("build-desktop-artifact", (it) => {
             mockUpdates: Option.none(),
             mockUpdateServerPort: Option.none(),
             wslPrebuild: Option.none(),
+            macSigningIdentity: Option.none(),
           }),
         );
 
@@ -1320,6 +1348,7 @@ it.layer(NodeServices.layer)("build-desktop-artifact", (it) => {
         mockUpdates: Option.some(false),
         mockUpdateServerPort: Option.none(),
         wslPrebuild: Option.none(),
+        macSigningIdentity: Option.some("T3 Code Alpha Release Signing"),
       }).pipe(
         Effect.provide(
           ConfigProvider.layer(
@@ -1341,6 +1370,7 @@ it.layer(NodeServices.layer)("build-desktop-artifact", (it) => {
       assert.equal(resolved.signed, false);
       assert.equal(resolved.verbose, false);
       assert.equal(resolved.mockUpdates, false);
+      assert.equal(resolved.macSigningIdentity, "T3 Code Alpha Release Signing");
     }),
   );
 });

@@ -260,6 +260,54 @@ jobs:
         with:
           targets: ${{ matrix.rust_target }}
 
+      - name: Install persistent Alpha macOS signing identity
+        if: matrix.platform == 'mac'
+        shell: bash
+        env:
+          ALPHA_MAC_SIGNING_P12_BASE64: ${{ secrets.ALPHA_MAC_SIGNING_P12_BASE64 }}
+          ALPHA_MAC_SIGNING_P12_PASSWORD: ${{ secrets.ALPHA_MAC_SIGNING_P12_PASSWORD }}
+        run: |
+          set -euo pipefail
+          if [[ -z "$ALPHA_MAC_SIGNING_P12_BASE64" || -z "$ALPHA_MAC_SIGNING_P12_PASSWORD" ]]; then
+            echo "Alpha macOS signing secrets are not configured." >&2
+            exit 1
+          fi
+
+          signing_keychain="$RUNNER_TEMP/t3code-alpha-signing.keychain-db"
+          signing_keychain_password="$(openssl rand -base64 32)"
+          signing_p12="$RUNNER_TEMP/t3code-alpha-release-signing.p12"
+          printf '%s' "$ALPHA_MAC_SIGNING_P12_BASE64" | base64 -D > "$signing_p12"
+
+          security create-keychain -p "$signing_keychain_password" "$signing_keychain"
+          security set-keychain-settings -lut 21600 "$signing_keychain"
+          security unlock-keychain -p "$signing_keychain_password" "$signing_keychain"
+          security import "$signing_p12" \
+            -k "$signing_keychain" \
+            -P "$ALPHA_MAC_SIGNING_P12_PASSWORD" \
+            -T /usr/bin/codesign
+          security set-key-partition-list \
+            -S apple-tool:,apple: \
+            -s \
+            -k "$signing_keychain_password" \
+            "$signing_keychain"
+          security add-trusted-cert \
+            -r trustRoot \
+            -p codeSign \
+            -k "$signing_keychain" \
+            assets/alpha/signing/t3code-alpha-release-signing.cer
+
+          expected_fingerprint="$(openssl x509 \
+            -inform der \
+            -in assets/alpha/signing/t3code-alpha-release-signing.cer \
+            -noout \
+            -fingerprint \
+            -sha1 | cut -d= -f2 | tr -d ':')"
+          security find-identity -v -p codesigning "$signing_keychain" \
+            | grep -Fq "$expected_fingerprint \"T3 Code Alpha Release Signing\""
+
+          echo "CSC_KEYCHAIN=$signing_keychain" >> "$GITHUB_ENV"
+          echo "ALPHA_MAC_SIGNING_IDENTITY=T3 Code Alpha Release Signing" >> "$GITHUB_ENV"
+
       - name: Align package versions to Alpha version
         run: node scripts/update-release-package-versions.ts "${{ needs.preflight.outputs.version }}"
 
@@ -294,6 +342,9 @@ jobs:
           if [[ "${{ matrix.platform }}" == "win" ]]; then
             args+=(--wsl-prebuild "$GITHUB_WORKSPACE/wsl-prebuild/pty.node")
           fi
+          if [[ "${{ matrix.platform }}" == "mac" ]]; then
+            args+=(--mac-signing-identity "$ALPHA_MAC_SIGNING_IDENTITY")
+          fi
 
           vp run dist:desktop:artifact "${args[@]}"
 
@@ -320,7 +371,23 @@ jobs:
 
           signature_details="$(codesign -dvvv "$app" 2>&1)"
           grep -Fq "Identifier=com.theblankclub.t3code.alpha" <<<"$signature_details"
-          grep -Fq "Signature=adhoc" <<<"$signature_details"
+          if grep -Fq "Signature=adhoc" <<<"$signature_details"; then
+            echo "Alpha release unexpectedly has an ad-hoc signature." >&2
+            exit 1
+          fi
+
+          certificate_fingerprint="$(openssl x509 \
+            -inform der \
+            -in assets/alpha/signing/t3code-alpha-release-signing.cer \
+            -noout \
+            -fingerprint \
+            -sha1 | cut -d= -f2 | tr -d ':')"
+          requirement="=identifier \"com.theblankclub.t3code.alpha\" and certificate leaf = H\"$certificate_fingerprint\""
+          codesign --verify \
+            --deep \
+            --strict \
+            --test-requirement "$requirement" \
+            "$app"
 
       - name: Collect release assets
         shell: bash
@@ -365,6 +432,11 @@ jobs:
           path: resource-monitor-publish/${{ matrix.resource_key }}/*
           if-no-files-found: error
           retention-days: 2
+
+      - name: Remove temporary Alpha signing keychain
+        if: always() && matrix.platform == 'mac'
+        shell: bash
+        run: security delete-keychain "$RUNNER_TEMP/t3code-alpha-signing.keychain-db" || true
 
   publish_cli:
     name: Publish t3code-alpha to npm

@@ -18,8 +18,8 @@ tests:
 
 # Intent
 
-Provide a repeatable macOS install and upgrade path for unsigned Alpha builds without requiring an
-Apple Developer account or a separate package-hosting service.
+Provide a repeatable macOS install and upgrade path for Alpha builds without requiring an Apple
+Developer account or a separate package-hosting service.
 
 # Behavioral invariants
 
@@ -29,15 +29,20 @@ Apple Developer account or a separate package-hosting service.
 - arm64 and x64 SHA-256 values are calculated from the artifacts produced by the same workflow run.
 - The tap-owned updater audits the cask before committing it with the tap's repository-scoped
   `GITHUB_TOKEN`.
-- Every install and upgrade ad-hoc signs the nested Electron bundles and outer application, verifies
-  the complete bundle strictly, and removes quarantine only after verification succeeds.
+- Release CI signs every macOS bundle with the same fork-owned self-signed identity.
+- Every install and upgrade verifies the complete bundle strictly against the pinned public
+  certificate and removes quarantine only after verification succeeds; the cask never re-signs it.
 - Standard `brew install` and `brew upgrade` commands require no recurring manual signing or
   quarantine repair while Alpha remains outside Apple Developer ID signing and notarization.
+- Reusing the release certificate preserves Alpha's designated requirement across upgrades, so
+  macOS Keychain and privacy permissions recognize the replacement bundle as the same application.
 - Replacing the app bundle does not delete Alpha state under `~/.t3-alpha`.
 
 # Current delta
 
 - `scripts/render-alpha-homebrew-cask.ts` generates the architecture-aware cask.
+- `assets/alpha/signing/t3code-alpha-release-signing.cer` is the public certificate pinned by the
+  release workflow and cask; its private key exists only in repository Actions secrets.
 - `.github/workflows/release-alpha.yml` publishes the complete GitHub prerelease that acts as the
   cask's immutable artifact source.
 - The tap repository has a scheduled updater and a separate macOS cask audit workflow; no
@@ -62,3 +67,5 @@ Apple Developer account or a separate package-hosting service.
 - 2026-08-16, upstream `2f486ab80c748b4d8e3d3b17e49b5a327cb93335`: `unaffected`; upstream's
   web theme changes do not touch the fork-owned Homebrew cask, artifact checksums, signing repair,
   or publication path.
+- 2026-08-16, local Alpha delta: replaced per-upgrade ad-hoc signing with a persistent self-signed
+  release identity. Homebrew now verifies the pinned identity and never changes the app seal.

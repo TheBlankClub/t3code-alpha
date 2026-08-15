@@ -13,13 +13,14 @@ surfaces:
   - server
 tests:
   - actionlint .github/workflows/release-alpha.yml
+  - vp test run scripts/alpha-workflow-contract.test.ts
   - vp test run scripts/resolve-alpha-release.test.ts scripts/resolve-nightly-release.test.ts scripts/classify-alpha-sync.test.ts scripts/record-alpha-safe-sync.test.ts
   - node scripts/resolve-alpha-release.ts --date 20260815 --run-number 27 --sha abcdef1234567890
 ---
 
 # Intent
 
-Build an unsigned, manual-install Alpha prerelease from the integration branch without invoking
+Build a fork-signed, manual-install Alpha prerelease from the integration branch without invoking
 upstream's official release, hosted-web, AUR, or npm publication paths.
 
 # Behavioral invariants
@@ -35,10 +36,10 @@ upstream's official release, hosted-web, AUR, or npm publication paths.
 - macOS arm64/x64, Linux x64, and Windows x64 artifacts use upstream's desktop builder and Alpha
   artifact identities.
 - Desktop artifacts are intentionally not signed with platform developer credentials. macOS builds
-  receive a complete ad-hoc seal, while GitHub releases contain manual installers only, not updater
-  manifests, blockmaps, or macOS ZIP update payloads.
+  use the fork's persistent self-signed identity, while GitHub releases contain manual installers
+  only, not updater manifests, blockmaps, or macOS ZIP update payloads.
 - Release CI mounts each produced macOS DMG and requires its embedded app to pass strict deep
-  signature verification with the Alpha bundle identifier and an ad-hoc signature.
+  signature verification with the Alpha bundle identifier and pinned release certificate.
 - Apple signing/notarization, Azure Trusted Signing, Clerk, and T3 Connect configuration are not
   release dependencies. Cloud linking is not part of this fork distribution.
 - npm publication uses provenance, the canonical `latest` tag, and the temporary `t3code-alpha`
@@ -55,6 +56,8 @@ upstream's official release, hosted-web, AUR, or npm publication paths.
 - `.github/workflows/release-alpha.yml` adapts the upstream release build graph to standard GitHub
   hosted runners and fork-owned release destinations, with CI-success, stale-SHA, duplicate-tag,
   and failure-escalation gates.
+- macOS jobs import the private release identity into an ephemeral Keychain, verify it against the
+  committed public certificate, sign the bundle, and delete that Keychain after artifact upload.
 - `docs/operations/alpha-release.md` records the one-time npm, GitHub App, Homebrew,
   branch-protection, and first-release gates.
 - `scripts/resolve-alpha-release.ts` reuses upstream's next-patch version calculation and adds the

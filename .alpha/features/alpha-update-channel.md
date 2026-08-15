@@ -21,8 +21,9 @@ tests:
 # Intent
 
 Give T3 Code Alpha a dedicated prerelease identity while keeping publication and branding under
-TheBlankClub's control. Until Alpha releases are signed, upgrades are performed through Homebrew
-or a manually downloaded installer rather than Electron's automatic updater.
+TheBlankClub's control. Until Alpha releases use Apple Developer ID signing and updater metadata,
+upgrades are performed through Homebrew or a manually downloaded installer rather than Electron's
+automatic updater.
 
 # Behavioral invariants
 
@@ -43,8 +44,8 @@ or a manually downloaded installer rather than Electron's automatic updater.
 
 - Contracts, desktop settings, updater runtime, version recognition, web branding, and build
   configuration recognize `alpha`.
-- The updater runtime detects Alpha versions and remains disabled while the distribution is
-  unsigned.
+- The updater runtime detects Alpha versions and remains disabled while the distribution lacks
+  Apple Developer ID signing, notarization, and updater manifests.
 - `assets/alpha/app-icon.icon` provides a dark graphite and ember blueprint source that preserves
   the upstream T3 geometry while remaining distinct from Dev, Nightly, and production.
 - iOS, Linux, Windows, web, and macOS Alpha renditions are generated. The macOS icon uses a

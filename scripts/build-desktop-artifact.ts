@@ -163,6 +163,7 @@ interface BuildCliInput {
   readonly mockUpdates: Option.Option<boolean>;
   readonly mockUpdateServerPort: Option.Option<number>;
   readonly wslPrebuild: Option.Option<string>;
+  readonly macSigningIdentity: Option.Option<string>;
 }
 
 function detectHostBuildPlatform(hostPlatform: string): typeof BuildPlatform.Type | undefined {
@@ -765,6 +766,7 @@ interface ResolvedBuildOptions {
   readonly mockUpdates: boolean;
   readonly mockUpdateServerPort: number | undefined;
   readonly wslPrebuild: string | undefined;
+  readonly macSigningIdentity: string | undefined;
 }
 
 interface StagePackageJson {
@@ -1240,6 +1242,7 @@ const BuildEnvConfig = Config.all({
   // into the staged node-pty so the WSL backend ships a ready binary and never
   // compiles on the user's machine.
   wslPrebuild: Config.string("T3CODE_DESKTOP_WSL_PREBUILD").pipe(Config.option),
+  macSigningIdentity: Config.string("T3CODE_DESKTOP_MAC_SIGNING_IDENTITY").pipe(Config.option),
 });
 
 const MockUpdateServerPortSchema = Schema.NumberFromString.check(
@@ -1333,6 +1336,9 @@ export const resolveBuildOptions = Effect.fn("resolveBuildOptions")(function* (
 
   const wslPrebuild =
     Option.getOrUndefined(input.wslPrebuild) ?? Option.getOrUndefined(env.wslPrebuild);
+  const macSigningIdentity =
+    Option.getOrUndefined(input.macSigningIdentity) ??
+    Option.getOrUndefined(env.macSigningIdentity);
 
   return {
     platform,
@@ -1347,6 +1353,7 @@ export const resolveBuildOptions = Effect.fn("resolveBuildOptions")(function* (
     mockUpdates,
     mockUpdateServerPort,
     wslPrebuild,
+    macSigningIdentity,
   } satisfies ResolvedBuildOptions;
 });
 
@@ -2029,6 +2036,12 @@ export function resolveDesktopProductName(version: string): string {
     : (desktopPackageJson.productName ?? "T3 Code");
 }
 
+export function resolveDesktopStagePackageName(version: string): string {
+  return resolveDesktopUpdateChannel(version) === "alpha"
+    ? ALPHA_DISTRIBUTION.desktopPackageName
+    : "t3code";
+}
+
 export const createBuildConfig = Effect.fn("createBuildConfig")(function* (
   platform: typeof BuildPlatform.Type,
   target: string,
@@ -2042,6 +2055,7 @@ export const createBuildConfig = Effect.fn("createBuildConfig")(function* (
         readonly provisioningProfilePath: string;
       }
     | undefined,
+  macSigningIdentity?: string,
 ) {
   const buildConfig: Record<string, unknown> = {
     appId: DESKTOP_APP_ID,
@@ -2081,10 +2095,9 @@ export const createBuildConfig = Effect.fn("createBuildConfig")(function* (
       category: "public.app-category.developer-tools",
       ...(!signed && updateChannel === "alpha"
         ? {
-            // Alpha deliberately ships without Apple credentials. Ask electron-builder to
-            // create a complete ad-hoc seal so manual DMG installs are not malformed; the
-            // Homebrew cask still re-signs after installation and owns quarantine removal.
-            identity: "-",
+            // Local Alpha builds fall back to an ad-hoc seal. Release CI supplies the
+            // fork-owned persistent identity so macOS sees every upgrade as the same app.
+            identity: macSigningIdentity ?? "-",
             hardenedRuntime: false,
           }
         : {}),
@@ -2914,7 +2927,7 @@ const buildDesktopArtifact = Effect.fn("buildDesktopArtifact")(function* (
       ? path.join(stageAppDir, WINDOWS_SERVER_RESOURCE_SOURCE_DIR, WINDOWS_SERVER_ASAR_RESOURCE)
       : undefined;
   const stagePackageJson: StagePackageJson = {
-    name: "t3code",
+    name: resolveDesktopStagePackageName(appVersion),
     version: appVersion,
     buildVersion: appVersion,
     t3codeCommitHash: commitHash,
@@ -2936,6 +2949,7 @@ const buildDesktopArtifact = Effect.fn("buildDesktopArtifact")(function* (
             provisioningProfilePath: macPasskeySigning.provisioningProfilePath,
           }
         : undefined,
+      options.macSigningIdentity,
     ),
     dependencies: stageDependencies,
     devDependencies: {
@@ -3172,6 +3186,12 @@ const buildDesktopArtifactCli = Command.make("build-desktop-artifact", {
   wslPrebuild: Flag.string("wsl-prebuild").pipe(
     Flag.withDescription(
       "Path to a prebuilt Linux node-pty (pty.node) for the target arch, staged for the WSL backend (env: T3CODE_DESKTOP_WSL_PREBUILD).",
+    ),
+    Flag.optional,
+  ),
+  macSigningIdentity: Flag.string("mac-signing-identity").pipe(
+    Flag.withDescription(
+      "Explicit macOS signing identity (env: T3CODE_DESKTOP_MAC_SIGNING_IDENTITY).",
     ),
     Flag.optional,
   ),

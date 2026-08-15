@@ -13,7 +13,7 @@ surfaces:
 tests:
   - vp test run apps/desktop/src/app/DesktopEnvironment.test.ts apps/desktop/src/app/DesktopEarlyElectronStartup.test.ts apps/desktop/src/app/DesktopEarlyUserData.test.ts apps/desktop/src/app/DesktopAppIdentity.test.ts apps/desktop/src/app/DesktopClerk.test.ts apps/desktop/src/app/DesktopLinuxUrlHandler.test.ts apps/desktop/src/electron/ElectronProtocol.test.ts apps/desktop/scripts/electron-launcher.test.mjs
   - vp test run apps/server/scripts/migrate-nightly-data-to-alpha.test.ts
-  - vp test run scripts/build-desktop-artifact.test.ts -t "product names|platform-specific packaging|passkey signing|Alpha renderer protocol"
+  - vp test run scripts/build-desktop-artifact.test.ts -t "product names|Safe Storage|platform-specific packaging|passkey signing|Alpha renderer protocol"
   - vp test run apps/server/src/server.test.ts -t "allows credentialed preflights"
 ---
 
@@ -32,6 +32,8 @@ identity.
   renderer helper can launch.
 - Packaged Alpha uses the application ID `com.theblankclub.t3code.alpha` and renderer protocol
   `t3code-alpha://app`.
+- Packaged Alpha uses the npm-style application name `t3code-alpha`, so Electron Safe Storage uses
+  `t3code-alpha Safe Storage` instead of the official and Nightly `t3code Safe Storage` item.
 - Linux uses Alpha-specific executable, desktop entry, window class, and URL-handler identities.
 - Alpha artifacts use the `T3-Code-Alpha-*` prefix.
 - Development keeps the upstream `t3code-dev` identity and worktree-safe state behavior.
@@ -45,6 +47,8 @@ identity.
 - The desktop main process synchronously selects the Alpha Electron profile before constructing the
   asynchronous runtime layer graph.
 - Electron, Clerk, Linux URL handling, and desktop packaging consume the centralized identity.
+- The staged desktop manifest derives its package name from the release channel, keeping upstream
+  Stable and Nightly behavior unchanged while isolating Alpha's macOS Keychain service.
 - Upstream's source-asset desktop launcher model resolves its non-development icon from Alpha's
   canonical artwork while retaining Alpha's bundle identifier and URL protocol.
 - The server recognizes `t3code-alpha://app` as a desktop renderer origin.

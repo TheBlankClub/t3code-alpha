@@ -2,6 +2,7 @@
 
 import * as NodeCrypto from "node:crypto";
 
+import { ALPHA_DISTRIBUTION } from "@t3tools/shared/alphaDistribution";
 import * as NodeRuntime from "@effect/platform-node/NodeRuntime";
 import * as NodeServices from "@effect/platform-node/NodeServices";
 import * as Effect from "effect/Effect";
@@ -45,18 +46,13 @@ cask "t3code-alpha" do
 
   postflight do
     target = "#{appdir}/T3 Code Alpha.app"
+    requirement = "=identifier \\"${ALPHA_DISTRIBUTION.desktopAppId}\\" and certificate leaf = H\\"${ALPHA_DISTRIBUTION.macReleaseSigningCertificateSha1}\\""
 
-    Dir.glob("#{target}/Contents/Frameworks/*.{app,framework}").each do |nested|
-      system_command "/usr/bin/codesign",
-                     args: ["--force", "--sign", "-", nested],
-                     sudo: false
-    end
-
-    system_command "/usr/bin/codesign",
-                   args: ["--force", "--deep", "--sign", "-", target],
-                   sudo: false
     system_command "/usr/bin/codesign",
                    args: ["--verify", "--deep", "--strict", target],
+                   sudo: false
+    system_command "/usr/bin/codesign",
+                   args: ["--verify", "--deep", "--strict", "--test-requirement", requirement, target],
                    sudo: false
     system_command "/usr/bin/xattr",
                    args: ["-dr", "com.apple.quarantine", target],
@@ -64,8 +60,9 @@ cask "t3code-alpha" do
   end
 
   caveats <<~EOS
-    T3 Code Alpha is not signed with an Apple Developer ID. This cask applies
-    an ad-hoc signature and removes quarantine after every install or upgrade.
+    T3 Code Alpha is signed with TheBlankClub's persistent self-signed release
+    identity, not an Apple Developer ID. This cask verifies that pinned identity
+    and removes quarantine after every install or upgrade.
     Install it only if you trust TheBlankClub's release artifacts:
 
       brew install --cask theblankclub/tap/t3code-alpha

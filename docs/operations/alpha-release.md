@@ -4,15 +4,15 @@
 > [Release Checklist](release.md).
 
 Alpha releases are produced only from the `alpha` branch by
-`.github/workflows/release-alpha.yml`. The workflow publishes unsigned desktop installers to this
-repository, publishes the exact matching server version to the public `t3code-alpha` npm package,
-creates a GitHub prerelease, and updates the `t3code-alpha` cask in
+`.github/workflows/release-alpha.yml`. The workflow publishes self-signed macOS and unsigned
+Windows/Linux desktop installers to this repository, publishes the exact matching server version
+to the public `t3code-alpha` npm package, creates a GitHub prerelease, and updates the `t3code-alpha` cask in
 `TheBlankClub/homebrew-tap`. The tap owns the final step: it checks the public prerelease feed every
 30 minutes and publishes only after both macOS DMGs are complete.
 
 This release model does not require Apple, Azure, Clerk, or T3 Connect configuration. It deliberately
-does not publish Electron updater manifests: automatic desktop updates are disabled in packaged
-Alpha builds while the artifacts are unsigned.
+does not publish Electron updater manifests: automatic desktop updates are disabled because Alpha
+is not Developer ID-signed or notarized.
 
 ## 1. npm trusted publishing
 
@@ -70,9 +70,31 @@ building or publishing anything. `homebrew-tap` needs no cross-repository token:
 workflow reads the public Alpha prerelease feed and commits the audited cask with its repository
 `GITHUB_TOKEN`.
 
-No repository Actions variables and no other Actions secrets are required for Alpha releases.
+The macOS signing secrets described below are the only additional release secrets.
 
-## 3. Branch protection and CI
+## 3. Persistent macOS release identity
+
+Alpha uses one long-lived self-signed code-signing certificate to keep its macOS designated
+requirement stable across upgrades. The public certificate is committed at
+`assets/alpha/signing/t3code-alpha-release-signing.cer`. The private identity is stored only in
+these repository Actions secrets:
+
+- `ALPHA_MAC_SIGNING_P12_BASE64`: base64-encoded PKCS#12 identity.
+- `ALPHA_MAC_SIGNING_P12_PASSWORD`: password for that PKCS#12 identity.
+
+Release jobs import the identity into an ephemeral Keychain, prove its SHA-1 fingerprint matches
+the committed public certificate, and pass its exact common name to the desktop builder. They then
+mount the DMG and require both a strict deep seal and this designated requirement:
+
+```text
+identifier "com.theblankclub.t3code.alpha" and certificate leaf = H"A3FE7063335600A78DDB3634CF76D5E1EF6D9645"
+```
+
+Do not rotate this certificate merely to refresh a release. Rotation changes the application
+identity macOS uses for Keychain and privacy grants and therefore requires a deliberate migration.
+Keep an offline recovery copy of the private identity; GitHub Actions secrets cannot be read back.
+
+## 4. Branch protection and CI
 
 Protect `alpha` with pull requests and require the four jobs from `.github/workflows/ci.yml`:
 
@@ -102,7 +124,7 @@ does not already have an Alpha tag. A daily scheduled run retries an unreleased 
 registry or artifact failures. Stale CI runs and already tagged commits are skipped. After a
 prerelease is complete, the tap's next scheduled run publishes its cask independently.
 
-## 4. macOS installation and upgrades
+## 5. macOS installation and upgrades
 
 The recommended macOS path is Homebrew:
 
@@ -117,9 +139,15 @@ brew update
 brew upgrade --cask t3code-alpha
 ```
 
-Alpha is not signed with an Apple Developer ID. The cask ad-hoc signs the nested Electron bundles
-and outer app after every install or upgrade, verifies the complete bundle, and removes quarantine
-only after verification succeeds. Use this path only for release artifacts you trust.
+Alpha is not signed with an Apple Developer ID. The cask verifies the bundle against the pinned
+self-signed release certificate, then removes quarantine. It never re-signs the application. Use
+this path only for release artifacts you trust.
+
+The first upgrade from the former ad-hoc release may require one final macOS permission prompt.
+The packaged application also changes its Electron package name from `t3code` to `t3code-alpha`,
+which isolates Alpha's `t3code-alpha Safe Storage` Keychain item from Nightly. Existing Alpha remote
+connection credentials encrypted under the former item may need to be entered again. Do not delete
+the old `t3code Safe Storage` item because official and Nightly installations may still use it.
 
 A manual upgrade also works: download the DMG for the Mac's architecture, quit T3 Code Alpha,
 replace `T3 Code Alpha.app` in Applications, and reopen it. macOS may require the user to right-click
@@ -128,7 +156,7 @@ the app and choose Open. Both methods preserve application state under `~/.t3-al
 Windows and Linux remain manual-install targets. Windows may show a SmartScreen warning for the
 unsigned installer; Linux users replace the AppImage.
 
-## 5. First release proof
+## 6. First release proof
 
 The first successful `alpha` CI run starts the initial release after the GitHub App is installed. A
 manual `Alpha Release` dispatch is also available, but duplicate-tag protection prevents publishing
@@ -144,9 +172,11 @@ the same SHA twice. On the exact released SHA:
 4. Install with `npx t3code-alpha@latest` and confirm the reported CLI version matches the package.
 5. Install the Homebrew cask on both Apple Silicon and Intel where available, then verify
    `brew upgrade --cask t3code-alpha` replaces an older Alpha app, produces a bundle that passes
-   `codesign --verify --deep --strict`, and leaves no `com.apple.quarantine` attribute.
+   `codesign --verify --deep --strict`, satisfies the pinned certificate requirement, and leaves no
+   `com.apple.quarantine` attribute. Upgrade once more and confirm macOS does not repeat Keychain or
+   Downloads-folder prompts.
 6. Confirm the desktop identity, protocol, and state remain isolated from official T3 Code and that
-   Settings reports automatic updates as unavailable for unsigned Alpha builds.
+   Settings reports automatic updates as unavailable for non-Developer-ID Alpha builds.
 
 Only after this proof should the temporary npm `bootstrap` tag be removed and the scheduled release
 be treated as operational.

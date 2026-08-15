@@ -16,6 +16,10 @@ function serializedWorkflow(name: string): string {
   return JSON.stringify(readWorkflow(name));
 }
 
+function rawWorkflow(name: string): string {
+  return NodeFS.readFileSync(NodePath.join(repoRoot, ".github", "workflows", name), "utf8");
+}
+
 describe("Alpha workflow contracts", () => {
   it("checks upstream every six hours and keeps unsafe candidates review-only", () => {
     const workflow = readWorkflow("sync-upstream.yml") as {
@@ -64,5 +68,20 @@ describe("Alpha workflow contracts", () => {
     assert.include(serialized, 'repositories":"t3code-alpha');
     assert.notInclude(serialized, "homebrew-tap");
     assert.include(serialized, "Alpha release is blocked");
+  });
+
+  it("signs macOS releases with the persistent Alpha identity", () => {
+    const workflow = rawWorkflow("release-alpha.yml");
+
+    assert.include(workflow, "ALPHA_MAC_SIGNING_P12_BASE64");
+    assert.include(workflow, "ALPHA_MAC_SIGNING_P12_PASSWORD");
+    assert.include(workflow, "security create-keychain");
+    assert.include(workflow, "security import");
+    assert.include(workflow, "--mac-signing-identity");
+    assert.include(workflow, "assets/alpha/signing/t3code-alpha-release-signing.cer");
+    assert.include(workflow, "--test-requirement");
+    assert.include(workflow, "certificate leaf");
+    assert.include(workflow, 'if grep -Fq "Signature=adhoc"');
+    assert.include(workflow, "Alpha release unexpectedly has an ad-hoc signature.");
   });
 });
