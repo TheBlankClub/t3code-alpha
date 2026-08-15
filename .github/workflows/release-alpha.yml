@@ -16,7 +16,7 @@ permissions:
 jobs:
   check_changes:
     name: Check for changes since last Alpha
-    if: github.event_name == 'schedule'
+    if: github.repository == 'TheBlankClub/t3code-alpha' && github.event_name == 'schedule'
     runs-on: ubuntu-24.04
     outputs:
       has_changes: ${{ steps.check.outputs.has_changes }}
@@ -57,6 +57,7 @@ jobs:
     name: Preflight
     needs: [check_changes]
     if: |
+      github.repository == 'TheBlankClub/t3code-alpha' &&
       !failure() && !cancelled() &&
       (github.event_name != 'schedule' || needs.check_changes.outputs.has_changes == 'true')
     runs-on: ubuntu-24.04

@@ -25,6 +25,8 @@ upstream's official release, hosted-web, AUR, or npm publication paths.
 # Behavioral invariants
 
 - The workflow always checks out and releases the `alpha` branch, even when manually dispatched.
+- The upstream release workflow is repository-gated and cannot react to Alpha tags or schedules in
+  the fork.
 - Scheduled runs skip when the Alpha branch still points to the most recent Alpha tag.
 - Versions use `X.Y.Z-alpha.YYYYMMDD.RUN`; GitHub releases are prereleases and never become latest.
 - macOS arm64/x64, Linux x64, and Windows x64 artifacts use upstream's desktop builder and Alpha
