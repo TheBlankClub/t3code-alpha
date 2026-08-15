@@ -14,6 +14,7 @@ surfaces:
 tests:
   - vp run icons:alpha-macos
   - vp test run apps/desktop/src/updates/updateChannels.test.ts apps/desktop/src/settings/DesktopAppSettings.test.ts apps/desktop/src/updates/DesktopUpdates.test.ts apps/web/src/branding.test.ts scripts/lib/brand-assets.test.ts
+  - vp test run apps/web/src/components/SidebarStageBackdrop.test.tsx apps/web/src/components/chat/ComposerPrimaryActions.test.tsx
   - vp test run scripts/build-desktop-artifact.test.ts -t "updater channels|packaging icons|favicon branding|GitHub desktop publish config"
   - vp run --filter @t3tools/contracts --filter @t3tools/desktop --filter @t3tools/web --filter @t3tools/scripts typecheck
 ---
@@ -38,6 +39,8 @@ automatic updater.
 - Homebrew upgrades replace the app bundle while preserving Alpha state in `~/.t3-alpha`.
 - Desktop Settings presents Alpha as a fixed track and never directs users to official feeds.
 - Bundled web and desktop icons resolve to the Alpha artwork family for Alpha versions.
+- Appearance identifies Alpha with its graphite-and-ember artwork by default, with pill and hidden
+  alternatives matching the Dev and Nightly controls.
 - Hosted Alpha web remains out of scope until separate hosting infrastructure exists.
 
 # Current delta
@@ -55,6 +58,8 @@ automatic updater.
   reports that argument as unsupported.
 - Desktop launcher and unpackaged non-development asset resolution use the canonical Alpha icon
   family, and Alpha DMGs use a dedicated dark graphite and ember installer background.
+- The web client carries that same material into the sidebar, composer send action, and standalone
+  authentication surfaces without replacing the user's chosen theme.
 
 # Retirement conditions
 

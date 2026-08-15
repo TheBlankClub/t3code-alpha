@@ -459,6 +459,22 @@ html[data-mobile-composer-route-transition="true"]::view-transition-old(t3-mobil
     --stage-night-glow-highlight: oklch(0.553749 0.176543 271.958);
     --stage-night-glow-secondary: oklch(0.345571 0.117466 273.568);
     --stage-night-sparkle: oklch(0.880867 0.057747 269.011);
+    /* Alpha keeps the graphite-and-ember material of its app icon while a
+       restrained theme tint prevents the header from feeling pasted on. */
+    --stage-alpha-base-top: #20242c;
+    --stage-alpha-base-mid: #111318;
+    --stage-alpha-base-bottom: #08090c;
+    --stage-alpha-top: color-mix(in oklch, var(--stage-alpha-base-top) 90%, var(--stage-art-top));
+    --stage-alpha-mid: color-mix(in oklch, var(--stage-alpha-base-mid) 92%, var(--stage-art-mid));
+    --stage-alpha-bottom: color-mix(
+      in oklch,
+      var(--stage-alpha-base-bottom) 94%,
+      var(--stage-art-bottom)
+    );
+    --stage-alpha-glow: color-mix(in oklch, #f6ad55 88%, var(--stage-art-highlight));
+    --stage-alpha-coal: color-mix(in oklch, #9a3412 90%, var(--stage-art-tertiary));
+    --stage-alpha-line: color-mix(in oklch, #f5b863 88%, var(--stage-art-line));
+    --stage-alpha-grid-line: color-mix(in oklch, #d68a3a 90%, var(--stage-art-secondary));
 
     @variant dark {
       --stage-art-top: oklch(0.581473 0.149124 256.9);
