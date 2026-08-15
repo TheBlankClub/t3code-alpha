@@ -42,8 +42,8 @@ upstream's official release, hosted-web, AUR, or npm publication paths.
   manifest. GitHub releases retain Alpha versioning and prerelease status.
 - npm publishes use GitHub OIDC trusted publishing and no long-lived npm token. The package was
   reserved interactively before enabling the automated release workflow.
-- After a successful GitHub prerelease, the workflow validates and publishes the matching macOS
-  cask to `TheBlankClub/homebrew-tap` with the Alpha automation GitHub App.
+- After a successful GitHub prerelease, the tap-owned updater independently validates and publishes
+  the matching macOS cask without a cross-repository credential.
 - The workflow does not deploy the official hosted web app, publish official AUR packages, mutate
   source package versions, or announce through upstream channels.
 

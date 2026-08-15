@@ -27,7 +27,8 @@ Apple Developer account or a separate package-hosting service.
 - The cask points only to macOS DMGs attached to a completed Alpha GitHub prerelease.
 - The cask version equals the released desktop and `t3code-alpha` npm package version.
 - arm64 and x64 SHA-256 values are calculated from the artifacts produced by the same workflow run.
-- The cask is audited before the automation GitHub App commits it to the tap.
+- The tap-owned updater audits the cask before committing it with the tap's repository-scoped
+  `GITHUB_TOKEN`.
 - Installation and upgrades use Homebrew's explicit `--no-quarantine` option while Alpha remains
   unsigned; the cask does not silently remove quarantine attributes.
 - Replacing the app bundle does not delete Alpha state under `~/.t3-alpha`.
@@ -35,9 +36,10 @@ Apple Developer account or a separate package-hosting service.
 # Current delta
 
 - `scripts/render-alpha-homebrew-cask.ts` generates the architecture-aware cask.
-- `.github/workflows/release-alpha.yml` downloads the completed macOS artifacts, audits the rendered
-  cask on macOS, and commits it to the tap with the Alpha automation GitHub App.
-- The tap repository has its own macOS cask audit workflow.
+- `.github/workflows/release-alpha.yml` publishes the complete GitHub prerelease that acts as the
+  cask's immutable artifact source.
+- The tap repository has a scheduled updater and a separate macOS cask audit workflow; no
+  cross-repository secret is required.
 
 # Retirement conditions
 

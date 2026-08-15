@@ -7,7 +7,8 @@ Alpha releases are produced only from the `alpha` branch by
 `.github/workflows/release-alpha.yml`. The workflow publishes unsigned desktop installers to this
 repository, publishes the exact matching server version to the public `t3code-alpha` npm package,
 creates a GitHub prerelease, and updates the `t3code-alpha` cask in
-`TheBlankClub/homebrew-tap`.
+`TheBlankClub/homebrew-tap`. The tap owns the final step: it checks the public prerelease feed every
+30 minutes and publishes only after both macOS DMGs are complete.
 
 This release model does not require Apple, Azure, Clerk, or T3 Connect configuration. It deliberately
 does not publish Electron updater manifests: automatic desktop updates are disabled in packaged
@@ -47,11 +48,8 @@ npm dist-tag rm t3code-alpha bootstrap
 
 ## 2. Alpha automation GitHub App
 
-Create one private GitHub App dedicated to Alpha automation. Install it on exactly these
-TheBlankClub repositories:
-
-- `t3code-alpha`
-- `homebrew-tap`
+Create one private GitHub App dedicated to Alpha automation. Install it on
+`TheBlankClub/t3code-alpha`.
 
 Grant these repository permissions:
 
@@ -67,9 +65,10 @@ Add its credentials only to `TheBlankClub/t3code-alpha` as repository Actions se
 
 The six-hour upstream sync uses the installation token to update its merge branch, manage its pull
 request, journal policy-safe candidates, auto-merge them after required CI, and report blockers. The
-release workflow uses the same App to update the cask in
-`homebrew-tap`. Preflight verifies that the App can mint a token scoped to both repositories before
-building or publishing anything.
+release workflow preflight verifies that the App can mint a token scoped to `t3code-alpha` before
+building or publishing anything. `homebrew-tap` needs no cross-repository token: its own scheduled
+workflow reads the public Alpha prerelease feed and commits the audited cask with its repository
+`GITHUB_TOKEN`.
 
 No repository Actions variables and no other Actions secrets are required for Alpha releases.
 
@@ -86,8 +85,10 @@ Do not require linear history: upstream reconciliation intentionally retains mer
 default `GITHUB_TOKEN` permission read-only; individual workflows declare their narrower write
 permissions.
 
-The `homebrew-tap` repository intentionally accepts the App's direct cask commit after the Alpha
-release workflow audits it on macOS. Its own `Test` workflow audits every cask change again.
+The `homebrew-tap` repository runs `.github/workflows/update-t3code-alpha.yml` every 30 minutes and
+on manual dispatch. That workflow selects the newest complete Alpha prerelease, downloads both
+macOS architectures, calculates their checksums, audits the rendered cask on macOS, and commits it.
+Its separate `Test` workflow audits every cask change again.
 
 Before merging an upstream reconciliation PR, confirm that its exact head contains the intended
 upstream SHA, every active `.alpha/features/*.md` record is reconciled, and all four jobs pass.
@@ -98,7 +99,8 @@ journaled head before auto-merge. Any Alpha-delta overlap or protected path rema
 
 Every successful CI run for a push to the current `alpha` head starts a release when that exact SHA
 does not already have an Alpha tag. A daily scheduled run retries an unreleased head after transient
-registry, artifact, or Homebrew failures. Stale CI runs and already tagged commits are skipped.
+registry or artifact failures. Stale CI runs and already tagged commits are skipped. After a
+prerelease is complete, the tap's next scheduled run publishes its cask independently.
 
 ## 4. macOS installation and upgrades
 
@@ -131,8 +133,8 @@ The first successful `alpha` CI run starts the initial release after the GitHub 
 manual `Alpha Release` dispatch is also available, but duplicate-tag protection prevents publishing
 the same SHA twice. On the exact released SHA:
 
-1. Confirm preflight, every platform build, npm publish, GitHub release, and Homebrew publication
-   jobs pass.
+1. Confirm preflight, every platform build, npm publish, and GitHub release jobs pass; then confirm
+   the matching `Update T3 Code Alpha` and `Test` runs pass in `homebrew-tap`.
 2. Confirm the GitHub release is a prerelease, is not the repository's latest release, and contains
    two DMGs, one AppImage, and one Windows installer. It must not contain updater YAML, blockmaps, or
    macOS ZIP payloads.

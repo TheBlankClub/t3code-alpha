@@ -61,7 +61,8 @@ describe("Alpha workflow contracts", () => {
     assert.include(serialized, "WORKFLOW_CONCLUSION");
     assert.include(serialized, "WORKFLOW_HEAD_SHA");
     assert.include(serialized, "git tag --points-at");
-    assert.include(serialized, "Publish Homebrew cask");
+    assert.include(serialized, 'repositories":"t3code-alpha');
+    assert.notInclude(serialized, "homebrew-tap");
     assert.include(serialized, "Alpha release is blocked");
   });
 });

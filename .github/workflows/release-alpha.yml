@@ -115,9 +115,7 @@ jobs:
           app-id: ${{ secrets.ALPHA_AUTOMATION_APP_ID }}
           private-key: ${{ secrets.ALPHA_AUTOMATION_APP_PRIVATE_KEY }}
           owner: ${{ github.repository_owner }}
-          repositories: |
-            t3code-alpha
-            homebrew-tap
+          repositories: t3code-alpha
 
       - id: release_meta
         name: Resolve Alpha version
@@ -476,113 +474,6 @@ jobs:
           fail_on_unmatched_files: true
           token: ${{ github.token }}
 
-  publish_homebrew:
-    name: Publish Homebrew cask
-    needs: [preflight, release]
-    if: ${{ !failure() && !cancelled() && needs.preflight.result == 'success' && needs.release.result == 'success' }}
-    runs-on: macos-15
-    timeout-minutes: 15
-    permissions:
-      contents: read
-    steps:
-      - name: Checkout release commit
-        uses: actions/checkout@v6
-        with:
-          ref: ${{ needs.preflight.outputs.ref }}
-          sparse-checkout: |
-            /*
-            !/.repos/
-          sparse-checkout-cone-mode: false
-
-      - name: Setup Vite+
-        uses: voidzero-dev/setup-vp@v1
-        with:
-          node-version-file: package.json
-          cache: true
-          run-install: |
-            args:
-              - --filter=@t3tools/scripts...
-
-      - name: Download macOS assets
-        uses: actions/download-artifact@v8
-        with:
-          pattern: alpha-desktop-mac-*
-          merge-multiple: true
-          path: release-assets
-
-      - id: app_token
-        name: Mint Homebrew tap token
-        uses: actions/create-github-app-token@v2
-        with:
-          app-id: ${{ secrets.ALPHA_AUTOMATION_APP_ID }}
-          private-key: ${{ secrets.ALPHA_AUTOMATION_APP_PRIVATE_KEY }}
-          owner: ${{ github.repository_owner }}
-          repositories: homebrew-tap
-
-      - name: Checkout Homebrew tap
-        uses: actions/checkout@v6
-        with:
-          repository: TheBlankClub/homebrew-tap
-          ref: main
-          path: homebrew-tap
-          token: ${{ steps.app_token.outputs.token }}
-
-      - id: app_bot
-        name: Resolve GitHub App bot identity
-        shell: bash
-        env:
-          GH_TOKEN: ${{ steps.app_token.outputs.token }}
-          APP_SLUG: ${{ steps.app_token.outputs.app-slug }}
-        run: |
-          set -euo pipefail
-          user_id="$(gh api "/users/${APP_SLUG}[bot]" --jq .id)"
-          echo "name=${APP_SLUG}[bot]" >> "$GITHUB_OUTPUT"
-          echo "email=${user_id}+${APP_SLUG}[bot]@users.noreply.github.com" >> "$GITHUB_OUTPUT"
-
-      - name: Render Homebrew cask
-        shell: bash
-        env:
-          ALPHA_VERSION: ${{ needs.preflight.outputs.version }}
-        run: |
-          set -euo pipefail
-          node scripts/render-alpha-homebrew-cask.ts \
-            --version "$ALPHA_VERSION" \
-            --arm64-path "release-assets/T3-Code-Alpha-${ALPHA_VERSION}-arm64.dmg" \
-            --x64-path "release-assets/T3-Code-Alpha-${ALPHA_VERSION}-x64.dmg" \
-            --output homebrew-tap/Casks/t3code-alpha.rb
-
-      - name: Prepare Homebrew cask commit
-        shell: bash
-        env:
-          APP_BOT_NAME: ${{ steps.app_bot.outputs.name }}
-          APP_BOT_EMAIL: ${{ steps.app_bot.outputs.email }}
-          ALPHA_VERSION: ${{ needs.preflight.outputs.version }}
-        run: |
-          set -euo pipefail
-          git -C homebrew-tap config user.name "$APP_BOT_NAME"
-          git -C homebrew-tap config user.email "$APP_BOT_EMAIL"
-          git -C homebrew-tap add Casks/t3code-alpha.rb
-          if git -C homebrew-tap diff --cached --quiet; then
-            echo "Homebrew cask already matches $ALPHA_VERSION."
-          else
-            git -C homebrew-tap commit -m "chore: update t3code-alpha to $ALPHA_VERSION"
-          fi
-
-      - name: Audit Homebrew cask
-        shell: bash
-        run: |
-          set -euo pipefail
-          ruby -c homebrew-tap/Casks/t3code-alpha.rb
-          brew style homebrew-tap/Casks/t3code-alpha.rb
-          brew tap theblankclub/tap "$GITHUB_WORKSPACE/homebrew-tap"
-          brew audit --cask --strict theblankclub/tap/t3code-alpha
-
-      - name: Publish Homebrew cask
-        shell: bash
-        run: |
-          set -euo pipefail
-          git -C homebrew-tap push origin HEAD:main
-
   report_status:
     name: Report Alpha release status
     needs:
@@ -592,7 +483,6 @@ jobs:
       - build
       - publish_cli
       - release
-      - publish_homebrew
     if: >-
       always() &&
       (needs.release_gate.result == 'failure' || needs.release_gate.outputs.should_release == 'true')
@@ -648,7 +538,7 @@ jobs:
           fi
 
       - name: Resolve previous release failure
-        if: steps.result.outputs.failed == 'false' && needs.publish_homebrew.result == 'success'
+        if: steps.result.outputs.failed == 'false' && needs.release.result == 'success'
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
@@ -663,5 +553,5 @@ jobs:
           if [[ -n "$existing_issue" ]]; then
             gh issue close "$existing_issue" \
               --repo "$GITHUB_REPOSITORY" \
-              --comment "Alpha release and Homebrew publication completed in $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID."
+              --comment "Alpha release completed in $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID."
           fi
