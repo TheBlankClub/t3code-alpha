@@ -16,7 +16,8 @@ packaging, versions, or release automation.
 ## Inspect before changing anything
 
 1. Read the repository `AGENTS.md` and preserve unrelated worktree changes.
-2. Run `scripts/inspect-upstream.sh --fetch` from the repository root.
+2. Run `.agents/skills/maintain-alpha-fork/scripts/inspect-upstream.sh --fetch` from the repository
+   root. The script resolves the repository root itself, so it also works from a subdirectory.
 3. Confirm that `origin` is the Alpha fork and `upstream` is the official T3 Code repository.
 4. Confirm the integration branch and its remote tracking branch. Do not assume the default branch.
 5. Read every active record under `.alpha/features/` that overlaps incoming paths or behavior.
