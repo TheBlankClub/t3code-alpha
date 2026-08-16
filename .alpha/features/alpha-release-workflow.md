@@ -32,6 +32,9 @@ upstream's official release, hosted-web, AUR, or npm publication paths.
   branch head and does not already have an Alpha release tag.
 - A daily scheduled run retries an unreleased Alpha head after transient publication failures.
 - Manual and scheduled runs also skip an already tagged source SHA, preventing duplicate releases.
+- The release workflow runs no checks, typecheck, or tests of its own. On the `workflow_run` path
+  the gate already proves CI succeeded for that exact SHA. On the scheduled and manual paths the
+  gate gives no such proof, so those runs publish without verifying the source commit.
 - Versions use `X.Y.Z-alpha.YYYYMMDD.RUN`; GitHub releases are prereleases and never become latest.
 - macOS arm64/x64, Linux x64, and Windows x64 artifacts use upstream's desktop builder and Alpha
   artifact identities.
@@ -55,17 +58,20 @@ upstream's official release, hosted-web, AUR, or npm publication paths.
 
 - `.github/workflows/release-alpha.yml` adapts the upstream release build graph to standard GitHub
   hosted runners and fork-owned release destinations, with CI-success, stale-SHA, duplicate-tag,
-  and failure-escalation gates.
+  and failure-escalation gates. Preflight only resolves release metadata; it does not re-verify the
+  source commit.
 - macOS jobs import the private release identity into an ephemeral Keychain with an explicit
   `/usr/bin/codesign` ACL, register that Keychain in the user search list so `codesign` can resolve
   the identity on macOS 15 runners, grant the named key Apple's non-interactive signing partitions,
   verify it against the committed public certificate, trust the self-signed certificate as a root in
   the admin domain so it passes trust evaluation, prove non-interactive signing with a throwaway
-  executable, assert a trust-valid signing identity, sign the bundle, and delete both that Keychain
-  and the trust setting after artifact upload. The trust mutation is non-interactive because it runs
-  under `sudo` against the System Keychain, and it is deliberately not scoped to a policy. A
-  partition-list command failure is advisory because the signing probe is the authoritative access
-  check.
+  executable, assert a trust-valid signing identity, and sign the bundle. The trust mutation is
+  non-interactive because it runs under `sudo` against the System Keychain, and it is deliberately
+  not scoped to a policy. None of this signing state is cleaned up: hosted runners are ephemeral, so
+  the Keychain, its search-list entry, and the trust setting die with the VM, while
+  `remove-trusted-cert` hangs on interactive authorization. Self-hosted runners would need a
+  different approach, because a trusted root certificate would persist there. A partition-list
+  command failure is advisory because the signing probe is the authoritative access check.
 - `docs/operations/alpha-release.md` records the one-time npm, GitHub App, Homebrew,
   branch-protection, and first-release gates.
 - `scripts/resolve-alpha-release.ts` reuses upstream's next-patch version calculation and adds the
@@ -110,8 +116,7 @@ upstream's official release, hosted-web, AUR, or npm publication paths.
   search list. On macOS 15 hosted runners `codesign --keychain` does not consult keychains outside
   the search list, so every signing probe failed with `errSecItemNotFound` ("The specified item
   could not be found in the keychain") regardless of partition-list state; the same lookup rule
-  applies to electron-builder's `CSC_KEYCHAIN` signing. Deleting the Keychain in cleanup also
-  removes it from the search list.
+  applies to electron-builder's `CSC_KEYCHAIN` signing.
 - 2026-08-16, local Alpha delta: restored a trust-settings mutation, reversing the removal recorded
   above. Every macOS build since that removal shipped an unsigned bundle: the self-signed Alpha
   certificate fails trust evaluation, so `security find-identity -v` reported no valid identity and
@@ -123,4 +128,28 @@ upstream's official release, hosted-web, AUR, or npm publication paths.
   electron-builder's identity lookup passes no policy and a scoped setting would not apply to it.
   The signing probe alone could not catch this, since `codesign --sign` succeeds with an untrusted
   certificate; the step now also asserts the identity through `security find-identity -v`, the same
-  lookup electron-builder performs. Cleanup removes the trust setting alongside the Keychain.
+  lookup electron-builder performs.
+- 2026-08-16, local Alpha delta: dropped the `remove-trusted-cert` cleanup added with that change
+  and bounded the remaining Keychain cleanup. Both macOS jobs signed and verified correctly, then
+  stalled in cleanup for minutes: `remove-trusted-cert` accepts no keychain argument and blocks on
+  interactive authorization even under `sudo`, and `|| true` cannot rescue a hang. With no step
+  timeout the job would have stranded a finished, uploaded build until the 45-minute job timeout.
+  Hosted runners are ephemeral, so the System Keychain and its trust setting are destroyed with the
+  VM and the command bought nothing.
+- 2026-08-16, local Alpha delta: dropped the remaining `delete-keychain` cleanup as well, removing
+  the post-upload cleanup step entirely. The same ephemerality argument applies: the Keychain lives
+  in `RUNNER_TEMP` and dies with the VM. Retaining only half the cleanup was also misleading, since
+  it implied the job tidied up after itself while leaving the one consequential artifact, a trusted
+  root certificate in the System Keychain, in place. Cleanup is now uniformly absent and documented
+  as such, so a future move to self-hosted runners has to confront the trust setting directly rather
+  than inherit a partial routine that looks complete.
+- 2026-08-16, local Alpha delta: removed Preflight's `vp check`, `vp run typecheck`, `vp run test`,
+  and the Electron runtime install that existed only to support them. They duplicated `ci.yml`'s
+  `check` and `test` jobs and cost roughly ten minutes per release, the `Test` step alone about
+  eight. On the `workflow_run` path this is pure duplication, because the gate already requires a
+  successful CI run for the identical SHA. On the scheduled and manual paths it is a deliberate
+  accepted risk: those triggers skip the gate's CI verification entirely, so a release can now
+  publish from a commit whose CI never ran or failed. Note this was already partly true before the
+  removal, since Preflight never re-ran `release_smoke`, `mobile_native_static_analysis`,
+  `cargo test`, or `build:desktop`. Closing that gap means teaching the gate to require a green CI
+  conclusion for the release SHA on every trigger.
