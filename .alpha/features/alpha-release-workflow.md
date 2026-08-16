@@ -59,10 +59,13 @@ upstream's official release, hosted-web, AUR, or npm publication paths.
 - macOS jobs import the private release identity into an ephemeral Keychain with an explicit
   `/usr/bin/codesign` ACL, register that Keychain in the user search list so `codesign` can resolve
   the identity on macOS 15 runners, grant the named key Apple's non-interactive signing partitions,
-  verify it against the committed public certificate, prove non-interactive signing with a throwaway
-  executable, sign the bundle, and delete that Keychain after artifact upload. They do not mutate
-  macOS trust settings. A partition-list command failure is advisory because the signing probe is
-  the authoritative access check.
+  verify it against the committed public certificate, trust the self-signed certificate as a root in
+  the admin domain so it passes trust evaluation, prove non-interactive signing with a throwaway
+  executable, assert a trust-valid signing identity, sign the bundle, and delete both that Keychain
+  and the trust setting after artifact upload. The trust mutation is non-interactive because it runs
+  under `sudo` against the System Keychain, and it is deliberately not scoped to a policy. A
+  partition-list command failure is advisory because the signing probe is the authoritative access
+  check.
 - `docs/operations/alpha-release.md` records the one-time npm, GitHub App, Homebrew,
   branch-protection, and first-release gates.
 - `scripts/resolve-alpha-release.ts` reuses upstream's next-patch version calculation and adds the
@@ -109,3 +112,15 @@ upstream's official release, hosted-web, AUR, or npm publication paths.
   could not be found in the keychain") regardless of partition-list state; the same lookup rule
   applies to electron-builder's `CSC_KEYCHAIN` signing. Deleting the Keychain in cleanup also
   removes it from the search list.
+- 2026-08-16, local Alpha delta: restored a trust-settings mutation, reversing the removal recorded
+  above. Every macOS build since that removal shipped an unsigned bundle: the self-signed Alpha
+  certificate fails trust evaluation, so `security find-identity -v` reported no valid identity and
+  electron-builder logged `skipped macOS application code signing` and continued, leaving the seal
+  check to fail with `code object is not signed at all`. The earlier hang was caused by requesting
+  trust without `sudo` against a user Keychain, which requires interactive authorization; running
+  `sudo security add-trusted-cert -d -k /Library/Keychains/System.keychain` is non-interactive, so
+  the hang does not return. The setting is intentionally not scoped with `-p codeSign` because
+  electron-builder's identity lookup passes no policy and a scoped setting would not apply to it.
+  The signing probe alone could not catch this, since `codesign --sign` succeeds with an untrusted
+  certificate; the step now also asserts the identity through `security find-identity -v`, the same
+  lookup electron-builder performs. Cleanup removes the trust setting alongside the Keychain.
