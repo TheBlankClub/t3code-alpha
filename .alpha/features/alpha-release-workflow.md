@@ -61,11 +61,13 @@ upstream's official release, hosted-web, AUR, or npm publication paths.
   the identity on macOS 15 runners, grant the named key Apple's non-interactive signing partitions,
   verify it against the committed public certificate, trust the self-signed certificate as a root in
   the admin domain so it passes trust evaluation, prove non-interactive signing with a throwaway
-  executable, assert a trust-valid signing identity, sign the bundle, and delete both that Keychain
-  and the trust setting after artifact upload. The trust mutation is non-interactive because it runs
-  under `sudo` against the System Keychain, and it is deliberately not scoped to a policy. A
-  partition-list command failure is advisory because the signing probe is the authoritative access
-  check.
+  executable, assert a trust-valid signing identity, sign the bundle, and delete that Keychain after
+  artifact upload. The trust mutation is non-interactive because it runs under `sudo` against the
+  System Keychain, and it is deliberately not scoped to a policy. The trust setting is intentionally
+  not reverted, because `remove-trusted-cert` hangs on interactive authorization and hosted runners
+  discard the System Keychain with the VM. Keychain cleanup is bounded so it can never strand a
+  finished build. A partition-list command failure is advisory because the signing probe is the
+  authoritative access check.
 - `docs/operations/alpha-release.md` records the one-time npm, GitHub App, Homebrew,
   branch-protection, and first-release gates.
 - `scripts/resolve-alpha-release.ts` reuses upstream's next-patch version calculation and adds the
@@ -123,4 +125,11 @@ upstream's official release, hosted-web, AUR, or npm publication paths.
   electron-builder's identity lookup passes no policy and a scoped setting would not apply to it.
   The signing probe alone could not catch this, since `codesign --sign` succeeds with an untrusted
   certificate; the step now also asserts the identity through `security find-identity -v`, the same
-  lookup electron-builder performs. Cleanup removes the trust setting alongside the Keychain.
+  lookup electron-builder performs.
+- 2026-08-16, local Alpha delta: dropped the `remove-trusted-cert` cleanup added with that change
+  and bounded the remaining Keychain cleanup. Both macOS jobs signed and verified correctly, then
+  stalled in cleanup for minutes: `remove-trusted-cert` accepts no keychain argument and blocks on
+  interactive authorization even under `sudo`, and `|| true` cannot rescue a hang. With no step
+  timeout the job would have stranded a finished, uploaded build until the 45-minute job timeout.
+  Hosted runners are ephemeral, so the System Keychain and its trust setting are destroyed with the
+  VM and the command bought nothing. Any future cleanup command stays bounded by `timeout-minutes`.
