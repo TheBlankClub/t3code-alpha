@@ -286,11 +286,6 @@ jobs:
             -k "$signing_keychain" \
             -P "$ALPHA_MAC_SIGNING_P12_PASSWORD" \
             -T /usr/bin/codesign
-          security set-key-partition-list \
-            -S apple-tool:,apple: \
-            -s \
-            -k "$signing_keychain_password" \
-            "$signing_keychain"
 
           expected_fingerprint="$(openssl x509 \
             -inform der \
