@@ -282,6 +282,9 @@ jobs:
           security create-keychain -p "$signing_keychain_password" "$signing_keychain"
           security set-keychain-settings -lut 21600 "$signing_keychain"
           security unlock-keychain -p "$signing_keychain_password" "$signing_keychain"
+          # macOS 15 runners resolve signing identities through the user keychain
+          # search list; codesign --keychain alone cannot see the imported identity.
+          security list-keychains -d user -s "$signing_keychain" login.keychain
           security import "$signing_p12" \
             -k "$signing_keychain" \
             -P "$ALPHA_MAC_SIGNING_P12_PASSWORD" \

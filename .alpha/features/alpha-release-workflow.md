@@ -57,8 +57,9 @@ upstream's official release, hosted-web, AUR, or npm publication paths.
   hosted runners and fork-owned release destinations, with CI-success, stale-SHA, duplicate-tag,
   and failure-escalation gates.
 - macOS jobs import the private release identity into an ephemeral Keychain with an explicit
-  `/usr/bin/codesign` ACL, grant the named key Apple's non-interactive signing partitions, verify it
-  against the committed public certificate, prove non-interactive signing with a throwaway
+  `/usr/bin/codesign` ACL, register that Keychain in the user search list so `codesign` can resolve
+  the identity on macOS 15 runners, grant the named key Apple's non-interactive signing partitions,
+  verify it against the committed public certificate, prove non-interactive signing with a throwaway
   executable, sign the bundle, and delete that Keychain after artifact upload. They do not mutate
   macOS trust settings. A partition-list command failure is advisory because the signing probe is
   the authoritative access check.
@@ -102,3 +103,9 @@ upstream's official release, hosted-web, AUR, or npm publication paths.
   proved that the import ACL alone did not grant non-interactive private-key access. The command now
   targets only the named Alpha key and treats its unreliable exit status as advisory; the bounded
   signing probe remains the authoritative release gate.
+- 2026-08-16, local Alpha delta: registered the ephemeral signing Keychain in the user keychain
+  search list. On macOS 15 hosted runners `codesign --keychain` does not consult keychains outside
+  the search list, so every signing probe failed with `errSecItemNotFound` ("The specified item
+  could not be found in the keychain") regardless of partition-list state; the same lookup rule
+  applies to electron-builder's `CSC_KEYCHAIN` signing. Deleting the Keychain in cleanup also
+  removes it from the search list.

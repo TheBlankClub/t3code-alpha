@@ -90,6 +90,7 @@ describe("Alpha workflow contracts", () => {
     assert.isDefined(signingStep);
     assert.strictEqual(signingStep["timeout-minutes"], 5);
     assert.notInclude(signingStep.run, "security add-trusted-cert");
+    assert.include(signingStep.run, 'security list-keychains -d user -s "$signing_keychain"');
     assert.include(signingStep.run, "security set-key-partition-list");
     assert.include(signingStep.run, '-l "T3 Code Alpha Release Signing"');
     assert.include(signingStep.run, "continuing to the signing probe");
