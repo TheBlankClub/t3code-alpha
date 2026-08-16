@@ -262,6 +262,7 @@ jobs:
 
       - name: Install persistent Alpha macOS signing identity
         if: matrix.platform == 'mac'
+        timeout-minutes: 5
         shell: bash
         env:
           ALPHA_MAC_SIGNING_P12_BASE64: ${{ secrets.ALPHA_MAC_SIGNING_P12_BASE64 }}
@@ -290,11 +291,6 @@ jobs:
             -s \
             -k "$signing_keychain_password" \
             "$signing_keychain"
-          security add-trusted-cert \
-            -r trustRoot \
-            -p codeSign \
-            -k "$signing_keychain" \
-            assets/alpha/signing/t3code-alpha-release-signing.cer
 
           expected_fingerprint="$(openssl x509 \
             -inform der \
@@ -302,8 +298,22 @@ jobs:
             -noout \
             -fingerprint \
             -sha1 | cut -d= -f2 | tr -d ':')"
-          security find-identity -v -p codesigning "$signing_keychain" \
-            | grep -Fq "$expected_fingerprint \"T3 Code Alpha Release Signing\""
+          security find-certificate -a -Z "$signing_keychain" \
+            | grep -Fq "SHA-1 hash: $expected_fingerprint"
+
+          signing_probe="$RUNNER_TEMP/t3code-alpha-signing-probe"
+          cp /usr/bin/true "$signing_probe"
+          codesign --force \
+            --keychain "$signing_keychain" \
+            --sign "T3 Code Alpha Release Signing" \
+            "$signing_probe"
+          probe_requirement="=certificate leaf = H\"$expected_fingerprint\""
+          codesign --verify \
+            --strict \
+            --verbose=2 \
+            --test-requirement "$probe_requirement" \
+            "$signing_probe"
+          rm -f "$signing_probe" "$signing_p12"
 
           echo "CSC_KEYCHAIN=$signing_keychain" >> "$GITHUB_ENV"
           echo "ALPHA_MAC_SIGNING_IDENTITY=T3 Code Alpha Release Signing" >> "$GITHUB_ENV"
