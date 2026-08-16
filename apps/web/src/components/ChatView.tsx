@@ -3037,6 +3037,7 @@ function ChatViewContent(props: ChatViewProps) {
             env: runtimeEnv,
             cols: SCRIPT_TERMINAL_COLS,
             rows: SCRIPT_TERMINAL_ROWS,
+            initialCommand: script.command,
           }
         : {
             threadId: activeThreadId,
@@ -3044,6 +3045,7 @@ function ChatViewContent(props: ChatViewProps) {
             cwd: targetCwd,
             ...(targetWorktreePath !== null ? { worktreePath: targetWorktreePath } : {}),
             env: runtimeEnv,
+            initialCommand: script.command,
           };
 
       if (shouldCreateNewTerminal) {
@@ -3064,20 +3066,25 @@ function ChatViewContent(props: ChatViewProps) {
         return;
       }
 
-      const writeResult = await writeTerminal({
-        environmentId,
-        input: {
-          threadId: activeThreadId,
-          terminalId: targetTerminalId,
-          data: `${script.command}\r`,
-        },
-      });
-      if (writeResult._tag === "Failure" && !isAtomCommandInterrupted(writeResult)) {
-        const error = squashAtomCommandFailure(writeResult);
-        setThreadError(
-          activeThreadId,
-          error instanceof Error ? error.message : `Failed to run script "${script.name}".`,
-        );
+      // Older remote servers ignore the optional initialCommand field. Keep
+      // project actions working across version skew, even though only newer
+      // servers can avoid the fresh-shell startup race.
+      if (openResult.value.initialCommandHandled !== true) {
+        const writeResult = await writeTerminal({
+          environmentId,
+          input: {
+            threadId: activeThreadId,
+            terminalId: targetTerminalId,
+            data: `${script.command}\r`,
+          },
+        });
+        if (writeResult._tag === "Failure" && !isAtomCommandInterrupted(writeResult)) {
+          const error = squashAtomCommandFailure(writeResult);
+          setThreadError(
+            activeThreadId,
+            error instanceof Error ? error.message : `Failed to run script "${script.name}".`,
+          );
+        }
       }
     },
     [
