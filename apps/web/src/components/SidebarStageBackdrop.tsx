@@ -5,8 +5,8 @@ import { APP_STAGE_LABEL } from "../branding";
 import { resolveServerBackedAppStageLabel } from "../branding.logic";
 import { primaryServerConfigAtom } from "../state/server";
 
-export type SidebarStageBackdropVariant = "nightly" | "dev";
-export type EnvironmentIdentificationPillLabel = "Dev" | "Nightly";
+export type SidebarStageBackdropVariant = "alpha" | "nightly" | "dev";
+export type EnvironmentIdentificationPillLabel = "Alpha" | "Dev" | "Nightly";
 
 // A wide viewBox keeps the 96-unit art height at a fixed scale while sidebar resizing reveals
 // more horizontal canvas instead of zooming the scene.
@@ -18,6 +18,7 @@ export function resolveSidebarStageBackdropVariant(
 ): SidebarStageBackdropVariant | null {
   if (!enabled) return null;
   const normalized = stageLabel.trim().toLowerCase();
+  if (normalized === "alpha") return "alpha";
   if (normalized === "nightly") return "nightly";
   if (normalized === "dev") return "dev";
   return null;
@@ -26,6 +27,7 @@ export function resolveSidebarStageBackdropVariant(
 export function resolveSidebarStageFocusRingOffsetClass(
   variant: SidebarStageBackdropVariant,
 ): string {
+  if (variant === "alpha") return "focus-visible:ring-offset-(--stage-alpha-bottom)";
   return variant === "nightly"
     ? "focus-visible:ring-offset-(--stage-night-bottom)"
     : "focus-visible:ring-offset-(--stage-art-bottom)";
@@ -35,6 +37,7 @@ export function resolveEnvironmentIdentificationPillLabel(
   stageLabel: string,
 ): EnvironmentIdentificationPillLabel | null {
   const normalized = stageLabel.trim().toLowerCase();
+  if (normalized === "alpha") return "Alpha";
   if (normalized === "dev") return "Dev";
   if (normalized === "nightly") return "Nightly";
   return null;
@@ -67,11 +70,136 @@ export function SidebarStageBackdrop({ variant }: { variant: SidebarStageBackdro
 }
 
 export function StageBackdropArt({ variant }: { variant: SidebarStageBackdropVariant }) {
+  if (variant === "alpha") return <AlphaDraftingArt />;
   return variant === "nightly" ? <NightlySkyArt /> : <DevBlueprintArt />;
 }
 
 export function StageBackdropButtonArt({ variant }: { variant: SidebarStageBackdropVariant }) {
+  if (variant === "alpha") return <AlphaDraftingArt compact />;
   return variant === "nightly" ? <NightlySkyArt compact /> : <DevBlueprintArt compact />;
+}
+
+function AlphaDraftingArt({ compact = false }: { compact?: boolean }) {
+  const idPrefix = useId().replaceAll(":", "");
+  const surfaceId = `${idPrefix}-stage-alpha-surface`;
+  const emberGlowId = `${idPrefix}-stage-alpha-ember-glow`;
+  const coalGlowId = `${idPrefix}-stage-alpha-coal-glow`;
+  const minorGridId = `${idPrefix}-stage-alpha-grid-minor`;
+  const majorGridId = `${idPrefix}-stage-alpha-grid-major`;
+  const glowsId = `${idPrefix}-stage-alpha-glows`;
+  const calibrationId = `${idPrefix}-stage-alpha-calibration`;
+
+  return (
+    <svg
+      className="stage-art stage-alpha h-full w-full"
+      fill="none"
+      preserveAspectRatio="xMinYMin slice"
+      viewBox={compact ? "112 0 8192 96" : STAGE_BACKDROP_VIEW_BOX}
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <defs>
+        <linearGradient
+          id={surfaceId}
+          x1="36"
+          y1="0"
+          x2="284"
+          y2="96"
+          gradientUnits="userSpaceOnUse"
+          spreadMethod="reflect"
+        >
+          <stop style={{ stopColor: "var(--stage-alpha-bottom)" }} />
+          <stop offset="0.5" style={{ stopColor: "var(--stage-alpha-mid)" }} />
+          <stop offset="1" style={{ stopColor: "var(--stage-alpha-top)" }} />
+        </linearGradient>
+        <radialGradient
+          id={emberGlowId}
+          cx="0"
+          cy="0"
+          r="1"
+          gradientTransform="translate(210 12) rotate(145) scale(156 86)"
+          gradientUnits="userSpaceOnUse"
+        >
+          <stop style={{ stopColor: "var(--stage-alpha-glow)" }} stopOpacity="0.36" />
+          <stop offset="0.48" style={{ stopColor: "var(--stage-alpha-coal)" }} stopOpacity="0.14" />
+          <stop offset="1" style={{ stopColor: "var(--stage-alpha-bottom)" }} stopOpacity="0" />
+        </radialGradient>
+        <radialGradient
+          id={coalGlowId}
+          cx="0"
+          cy="0"
+          r="1"
+          gradientTransform="translate(30 104) rotate(-28) scale(132 72)"
+          gradientUnits="userSpaceOnUse"
+        >
+          <stop style={{ stopColor: "var(--stage-alpha-coal)" }} stopOpacity="0.22" />
+          <stop offset="1" style={{ stopColor: "var(--stage-alpha-bottom)" }} stopOpacity="0" />
+        </radialGradient>
+        <pattern id={minorGridId} width="8" height="8" patternUnits="userSpaceOnUse">
+          <path
+            d="M8 0H0V8"
+            style={{ stroke: "var(--stage-alpha-grid-line)" }}
+            strokeOpacity="0.16"
+            strokeWidth="0.45"
+          />
+        </pattern>
+        <pattern id={majorGridId} width="32" height="32" patternUnits="userSpaceOnUse">
+          <path
+            d="M32 0H0V32"
+            style={{ stroke: "var(--stage-alpha-grid-line)" }}
+            strokeOpacity="0.3"
+            strokeWidth="0.6"
+          />
+        </pattern>
+        <pattern id={glowsId} width="768" height="96" patternUnits="userSpaceOnUse">
+          <rect width="768" height="96" fill={`url(#${emberGlowId})`} />
+          <rect width="768" height="96" fill={`url(#${coalGlowId})`} />
+        </pattern>
+        <pattern id={calibrationId} width="768" height="96" patternUnits="userSpaceOnUse">
+          <g
+            style={{ stroke: "var(--stage-alpha-line)" }}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <g strokeOpacity="0.72" strokeWidth="0.65">
+              <path d="M76 18H238" strokeDasharray="6 4" />
+              <path d="M76 14V22M238 14V22" />
+              <path d="M62 34V82" strokeDasharray="5 4" />
+              <path d="M58 34H66M58 82H66" />
+              <path d="M318 70H450" strokeDasharray="7 5" />
+              <path d="M318 66V74M450 66V74" />
+            </g>
+            <g strokeOpacity="0.46" strokeWidth="0.55">
+              <circle cx="164" cy="58" r="27" strokeDasharray="5 4" />
+              <path d="M164 25V91M131 58H197" strokeDasharray="3 4" />
+              <circle cx="164" cy="58" r="2.2" />
+              <path d="M151 58A13 13 0 0 1 177 58" strokeOpacity="0.78" />
+              <circle cx="544" cy="35" r="18" strokeDasharray="4 5" />
+              <path d="M544 12V58M521 35H567" strokeDasharray="3 4" />
+            </g>
+            <g strokeOpacity="0.78" strokeWidth="0.7">
+              <path d="M28 24H36M32 20V28" />
+              <path d="M268 45L274 51M274 45L268 51" />
+              <path d="M478 20H486M482 16V24" />
+              <path d="M624 72L630 78M630 72L624 78" />
+              <path d="M706 29H714M710 25V33" />
+            </g>
+          </g>
+          <g style={{ fill: "var(--stage-alpha-line)" }} fillOpacity="0.42">
+            <circle cx="42" cy="70" r="0.8" />
+            <circle cx="286" cy="15" r="0.7" />
+            <circle cx="466" cy="82" r="0.75" />
+            <circle cx="684" cy="18" r="0.8" />
+          </g>
+        </pattern>
+      </defs>
+
+      <rect width="100%" height="96" fill={`url(#${surfaceId})`} />
+      <rect width="100%" height="96" fill={`url(#${glowsId})`} />
+      <rect width="100%" height="96" fill={`url(#${minorGridId})`} />
+      <rect width="100%" height="96" fill={`url(#${majorGridId})`} />
+      <rect width="100%" height="96" fill={`url(#${calibrationId})`} />
+    </svg>
+  );
 }
 
 const NIGHTLY_STARS: ReadonlyArray<{
