@@ -89,7 +89,14 @@ describe("Alpha workflow contracts", () => {
 
     assert.isDefined(signingStep);
     assert.strictEqual(signingStep["timeout-minutes"], 5);
-    assert.notInclude(signingStep.run, "security add-trusted-cert");
+    // Trust must be established non-interactively: `sudo` plus the admin domain
+    // avoids the authorization prompt that once hung this step, and the setting
+    // must stay policy-unscoped so electron-builder's bare `find-identity -v`
+    // lookup still sees the identity as valid.
+    assert.include(signingStep.run, "sudo security add-trusted-cert");
+    assert.include(signingStep.run, "-k /Library/Keychains/System.keychain");
+    assert.notInclude(signingStep.run, "-p codeSign");
+    assert.include(signingStep.run, 'security find-identity -v "$signing_keychain"');
     assert.include(signingStep.run, 'security list-keychains -d user -s "$signing_keychain"');
     assert.include(signingStep.run, "security set-key-partition-list");
     assert.include(signingStep.run, '-l "T3 Code Alpha Release Signing"');
@@ -101,7 +108,7 @@ describe("Alpha workflow contracts", () => {
 
     assert.include(workflow, "ALPHA_MAC_SIGNING_P12_BASE64");
     assert.include(workflow, "ALPHA_MAC_SIGNING_P12_PASSWORD");
-    assert.notInclude(workflow, "security add-trusted-cert");
+    assert.include(workflow, "sudo security remove-trusted-cert");
     assert.include(workflow, "security create-keychain");
     assert.include(workflow, "security import");
     assert.include(workflow, "--mac-signing-identity");
