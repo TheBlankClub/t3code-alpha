@@ -286,6 +286,13 @@ jobs:
             -k "$signing_keychain" \
             -P "$ALPHA_MAC_SIGNING_P12_PASSWORD" \
             -T /usr/bin/codesign
+          if ! security set-key-partition-list \
+            -S apple-tool:,apple: \
+            -l "T3 Code Alpha Release Signing" \
+            -k "$signing_keychain_password" \
+            "$signing_keychain"; then
+            echo "::warning::Could not confirm the imported key's partition list; continuing to the signing probe."
+          fi
 
           expected_fingerprint="$(openssl x509 \
             -inform der \
