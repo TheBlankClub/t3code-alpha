@@ -57,7 +57,8 @@ upstream's official release, hosted-web, AUR, or npm publication paths.
   hosted runners and fork-owned release destinations, with CI-success, stale-SHA, duplicate-tag,
   and failure-escalation gates.
 - macOS jobs import the private release identity into an ephemeral Keychain, verify it against the
-  committed public certificate, sign the bundle, and delete that Keychain after artifact upload.
+  committed public certificate, prove non-interactive signing with a throwaway executable, sign the
+  bundle, and delete that Keychain after artifact upload. They do not mutate macOS trust settings.
 - `docs/operations/alpha-release.md` records the one-time npm, GitHub App, Homebrew,
   branch-protection, and first-release gates.
 - `scripts/resolve-alpha-release.ts` reuses upstream's next-patch version calculation and adds the
@@ -91,3 +92,6 @@ upstream's official release, hosted-web, AUR, or npm publication paths.
 - 2026-08-16, upstream `2f486ab80c748b4d8e3d3b17e49b5a327cb93335`: `unaffected`; adopted the
   incoming web theme behavior through merge ancestry without changing Alpha CI, packaging, npm,
   GitHub prerelease, or Homebrew publication responsibilities.
+- 2026-08-16, local Alpha delta: removed the interactive trust-settings mutation from macOS signing
+  setup, added a bounded signing probe, and capped identity installation at five minutes so both
+  macOS architectures fail promptly instead of blocking until the job timeout.
