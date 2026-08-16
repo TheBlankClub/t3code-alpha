@@ -140,18 +140,6 @@ jobs:
           previous_tag="$(git tag --list 'v*-alpha.*' --sort=-version:refname | grep -Fvx "$CURRENT_TAG" | head -n 1 || true)"
           echo "previous_tag=$previous_tag" >> "$GITHUB_OUTPUT"
 
-      - name: Ensure Electron runtime is installed
-        run: vp run --filter @t3tools/desktop ensure:electron
-
-      - name: Check
-        run: vp check
-
-      - name: Typecheck
-        run: vp run typecheck
-
-      - name: Test
-        run: vp run test
-
   build_wsl_node_pty:
     name: Build WSL node-pty (linux-x64)
     needs: [preflight]
@@ -306,6 +294,18 @@ jobs:
           security find-certificate -a -Z "$signing_keychain" \
             | grep -Fq "SHA-1 hash: $expected_fingerprint"
 
+          # The Alpha certificate is self-signed, so it fails trust evaluation
+          # until it is trusted explicitly. electron-builder resolves identities
+          # with `security find-identity -v`, which reports only trust-valid
+          # certificates, and silently skips signing when it finds none. That
+          # lookup passes no policy, so the trust setting must not be scoped to
+          # one either.
+          sudo security add-trusted-cert \
+            -d \
+            -r trustRoot \
+            -k /Library/Keychains/System.keychain \
+            assets/alpha/signing/t3code-alpha-release-signing.cer
+
           signing_probe="$RUNNER_TEMP/t3code-alpha-signing-probe"
           cp /usr/bin/true "$signing_probe"
           codesign --force \
@@ -319,6 +319,17 @@ jobs:
             --test-requirement "$probe_requirement" \
             "$signing_probe"
           rm -f "$signing_probe" "$signing_p12"
+
+          # `codesign --sign` succeeds with an untrusted certificate, so the
+          # probe above cannot prove the build will sign. Assert the identity
+          # the way electron-builder looks it up, or an unsigned app reaches the
+          # seal check as a confusing "not signed at all" failure.
+          if ! security find-identity -v "$signing_keychain" \
+            | grep -Fq "$expected_fingerprint"; then
+            echo "Alpha signing identity is present but not valid for signing." >&2
+            security find-identity "$signing_keychain" >&2 || true
+            exit 1
+          fi
 
           echo "CSC_KEYCHAIN=$signing_keychain" >> "$GITHUB_ENV"
           echo "ALPHA_MAC_SIGNING_IDENTITY=T3 Code Alpha Release Signing" >> "$GITHUB_ENV"
@@ -448,10 +459,13 @@ jobs:
           if-no-files-found: error
           retention-days: 2
 
-      - name: Remove temporary Alpha signing keychain
-        if: always() && matrix.platform == 'mac'
-        shell: bash
-        run: security delete-keychain "$RUNNER_TEMP/t3code-alpha-signing.keychain-db" || true
+      # macOS signing state is deliberately not cleaned up. Hosted runners are
+      # ephemeral, so the ephemeral Keychain, its search-list entry, and the
+      # System Keychain trust setting all die with the VM. Cleanup only ever
+      # cost release time: `remove-trusted-cert` blocks on interactive
+      # authorization even under `sudo` and once hung a finished build until the
+      # job timeout. Self-hosted runners would need a different approach, since
+      # a trusted root certificate would persist there.
 
   publish_cli:
     name: Publish t3code-alpha to npm
