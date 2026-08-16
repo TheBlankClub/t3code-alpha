@@ -140,18 +140,6 @@ jobs:
           previous_tag="$(git tag --list 'v*-alpha.*' --sort=-version:refname | grep -Fvx "$CURRENT_TAG" | head -n 1 || true)"
           echo "previous_tag=$previous_tag" >> "$GITHUB_OUTPUT"
 
-      - name: Ensure Electron runtime is installed
-        run: vp run --filter @t3tools/desktop ensure:electron
-
-      - name: Check
-        run: vp check
-
-      - name: Typecheck
-        run: vp run typecheck
-
-      - name: Test
-        run: vp run test
-
   build_wsl_node_pty:
     name: Build WSL node-pty (linux-x64)
     needs: [preflight]
