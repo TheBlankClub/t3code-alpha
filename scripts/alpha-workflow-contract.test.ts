@@ -71,10 +71,33 @@ describe("Alpha workflow contracts", () => {
   });
 
   it("signs macOS releases with the persistent Alpha identity", () => {
+    const parsedWorkflow = readWorkflow("release-alpha.yml") as {
+      readonly jobs: {
+        readonly build: {
+          readonly steps: ReadonlyArray<{
+            readonly name?: string;
+            readonly "timeout-minutes"?: number;
+            readonly run?: string;
+          }>;
+        };
+      };
+    };
     const workflow = rawWorkflow("release-alpha.yml");
+    const signingStep = parsedWorkflow.jobs.build.steps.find(
+      (step) => step.name === "Install persistent Alpha macOS signing identity",
+    );
+
+    assert.isDefined(signingStep);
+    assert.strictEqual(signingStep["timeout-minutes"], 5);
+    assert.notInclude(signingStep.run, "security add-trusted-cert");
+    assert.include(signingStep.run, "security find-certificate");
+    assert.include(signingStep.run, "t3code-alpha-signing-probe");
+    assert.include(signingStep.run, "codesign --force");
+    assert.include(signingStep.run, '--test-requirement "$probe_requirement"');
 
     assert.include(workflow, "ALPHA_MAC_SIGNING_P12_BASE64");
     assert.include(workflow, "ALPHA_MAC_SIGNING_P12_PASSWORD");
+    assert.notInclude(workflow, "security add-trusted-cert");
     assert.include(workflow, "security create-keychain");
     assert.include(workflow, "security import");
     assert.include(workflow, "--mac-signing-identity");
