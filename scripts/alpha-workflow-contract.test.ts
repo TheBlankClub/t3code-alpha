@@ -86,15 +86,6 @@ describe("Alpha workflow contracts", () => {
     const signingStep = parsedWorkflow.jobs.build.steps.find(
       (step) => step.name === "Install persistent Alpha macOS signing identity",
     );
-    const cleanupStep = parsedWorkflow.jobs.build.steps.find(
-      (step) => step.name === "Remove temporary Alpha signing keychain",
-    );
-
-    // Keychain cleanup runs after artifacts are uploaded, so an unbounded
-    // command there strands a finished build until the job timeout.
-    assert.isDefined(cleanupStep);
-    assert.strictEqual(cleanupStep["timeout-minutes"], 2);
-
     assert.isDefined(signingStep);
     assert.strictEqual(signingStep["timeout-minutes"], 5);
     // Trust must be established non-interactively: `sudo` plus the admin domain
@@ -116,9 +107,11 @@ describe("Alpha workflow contracts", () => {
 
     assert.include(workflow, "ALPHA_MAC_SIGNING_P12_BASE64");
     assert.include(workflow, "ALPHA_MAC_SIGNING_P12_PASSWORD");
-    // `remove-trusted-cert` hangs on interactive authorization and must not come
-    // back; the ephemeral runner discards the trust setting with the VM.
+    // Signing state is never cleaned up: the ephemeral runner discards it, and
+    // `remove-trusted-cert` hangs on interactive authorization. Neither command
+    // may come back, and post-upload cleanup must not reappear at all.
     assert.notInclude(workflow, "security remove-trusted-cert");
+    assert.notInclude(workflow, "security delete-keychain");
     assert.include(workflow, "security create-keychain");
     assert.include(workflow, "security import");
     assert.include(workflow, "--mac-signing-identity");

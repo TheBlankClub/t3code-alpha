@@ -459,16 +459,13 @@ jobs:
           if-no-files-found: error
           retention-days: 2
 
-      # The trust setting is deliberately left in place. `remove-trusted-cert`
-      # takes no keychain argument and blocks on interactive authorization even
-      # under `sudo`, which hangs the job until its timeout. Hosted runners are
-      # ephemeral, so the System Keychain is destroyed with the VM anyway. The
-      # bounded timeout keeps any future cleanup command from hanging a release.
-      - name: Remove temporary Alpha signing keychain
-        if: always() && matrix.platform == 'mac'
-        timeout-minutes: 2
-        shell: bash
-        run: security delete-keychain "$RUNNER_TEMP/t3code-alpha-signing.keychain-db" || true
+      # macOS signing state is deliberately not cleaned up. Hosted runners are
+      # ephemeral, so the ephemeral Keychain, its search-list entry, and the
+      # System Keychain trust setting all die with the VM. Cleanup only ever
+      # cost release time: `remove-trusted-cert` blocks on interactive
+      # authorization even under `sudo` and once hung a finished build until the
+      # job timeout. Self-hosted runners would need a different approach, since
+      # a trusted root certificate would persist there.
 
   publish_cli:
     name: Publish t3code-alpha to npm
