@@ -3,7 +3,7 @@ id: restore-reverted-message-to-composer
 status: active
 risk: amber
 introduced_by: a47276a40
-last_reconciled_with: 2f486ab80c748b4d8e3d3b17e49b5a327cb93335
+last_reconciled_with: a4cc1367b03ee0c1dc2b50fceac81ef5e63212e2
 upstream_issue: pingdotgg/t3code#5685
 upstream_pr: pingdotgg/t3code#6044
 surfaces:
@@ -42,3 +42,5 @@ Let users edit and resend a reverted prompt instead of recreating its text and i
 - 2026-08-16, upstream `2f486ab80c748b4d8e3d3b17e49b5a327cb93335`: added the current upstream
   PR implementation as a temporary Alpha carry patch; no existing Alpha feature overlaps its
   composer or thread-reducer behavior.
+- 2026-08-17, upstream `a4cc1367b03ee0c1dc2b50fceac81ef5e63212e2`: `unaffected`; automated safe-sync classification
+  found no Alpha-delta overlap or protected-path changes. Required PR CI remained the merge gate.

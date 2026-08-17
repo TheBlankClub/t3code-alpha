@@ -3,7 +3,7 @@ id: alpha-update-channel
 status: active
 risk: red
 introduced_by: alpha-update-channel
-last_reconciled_with: 2f486ab80c748b4d8e3d3b17e49b5a327cb93335
+last_reconciled_with: a4cc1367b03ee0c1dc2b50fceac81ef5e63212e2
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -89,3 +89,5 @@ automatic updater.
 - 2026-08-16, upstream `2f486ab80c748b4d8e3d3b17e49b5a327cb93335`: `unaffected`; adopted
   upstream's restored dark palette and simplified advanced theme families while retaining Alpha's
   updater channel, release feed, fixed Settings track, and artwork branding.
+- 2026-08-17, upstream `a4cc1367b03ee0c1dc2b50fceac81ef5e63212e2`: `unaffected`; automated safe-sync classification
+  found no Alpha-delta overlap or protected-path changes. Required PR CI remained the merge gate.
