@@ -3,7 +3,7 @@ id: project-action-terminal-startup
 status: active
 risk: amber
 introduced_by: 438019e36
-last_reconciled_with: 2f486ab80c748b4d8e3d3b17e49b5a327cb93335
+last_reconciled_with: a4cc1367b03ee0c1dc2b50fceac81ef5e63212e2
 upstream_issue: pingdotgg/t3code#6337
 upstream_pr: pingdotgg/t3code#6338
 surfaces:
@@ -46,3 +46,5 @@ is still initializing.
 - 2026-08-16, upstream `2f486ab80c748b4d8e3d3b17e49b5a327cb93335`: added the current upstream
   PR implementation as a temporary Alpha carry patch; the existing Alpha terminal-related release
   note does not overlap this runtime behavior.
+- 2026-08-17, upstream `a4cc1367b03ee0c1dc2b50fceac81ef5e63212e2`: `unaffected`; automated safe-sync classification
+  found no Alpha-delta overlap or protected-path changes. Required PR CI remained the merge gate.

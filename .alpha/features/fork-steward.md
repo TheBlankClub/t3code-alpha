@@ -3,7 +3,7 @@ id: fork-steward
 status: active
 risk: green
 introduced_by: alpha-foundation
-last_reconciled_with: 2f486ab80c748b4d8e3d3b17e49b5a327cb93335
+last_reconciled_with: a4cc1367b03ee0c1dc2b50fceac81ef5e63212e2
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -53,3 +53,5 @@ retiring fork code when upstream provides an equivalent or better implementation
 - 2026-08-16, upstream `2f486ab80c748b4d8e3d3b17e49b5a327cb93335`: `unaffected`; adopted the
   upstream theme fixes unchanged while retaining the feature ledger, semantic conflict policy,
   release gates, and reconciliation tooling.
+- 2026-08-17, upstream `a4cc1367b03ee0c1dc2b50fceac81ef5e63212e2`: `unaffected`; automated safe-sync classification
+  found no Alpha-delta overlap or protected-path changes. Required PR CI remained the merge gate.

@@ -3,7 +3,7 @@ id: newest-agents-first
 status: active
 risk: green
 introduced_by: newest-agents-first
-last_reconciled_with: cd096b9ad5a4156ffeab85de617cbb219057007f
+last_reconciled_with: a4cc1367b03ee0c1dc2b50fceac81ef5e63212e2
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -39,3 +39,5 @@ users scroll past older agents.
 - 2026-08-17, upstream `cd096b9ad5a4156ffeab85de617cbb219057007f`: `unaffected`; current
   upstream still orders direct agents oldest-first and incoming changes do not touch the subagent
   runtime or Agents panel.
+- 2026-08-17, upstream `a4cc1367b03ee0c1dc2b50fceac81ef5e63212e2`: `unaffected`; automated safe-sync classification
+  found no Alpha-delta overlap or protected-path changes. Required PR CI remained the merge gate.

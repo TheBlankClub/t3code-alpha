@@ -3,7 +3,7 @@ id: alpha-release-workflow
 status: active
 risk: red
 introduced_by: alpha-release-workflow
-last_reconciled_with: 2f486ab80c748b4d8e3d3b17e49b5a327cb93335
+last_reconciled_with: a4cc1367b03ee0c1dc2b50fceac81ef5e63212e2
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -153,3 +153,5 @@ upstream's official release, hosted-web, AUR, or npm publication paths.
   removal, since Preflight never re-ran `release_smoke`, `mobile_native_static_analysis`,
   `cargo test`, or `build:desktop`. Closing that gap means teaching the gate to require a green CI
   conclusion for the release SHA on every trigger.
+- 2026-08-17, upstream `a4cc1367b03ee0c1dc2b50fceac81ef5e63212e2`: `unaffected`; automated safe-sync classification
+  found no Alpha-delta overlap or protected-path changes. Required PR CI remained the merge gate.
