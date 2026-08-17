@@ -840,11 +840,11 @@ export function deriveAgentPanelModel({
 
   return {
     workflows: workflowGroups,
-    // Updates and the >100-agent retention ranking must never reshuffle rows
-    // that remain visible.
+    // New spawns stay at the top; updates and the >100-agent retention ranking
+    // must never reshuffle rows that remain visible.
     directAgents: direct
       .slice()
-      .sort((a, b) => a.firstSeenAt.localeCompare(b.firstSeenAt) || a.id.localeCompare(b.id)),
+      .sort((a, b) => b.firstSeenAt.localeCompare(a.firstSeenAt) || b.id.localeCompare(a.id)),
     runningCount,
     waitingCount,
     idleCount,
