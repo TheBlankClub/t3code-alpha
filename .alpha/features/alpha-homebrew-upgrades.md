@@ -3,7 +3,7 @@ id: alpha-homebrew-upgrades
 status: active
 risk: red
 introduced_by: alpha-homebrew-upgrades
-last_reconciled_with: a4cc1367b03ee0c1dc2b50fceac81ef5e63212e2
+last_reconciled_with: cebac353defde6211c9e8c3d8ecd140c92042930
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -70,4 +70,6 @@ Developer account or a separate package-hosting service.
 - 2026-08-16, local Alpha delta: replaced per-upgrade ad-hoc signing with a persistent self-signed
   release identity. Homebrew now verifies the pinned identity and never changes the app seal.
 - 2026-08-17, upstream `a4cc1367b03ee0c1dc2b50fceac81ef5e63212e2`: `unaffected`; automated safe-sync classification
+  found no Alpha-delta overlap or protected-path changes. Required PR CI remained the merge gate.
+- 2026-08-18, upstream `cebac353defde6211c9e8c3d8ecd140c92042930`: `unaffected`; automated safe-sync classification
   found no Alpha-delta overlap or protected-path changes. Required PR CI remained the merge gate.
