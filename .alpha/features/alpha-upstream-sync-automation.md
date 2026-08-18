@@ -3,7 +3,7 @@ id: alpha-upstream-sync-automation
 status: active
 risk: red
 introduced_by: alpha-upstream-sync-automation
-last_reconciled_with: a4cc1367b03ee0c1dc2b50fceac81ef5e63212e2
+last_reconciled_with: cebac353defde6211c9e8c3d8ecd140c92042930
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -69,4 +69,6 @@ reconciliation claims about Alpha-only features.
 - 2026-08-16, upstream `2f486ab80c748b4d8e3d3b17e49b5a327cb93335`: `unaffected`; retained the
   six-hour fork sync workflow, protected-surface policy, journal gate, and merge-ancestry model.
 - 2026-08-17, upstream `a4cc1367b03ee0c1dc2b50fceac81ef5e63212e2`: `unaffected`; automated safe-sync classification
+  found no Alpha-delta overlap or protected-path changes. Required PR CI remained the merge gate.
+- 2026-08-18, upstream `cebac353defde6211c9e8c3d8ecd140c92042930`: `unaffected`; automated safe-sync classification
   found no Alpha-delta overlap or protected-path changes. Required PR CI remained the merge gate.
