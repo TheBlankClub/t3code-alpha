@@ -3,7 +3,7 @@ id: alpha-distribution-identity
 status: active
 risk: red
 introduced_by: alpha-distribution-identity
-last_reconciled_with: f708f63fa9bcd7e51f1f62531f6f9ed966b71807
+last_reconciled_with: beab6886f45bf42906d0bd01aefe5dfe9e66a867
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -88,3 +88,5 @@ identity.
   adopted upstream's macOS LaunchAgent service model while deriving its label from Alpha's isolated
   application ID. Incoming desktop lifecycle and passkey changes do not alter Alpha state,
   protocol, packaging, or renderer identity.
+- 2026-08-20, upstream `beab6886f45bf42906d0bd01aefe5dfe9e66a867`: `unaffected`; automated safe-sync classification
+  found no Alpha-delta overlap or protected-path changes. Required PR CI remained the merge gate.

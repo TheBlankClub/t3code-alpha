@@ -3,7 +3,7 @@ id: alpha-server-package
 status: active
 risk: red
 introduced_by: alpha-server-package
-last_reconciled_with: f708f63fa9bcd7e51f1f62531f6f9ed966b71807
+last_reconciled_with: beab6886f45bf42906d0bd01aefe5dfe9e66a867
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -88,3 +88,5 @@ official T3 Code without publishing to or executing the upstream `t3` package.
 - 2026-08-20, upstream `f708f63fa9bcd7e51f1f62531f6f9ed966b71807`: `upstream-redesign`;
   adopted upstream's macOS launchd background-service implementation and retained Alpha's npm,
   binary, runtime, systemd, and new Alpha-specific LaunchAgent identities.
+- 2026-08-20, upstream `beab6886f45bf42906d0bd01aefe5dfe9e66a867`: `unaffected`; automated safe-sync classification
+  found no Alpha-delta overlap or protected-path changes. Required PR CI remained the merge gate.
