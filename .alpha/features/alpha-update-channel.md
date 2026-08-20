@@ -3,7 +3,7 @@ id: alpha-update-channel
 status: active
 risk: red
 introduced_by: alpha-update-channel
-last_reconciled_with: f708f63fa9bcd7e51f1f62531f6f9ed966b71807
+last_reconciled_with: beab6886f45bf42906d0bd01aefe5dfe9e66a867
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -97,3 +97,5 @@ automatic updater.
   adopted upstream's serialized updater actions and queued-installer refresh behavior while
   retaining Alpha channel recognition, prerelease filtering, disabled unsigned updates, and the
   fork-owned installer message. Workspace and Settings redesigns preserve Alpha artwork controls.
+- 2026-08-20, upstream `beab6886f45bf42906d0bd01aefe5dfe9e66a867`: `unaffected`; automated safe-sync classification
+  found no Alpha-delta overlap or protected-path changes. Required PR CI remained the merge gate.

@@ -3,7 +3,7 @@ id: restore-reverted-message-to-composer
 status: active
 risk: amber
 introduced_by: a47276a40
-last_reconciled_with: f708f63fa9bcd7e51f1f62531f6f9ed966b71807
+last_reconciled_with: beab6886f45bf42906d0bd01aefe5dfe9e66a867
 upstream_issue: pingdotgg/t3code#5685
 upstream_pr: pingdotgg/t3code#6044
 surfaces:
@@ -49,3 +49,5 @@ Let users edit and resend a reverted prompt instead of recreating its text and i
 - 2026-08-20, upstream `f708f63fa9bcd7e51f1f62531f6f9ed966b71807`: `mechanical-overlap`;
   adopted upstream's composer drawers, workspace navigation, and activity presentation while
   retaining reverted prompt and attachment restoration with its existing focused coverage.
+- 2026-08-20, upstream `beab6886f45bf42906d0bd01aefe5dfe9e66a867`: `unaffected`; automated safe-sync classification
+  found no Alpha-delta overlap or protected-path changes. Required PR CI remained the merge gate.

@@ -3,7 +3,7 @@ id: alpha-upstream-sync-automation
 status: active
 risk: red
 introduced_by: alpha-upstream-sync-automation
-last_reconciled_with: f708f63fa9bcd7e51f1f62531f6f9ed966b71807
+last_reconciled_with: beab6886f45bf42906d0bd01aefe5dfe9e66a867
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -75,3 +75,5 @@ reconciliation claims about Alpha-only features.
 - 2026-08-20, upstream `f708f63fa9bcd7e51f1f62531f6f9ed966b71807`: `unaffected`;
   the protected updater, server-package, and identity overlaps correctly required manual
   reconciliation; the automation policy and workflows remain unchanged.
+- 2026-08-20, upstream `beab6886f45bf42906d0bd01aefe5dfe9e66a867`: `unaffected`; automated safe-sync classification
+  found no Alpha-delta overlap or protected-path changes. Required PR CI remained the merge gate.
