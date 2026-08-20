@@ -3,7 +3,7 @@ id: alpha-homebrew-upgrades
 status: active
 risk: red
 introduced_by: alpha-homebrew-upgrades
-last_reconciled_with: cebac353defde6211c9e8c3d8ecd140c92042930
+last_reconciled_with: f708f63fa9bcd7e51f1f62531f6f9ed966b71807
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -73,3 +73,6 @@ Developer account or a separate package-hosting service.
   found no Alpha-delta overlap or protected-path changes. Required PR CI remained the merge gate.
 - 2026-08-18, upstream `cebac353defde6211c9e8c3d8ecd140c92042930`: `unaffected`; automated safe-sync classification
   found no Alpha-delta overlap or protected-path changes. Required PR CI remained the merge gate.
+- 2026-08-20, upstream `f708f63fa9bcd7e51f1f62531f6f9ed966b71807`: `unaffected`;
+  incoming marketing download selection and desktop updater changes do not alter the Alpha cask,
+  pinned certificate, artifact checksums, or Homebrew publication path.

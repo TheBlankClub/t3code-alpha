@@ -3,7 +3,7 @@ id: fork-steward
 status: active
 risk: green
 introduced_by: alpha-foundation
-last_reconciled_with: cebac353defde6211c9e8c3d8ecd140c92042930
+last_reconciled_with: f708f63fa9bcd7e51f1f62531f6f9ed966b71807
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -57,3 +57,6 @@ retiring fork code when upstream provides an equivalent or better implementation
   found no Alpha-delta overlap or protected-path changes. Required PR CI remained the merge gate.
 - 2026-08-18, upstream `cebac353defde6211c9e8c3d8ecd140c92042930`: `unaffected`; automated safe-sync classification
   found no Alpha-delta overlap or protected-path changes. Required PR CI remained the merge gate.
+- 2026-08-20, upstream `f708f63fa9bcd7e51f1f62531f6f9ed966b71807`: `unaffected`;
+  reconciliation retained merge ancestry, classified protected overlaps, and updated the feature
+  ledger without changing fork policy or release gates.

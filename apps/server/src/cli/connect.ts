@@ -6,6 +6,7 @@ import {
 } from "@t3tools/contracts";
 import { RelayOkResponse } from "@t3tools/contracts/relay";
 import { ALPHA_DISTRIBUTION } from "@t3tools/shared/alphaDistribution";
+import { HostProcessPlatform } from "@t3tools/shared/hostProcess";
 import * as RelayClient from "@t3tools/shared/relayClient";
 import { withRelayClientTracing } from "@t3tools/shared/relayTracing";
 import * as Cause from "effect/Cause";
@@ -696,8 +697,11 @@ export const connectCommand = Command.make("connect", {
         // fail the command, just tell the user what happened and move on.
         const background = yield* recoverServiceOnboardingOffer(offerServiceDuringOnboarding);
         if (background) {
+          const platform = yield* HostProcessPlatform;
           yield* Console.log(
-            "\n✓ Background service ready\n\nT3 Code will stay reachable after you log out.",
+            platform === "darwin"
+              ? "\n✓ Background service ready\n\nT3 Code will stay reachable while you are logged in to this Mac."
+              : "\n✓ Background service ready\n\nT3 Code will stay reachable after you log out.",
           );
           return;
         }

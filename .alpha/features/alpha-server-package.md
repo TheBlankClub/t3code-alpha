@@ -3,7 +3,7 @@ id: alpha-server-package
 status: active
 risk: red
 introduced_by: alpha-server-package
-last_reconciled_with: cebac353defde6211c9e8c3d8ecd140c92042930
+last_reconciled_with: f708f63fa9bcd7e51f1f62531f6f9ed966b71807
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -40,6 +40,8 @@ official T3 Code without publishing to or executing the upstream `t3` package.
   `t3code-alpha@latest`, and stores managed remote state below `~/.t3-alpha`.
 - Pinned updates install and launch `node_modules/t3code-alpha/dist/bin.mjs`.
 - Linux installs `t3code-alpha.service`, leaving an official `t3code.service` untouched.
+- macOS installs `com.theblankclub.t3code.alpha.service.plist`, leaving the official LaunchAgent
+  label and plist untouched.
 - User-visible update and recovery commands point only to the Alpha package and binary.
 - Alpha CLI builds identify their channel in the T3 Connect loopback completion page.
 
@@ -51,8 +53,8 @@ official T3 Code without publishing to or executing the upstream `t3` package.
   keeps upstream's internal `t3` package name for deterministic Effect service keys. The published
   manifest retains its description and license, and the publisher preserves interactive stdin for
   npm write authentication.
-- CLI suggestions, remote SSH bootstrap, pinned self-update, and the standalone service launcher
-  resolve the Alpha package consistently.
+- CLI suggestions, remote SSH bootstrap, pinned self-update, and the systemd and launchd service
+  managers resolve the Alpha package and service identities consistently.
 - Web and shared client-runtime update messages identify the package users actually install.
 
 # Retirement conditions
@@ -83,3 +85,6 @@ official T3 Code without publishing to or executing the upstream `t3` package.
   found no Alpha-delta overlap or protected-path changes. Required PR CI remained the merge gate.
 - 2026-08-18, upstream `cebac353defde6211c9e8c3d8ecd140c92042930`: `unaffected`; automated safe-sync classification
   found no Alpha-delta overlap or protected-path changes. Required PR CI remained the merge gate.
+- 2026-08-20, upstream `f708f63fa9bcd7e51f1f62531f6f9ed966b71807`: `upstream-redesign`;
+  adopted upstream's macOS launchd background-service implementation and retained Alpha's npm,
+  binary, runtime, systemd, and new Alpha-specific LaunchAgent identities.
