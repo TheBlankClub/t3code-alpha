@@ -3,7 +3,7 @@ id: alpha-distribution-identity
 status: active
 risk: red
 introduced_by: alpha-distribution-identity
-last_reconciled_with: beab6886f45bf42906d0bd01aefe5dfe9e66a867
+last_reconciled_with: b381fdb12cb7cb241e2b8aca84941375f3fb43f4
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -90,3 +90,6 @@ identity.
   protocol, packaging, or renderer identity.
 - 2026-08-20, upstream `beab6886f45bf42906d0bd01aefe5dfe9e66a867`: `unaffected`; automated safe-sync classification
   found no Alpha-delta overlap or protected-path changes. Required PR CI remained the merge gate.
+- 2026-08-22, upstream `b381fdb12cb7cb241e2b8aca84941375f3fb43f4`: `unaffected`; incoming web
+  composer, terminal, preview, and CI-parallelization changes do not touch this feature's
+  surfaces.
