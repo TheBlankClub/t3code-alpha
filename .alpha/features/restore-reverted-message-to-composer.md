@@ -3,7 +3,7 @@ id: restore-reverted-message-to-composer
 status: active
 risk: amber
 introduced_by: a47276a40
-last_reconciled_with: b381fdb12cb7cb241e2b8aca84941375f3fb43f4
+last_reconciled_with: 035058a23e651ea5f407c9ab73cf5329cc40c102
 upstream_issue: pingdotgg/t3code#5685
 upstream_pr: pingdotgg/t3code#6044
 surfaces:
@@ -55,3 +55,5 @@ Let users edit and resend a reverted prompt instead of recreating its text and i
   added draft-hero submission resolvers to the same insertion point in `ChatView.logic.ts`. Both
   sides were additive, so the Alpha reverted-message helpers were kept alongside upstream's new
   functions with no behavioral change. Focused coverage still passes.
+- 2026-08-22, upstream `035058a23e651ea5f407c9ab73cf5329cc40c102`: `unaffected`; automated safe-sync classification
+  found no Alpha-delta overlap or protected-path changes. Required PR CI remained the merge gate.
