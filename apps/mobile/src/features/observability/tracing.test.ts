@@ -17,7 +17,7 @@ vi.mock("expo-constants", () => ({
   },
 }));
 
-it.effect("exports spans through the scoped mobile OTLP layer", () => {
+it.effect("does not export mobile spans when Alpha outbound telemetry is disabled", () => {
   const fetchFn = vi.fn<typeof fetch>(async () => new Response(null, { status: 202 }));
   const tracingLayer = makeTracingLayer(
     {
@@ -42,18 +42,13 @@ it.effect("exports spans through the scoped mobile OTLP layer", () => {
     Effect.scoped,
     Effect.andThen(
       Effect.sync(() => {
-        expect(fetchFn).toHaveBeenCalledOnce();
-        const [url, init] = fetchFn.mock.calls[0]!;
-        expect(String(url)).toBe("https://api.axiom.test/v1/traces");
-        expect(new Headers(init?.headers).get("authorization")).toBe("Bearer public-ingest-token");
-        expect(new Headers(init?.headers).get("x-axiom-dataset")).toBe("mobile-traces");
-        expect(new TextDecoder().decode(init?.body as Uint8Array)).toContain("mobile.test.span");
+        expect(fetchFn).not.toHaveBeenCalled();
       }),
     ),
   );
 });
 
-it.effect("does not let OTLP serialization failures alter application effects", () => {
+it.effect("does not let disabled mobile tracing alter application effects", () => {
   const fetchFn = vi.fn<typeof fetch>(async () => new Response(null, { status: 202 }));
   const tracingLayer = makeTracingLayer(
     {
@@ -87,10 +82,7 @@ it.effect("does not let OTLP serialization failures alter application effects", 
     Effect.scoped,
     Effect.andThen(
       Effect.sync(() => {
-        expect(fetchFn).toHaveBeenCalledOnce();
-        expect(new TextDecoder().decode(fetchFn.mock.calls[0]?.[1]?.body as Uint8Array)).toContain(
-          "mobile.test.failed-span",
-        );
+        expect(fetchFn).not.toHaveBeenCalled();
       }),
     ),
   );

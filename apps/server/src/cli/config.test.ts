@@ -488,7 +488,7 @@ it.layer(NodeServices.layer)("cli config resolution", (it) => {
     }),
   );
 
-  it.effect("falls back to persisted observability settings when env vars are absent", () =>
+  it.effect("ignores persisted remote observability settings in Alpha", () =>
     Effect.gen(function* () {
       const fs = yield* FileSystem.FileSystem;
       const path = yield* Path.Path;
@@ -531,13 +531,11 @@ it.layer(NodeServices.layer)("cli config resolution", (it) => {
         ),
       );
 
-      expect(resolved.otlpTracesUrl).toBe("http://localhost:4318/v1/traces");
-      expect(resolved.otlpMetricsUrl).toBe("http://localhost:4318/v1/metrics");
+      expect(resolved.otlpTracesUrl).toBeUndefined();
+      expect(resolved.otlpMetricsUrl).toBeUndefined();
       expect(resolved).toEqual({
         logLevel: "Info",
         ...defaultObservabilityConfig,
-        otlpTracesUrl: "http://localhost:4318/v1/traces",
-        otlpMetricsUrl: "http://localhost:4318/v1/metrics",
         mode: "desktop",
         port: 4888,
         cwd: process.cwd(),

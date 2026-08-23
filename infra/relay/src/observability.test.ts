@@ -52,11 +52,14 @@ it.effect("exports schema error fields as span attributes", () =>
       Effect.withSpan("relay.test.schema_error"),
       Effect.exit,
       Effect.provide(
-        makeRelayTraceLayer({
-          tracesEndpoint: "/v1/traces",
-          tracesDatasetName: "relay-test-traces",
-          ingestToken: Redacted.make("test-token"),
-        }),
+        makeRelayTraceLayer(
+          {
+            tracesEndpoint: "/v1/traces",
+            tracesDatasetName: "relay-test-traces",
+            ingestToken: Redacted.make("test-token"),
+          },
+          { outboundTelemetryEnabled: true },
+        ),
       ),
     );
 

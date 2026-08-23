@@ -173,7 +173,7 @@ export const otlpTracesProxyRouteLayer = HttpRouter.add(
       ),
     );
 
-    if (otlpTracesUrl === undefined) {
+    if (!ALPHA_DISTRIBUTION.outboundTelemetryEnabled || otlpTracesUrl === undefined) {
       return HttpServerResponse.empty({ status: 204 });
     }
 

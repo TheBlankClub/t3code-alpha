@@ -8,6 +8,8 @@ import * as Tracer from "effect/Tracer";
 import type { HttpClient } from "effect/unstable/http";
 import { OtlpSerialization, OtlpTracer } from "effect/unstable/observability";
 
+import { ALPHA_DISTRIBUTION } from "./alphaDistribution.ts";
+
 export interface RelayClientTracingConfig {
   readonly tracesUrl: string;
   readonly tracesDataset: string;
@@ -127,8 +129,11 @@ function nonInterferingTracer(delegate: Tracer.Tracer): Tracer.Tracer {
 export function makeRelayClientTracingLayer(
   config: RelayClientTracingConfig | null,
   resource: RelayClientTracingResource,
+  options?: { readonly outboundTelemetryEnabled?: boolean },
 ): Layer.Layer<never, never, HttpClient.HttpClient> {
-  if (config === null) {
+  const outboundTelemetryEnabled =
+    options?.outboundTelemetryEnabled ?? ALPHA_DISTRIBUTION.outboundTelemetryEnabled;
+  if (!outboundTelemetryEnabled || config === null) {
     return Layer.succeed(RelayClientTracer, Option.none());
   }
 

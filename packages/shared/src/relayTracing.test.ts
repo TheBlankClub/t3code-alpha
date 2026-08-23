@@ -78,6 +78,7 @@ describe("withRelayClientTracing", () => {
         runtime: "test",
         client: "test",
       },
+      { outboundTelemetryEnabled: true },
     ).pipe(Layer.provide(httpClientLayer));
     const rootCause = new Error("relay socket closed");
     const failure = new Error("relay request failed", { cause: rootCause });

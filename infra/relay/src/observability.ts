@@ -1,6 +1,7 @@
 import * as Alchemy from "alchemy";
 import * as Axiom from "alchemy/Axiom";
 import * as Output from "alchemy/Output";
+import { ALPHA_DISTRIBUTION } from "@t3tools/shared/alphaDistribution";
 import * as Cause from "effect/Cause";
 import * as Effect from "effect/Effect";
 import * as Exit from "effect/Exit";
@@ -212,12 +213,21 @@ const withSchemaErrorAttributes = (delegate: Tracer.Tracer): Tracer.Tracer =>
     ...(delegate.context ? { context: delegate.context } : {}),
   });
 
-export const makeRelayTraceLayer = (input: {
-  readonly tracesEndpoint: string;
-  readonly tracesDatasetName: string;
-  readonly ingestToken: Redacted.Redacted<string>;
-}) =>
-  Layer.effect(
+export const makeRelayTraceLayer = (
+  input: {
+    readonly tracesEndpoint: string;
+    readonly tracesDatasetName: string;
+    readonly ingestToken: Redacted.Redacted<string>;
+  },
+  options?: { readonly outboundTelemetryEnabled?: boolean },
+) => {
+  const outboundTelemetryEnabled =
+    options?.outboundTelemetryEnabled ?? ALPHA_DISTRIBUTION.outboundTelemetryEnabled;
+  if (!outboundTelemetryEnabled) {
+    return Layer.empty;
+  }
+
+  return Layer.effect(
     Tracer.Tracer,
     OtlpTracer.make({
       url: input.tracesEndpoint,
@@ -235,3 +245,4 @@ export const makeRelayTraceLayer = (input: {
       exportInterval: "1 second",
     }).pipe(Effect.map(withSchemaErrorAttributes)),
   ).pipe(Layer.provideMerge(OtlpExporter.layerFlusher), Layer.provide(OtlpSerialization.layerJson));
+};

@@ -1,3 +1,4 @@
+import { ALPHA_DISTRIBUTION } from "@t3tools/shared/alphaDistribution";
 import { httpHeaderRedactionLayer } from "@t3tools/shared/httpObservability";
 import { makeLocalFileTracer, makeTraceSink } from "@t3tools/shared/observability";
 import * as Effect from "effect/Effect";
@@ -44,7 +45,7 @@ export const ObservabilityLive = Layer.unwrap(
             }),
         });
         const delegate =
-          config.otlpTracesUrl === undefined
+          !ALPHA_DISTRIBUTION.outboundTelemetryEnabled || config.otlpTracesUrl === undefined
             ? undefined
             : yield* OtlpTracer.make({
                 url: config.otlpTracesUrl,
@@ -75,7 +76,7 @@ export const ObservabilityLive = Layer.unwrap(
     ).pipe(Layer.provide(OtlpExporter.layerFlusher), Layer.provideMerge(otlpSerializationLayer));
 
     const metricsLayer =
-      config.otlpMetricsUrl === undefined
+      !ALPHA_DISTRIBUTION.outboundTelemetryEnabled || config.otlpMetricsUrl === undefined
         ? Layer.empty
         : OtlpMetrics.layer({
             url: config.otlpMetricsUrl,

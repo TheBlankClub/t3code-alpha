@@ -1,4 +1,5 @@
 export const ALPHA_DISTRIBUTION = {
+  outboundTelemetryEnabled: false,
   productName: "T3 Code Alpha",
   desktopAppId: "com.theblankclub.t3code.alpha",
   desktopProtocolScheme: "t3code-alpha",

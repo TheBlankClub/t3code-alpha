@@ -36,6 +36,26 @@ interface RecordedBatchBody {
 }
 
 it.layer(NodeServices.layer)("AnalyticsService test", (it) => {
+  it.effect("keeps the Alpha runtime analytics layer disabled", () =>
+    Effect.gen(function* () {
+      const analytics = yield* AnalyticsService.AnalyticsService;
+
+      yield* analytics.record("test.alpha.disabled");
+      yield* analytics.flush;
+    }).pipe(
+      Effect.provide(
+        AnalyticsService.layer.pipe(
+          Layer.provideMerge(
+            ServerConfig.ServerConfig.layerTest(process.cwd(), {
+              prefix: "t3-telemetry-disabled-",
+            }),
+          ),
+          Layer.provideMerge(NodeHttpServer.layerTest),
+        ),
+      ),
+    ),
+  );
+
   it.effect("flush drains all buffered events across multiple batches", () =>
     Effect.gen(function* () {
       const capturedRequests: Array<RecordedBatchRequest> = [];
@@ -43,7 +63,10 @@ it.layer(NodeServices.layer)("AnalyticsService test", (it) => {
         prefix: "t3-telemetry-base-",
       });
 
-      const telemetryLayer = AnalyticsService.layer.pipe(Layer.provideMerge(serverConfigLayer));
+      const telemetryLayer = Layer.effect(
+        AnalyticsService.AnalyticsService,
+        AnalyticsService.make,
+      ).pipe(Layer.provideMerge(serverConfigLayer));
       const configLayer = ConfigProvider.layer(
         ConfigProvider.fromUnknown({
           T3CODE_TELEMETRY_ENABLED: true,

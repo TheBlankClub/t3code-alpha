@@ -4091,7 +4091,7 @@ it.layer(NodeServices.layer)("server router seam", (it) => {
       }).pipe(Effect.provide(NodeHttpServer.layerTest)),
   );
 
-  it.effect("proxies browser OTLP trace exports through the server", () =>
+  it.effect("keeps browser OTLP trace exports local when outbound telemetry is disabled", () =>
     Effect.gen(function* () {
       const upstreamRequests: Array<{
         readonly body: string;
@@ -4269,12 +4269,7 @@ it.layer(NodeServices.layer)("server router seam", (it) => {
           },
         },
       ]);
-      assert.deepEqual(upstreamRequests, [
-        {
-          body: jsonRequestBody(payload),
-          contentType: "application/json",
-        },
-      ]);
+      assert.deepEqual(upstreamRequests, []);
     }).pipe(Effect.provide(NodeHttpServer.layerTest)),
   );
 

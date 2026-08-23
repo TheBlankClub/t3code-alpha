@@ -1,4 +1,5 @@
 import { PRIMARY_LOCAL_ENVIRONMENT_ID } from "@t3tools/contracts";
+import { ALPHA_DISTRIBUTION } from "@t3tools/shared/alphaDistribution";
 import { makeLocalFileTracer, makeTraceSink } from "@t3tools/shared/observability";
 import { parsePersistedServerObservabilitySettings } from "@t3tools/shared/serverSettings";
 import * as Context from "effect/Context";
@@ -339,6 +340,10 @@ const readPersistedOtlpTracesUrl: Effect.Effect<
 });
 
 const resolveOtlpTracesUrl = Effect.gen(function* () {
+  if (!ALPHA_DISTRIBUTION.outboundTelemetryEnabled) {
+    return Option.none<string>();
+  }
+
   const environment = yield* DesktopEnvironment.DesktopEnvironment;
   if (Option.isSome(environment.otlpTracesUrl)) {
     return environment.otlpTracesUrl;

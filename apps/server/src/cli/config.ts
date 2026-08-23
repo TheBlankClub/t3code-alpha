@@ -1,6 +1,7 @@
-import * as NetService from "@t3tools/shared/Net";
-import { parsePersistedServerObservabilitySettings } from "@t3tools/shared/serverSettings";
 import { DesktopBackendBootstrap, PortSchema } from "@t3tools/contracts";
+import * as NetService from "@t3tools/shared/Net";
+import { ALPHA_DISTRIBUTION } from "@t3tools/shared/alphaDistribution";
+import { parsePersistedServerObservabilitySettings } from "@t3tools/shared/serverSettings";
 import * as Config from "effect/Config";
 import * as Duration from "effect/Duration";
 import * as Effect from "effect/Effect";
@@ -356,14 +357,16 @@ export const resolveServerConfig = (
       traceBatchWindowMs: env.traceBatchWindowMs,
       traceMaxBytes: env.traceMaxBytes,
       traceMaxFiles: env.traceMaxFiles,
-      otlpTracesUrl:
-        env.otlpTracesUrl ??
-        bootstrap?.otlpTracesUrl ??
-        persistedObservabilitySettings.otlpTracesUrl,
-      otlpMetricsUrl:
-        env.otlpMetricsUrl ??
-        bootstrap?.otlpMetricsUrl ??
-        persistedObservabilitySettings.otlpMetricsUrl,
+      otlpTracesUrl: ALPHA_DISTRIBUTION.outboundTelemetryEnabled
+        ? (env.otlpTracesUrl ??
+          bootstrap?.otlpTracesUrl ??
+          persistedObservabilitySettings.otlpTracesUrl)
+        : undefined,
+      otlpMetricsUrl: ALPHA_DISTRIBUTION.outboundTelemetryEnabled
+        ? (env.otlpMetricsUrl ??
+          bootstrap?.otlpMetricsUrl ??
+          persistedObservabilitySettings.otlpMetricsUrl)
+        : undefined,
       otlpExportIntervalMs: env.otlpExportIntervalMs,
       otlpServiceName: env.otlpServiceName,
       mode,

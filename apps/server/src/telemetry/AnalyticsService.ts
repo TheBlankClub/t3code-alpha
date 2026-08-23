@@ -6,6 +6,7 @@
  *
  * @module AnalyticsService
  */
+import { ALPHA_DISTRIBUTION } from "@t3tools/shared/alphaDistribution";
 import { HostProcessArchitecture, HostProcessPlatform } from "@t3tools/shared/hostProcess";
 import * as Config from "effect/Config";
 import * as Context from "effect/Context";
@@ -181,6 +182,8 @@ export const make = Effect.gen(function* () {
   return AnalyticsService.of({ record, flush });
 });
 
-export const layer = Layer.effect(AnalyticsService, make);
+export const layer = ALPHA_DISTRIBUTION.outboundTelemetryEnabled
+  ? Layer.effect(AnalyticsService, make)
+  : AnalyticsService.layerTest;
 
 export const layerTest = AnalyticsService.layerTest;
