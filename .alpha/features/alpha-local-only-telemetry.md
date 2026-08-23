@@ -3,7 +3,7 @@ id: alpha-local-only-telemetry
 status: active
 risk: red
 introduced_by: alpha-local-only-telemetry
-last_reconciled_with: 035058a23e651ea5f407c9ab73cf5329cc40c102
+last_reconciled_with: a9cd94eb935fed8e73b0d88e599c27048f2939c3
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -47,3 +47,6 @@ traces, or metrics to third-party telemetry services.
 
 - 2026-08-23, upstream `035058a23e651ea5f407c9ab73cf5329cc40c102`: added the Alpha-only
   local telemetry invariant after auditing PostHog and Axiom/OTLP tracking paths.
+- 2026-08-24, upstream `a9cd94eb935fed8e73b0d88e599c27048f2939c3`: `mechanical-overlap`;
+  adopted upstream's Codex feedback and provider lifecycle changes without adding product analytics
+  or remote trace export. Every Alpha outbound-telemetry guard remains in place.

@@ -3,7 +3,7 @@ id: alpha-upstream-sync-automation
 status: active
 risk: red
 introduced_by: alpha-upstream-sync-automation
-last_reconciled_with: 035058a23e651ea5f407c9ab73cf5329cc40c102
+last_reconciled_with: a9cd94eb935fed8e73b0d88e599c27048f2939c3
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -82,3 +82,6 @@ reconciliation claims about Alpha-only features.
   Blacksmith runner labels back to public GitHub-hosted runners in core CI.
 - 2026-08-22, upstream `035058a23e651ea5f407c9ab73cf5329cc40c102`: `unaffected`; automated safe-sync classification
   found no Alpha-delta overlap or protected-path changes. Required PR CI remained the merge gate.
+- 2026-08-24, upstream `a9cd94eb935fed8e73b0d88e599c27048f2939c3`: `mechanical-overlap`;
+  the protected official release workflow changed, so this reconciliation stayed manual. The
+  six-hour classifier, journal finalizer, public runners, and CI merge gate remain unchanged.

@@ -3,7 +3,7 @@ id: alpha-release-workflow
 status: active
 risk: red
 introduced_by: alpha-release-workflow
-last_reconciled_with: 035058a23e651ea5f407c9ab73cf5329cc40c102
+last_reconciled_with: a9cd94eb935fed8e73b0d88e599c27048f2939c3
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -167,3 +167,6 @@ upstream's official release, hosted-web, AUR, or npm publication paths.
   surfaces.
 - 2026-08-22, upstream `035058a23e651ea5f407c9ab73cf5329cc40c102`: `unaffected`; automated safe-sync classification
   found no Alpha-delta overlap or protected-path changes. Required PR CI remained the merge gate.
+- 2026-08-24, upstream `a9cd94eb935fed8e73b0d88e599c27048f2939c3`: `mechanical-overlap`;
+  adopted upstream's release quality-job split, dependency caching, and desktop builder changes.
+  The official workflow remains repository-gated and the Alpha release graph remains separate.

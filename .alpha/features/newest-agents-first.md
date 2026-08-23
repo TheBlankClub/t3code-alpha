@@ -3,7 +3,7 @@ id: newest-agents-first
 status: active
 risk: green
 introduced_by: newest-agents-first
-last_reconciled_with: 035058a23e651ea5f407c9ab73cf5329cc40c102
+last_reconciled_with: a9cd94eb935fed8e73b0d88e599c27048f2939c3
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -51,3 +51,5 @@ users scroll past older agents.
   terminal, and scroll-anchoring changes do not touch the shared agent-panel ordering model.
 - 2026-08-22, upstream `035058a23e651ea5f407c9ab73cf5329cc40c102`: `unaffected`; automated safe-sync classification
   found no Alpha-delta overlap or protected-path changes. Required PR CI remained the merge gate.
+- 2026-08-24, upstream `a9cd94eb935fed8e73b0d88e599c27048f2939c3`: `unaffected`; incoming pinned
+  thread ordering and work-log rendering changes do not touch direct-agent ordering or row stability.

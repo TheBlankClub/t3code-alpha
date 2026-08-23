@@ -3,7 +3,7 @@ id: project-action-terminal-startup
 status: active
 risk: amber
 introduced_by: 438019e36
-last_reconciled_with: 035058a23e651ea5f407c9ab73cf5329cc40c102
+last_reconciled_with: a9cd94eb935fed8e73b0d88e599c27048f2939c3
 upstream_issue: pingdotgg/t3code#6337
 upstream_pr: pingdotgg/t3code#6338
 surfaces:
@@ -60,3 +60,5 @@ is still initializing.
   surfaces.
 - 2026-08-22, upstream `035058a23e651ea5f407c9ab73cf5329cc40c102`: `unaffected`; automated safe-sync classification
   found no Alpha-delta overlap or protected-path changes. Required PR CI remained the merge gate.
+- 2026-08-24, upstream `a9cd94eb935fed8e73b0d88e599c27048f2939c3`: `unaffected`; incoming provider,
+  feedback, and composer changes do not alter terminal initial-command handling or its fallback.
