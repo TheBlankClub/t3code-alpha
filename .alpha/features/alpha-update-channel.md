@@ -3,7 +3,7 @@ id: alpha-update-channel
 status: active
 risk: red
 introduced_by: alpha-update-channel
-last_reconciled_with: a9cd94eb935fed8e73b0d88e599c27048f2939c3
+last_reconciled_with: 860caaa6023a3aaf616a5899816c74c195ca8de2
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -107,3 +107,7 @@ automatic updater.
 - 2026-08-24, upstream `a9cd94eb935fed8e73b0d88e599c27048f2939c3`: `mechanical-overlap`;
   adopted upstream's appearance contrast controls and desktop packaging improvements while
   retaining Alpha channel recognition, disabled unsigned updates, and Alpha artwork.
+- 2026-08-26, upstream `860caaa6023a3aaf616a5899816c74c195ca8de2`: `mechanical-overlap`;
+  adopted upstream's preview packaging, macOS file exclusions, and signing helper while retaining
+  Alpha channel recognition, disabled automatic updates, fork-owned artifacts, and Alpha artwork.
+  Fork preview builds now use an Alpha prerelease version instead of a Stable-shaped PR version.

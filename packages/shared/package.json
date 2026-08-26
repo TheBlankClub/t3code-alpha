@@ -230,6 +230,10 @@
     "./alphaDistribution": {
       "types": "./src/alphaDistribution.ts",
       "import": "./src/alphaDistribution.ts"
+    },
+    "./claudeCompaction": {
+      "types": "./src/claudeCompaction.ts",
+      "import": "./src/claudeCompaction.ts"
     }
   },
   "scripts": {

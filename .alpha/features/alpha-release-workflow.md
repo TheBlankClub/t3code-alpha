@@ -3,7 +3,7 @@ id: alpha-release-workflow
 status: active
 risk: red
 introduced_by: alpha-release-workflow
-last_reconciled_with: a9cd94eb935fed8e73b0d88e599c27048f2939c3
+last_reconciled_with: 860caaa6023a3aaf616a5899816c74c195ca8de2
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -170,3 +170,7 @@ upstream's official release, hosted-web, AUR, or npm publication paths.
 - 2026-08-24, upstream `a9cd94eb935fed8e73b0d88e599c27048f2939c3`: `mechanical-overlap`;
   adopted upstream's release quality-job split, dependency caching, and desktop builder changes.
   The official workflow remains repository-gated and the Alpha release graph remains separate.
+- 2026-08-26, upstream `860caaa6023a3aaf616a5899816c74c195ca8de2`: `mechanical-overlap`;
+  adopted upstream's desktop signing and preview build improvements. The fork preview uses a
+  GitHub-hosted runner and Alpha package identity, while the fork-owned release graph, signing
+  identity, publication destinations, and manual-installer policy remain unchanged.

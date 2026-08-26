@@ -3,7 +3,7 @@ id: alpha-server-package
 status: active
 risk: red
 introduced_by: alpha-server-package
-last_reconciled_with: a9cd94eb935fed8e73b0d88e599c27048f2939c3
+last_reconciled_with: 860caaa6023a3aaf616a5899816c74c195ca8de2
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -49,6 +49,8 @@ official T3 Code without publishing to or executing the upstream `t3` package.
 
 - `packages/shared/src/alphaDistribution.ts` owns the package, binary, dist-tag, home-directory,
   and systemd-unit identities.
+- CLI entrypoint fallback canonicalizes both the module and executable paths so npm links work
+  through symlinked parent directories such as macOS `/var`.
 - The publisher rewrites the packed manifest to the Alpha npm identity while the source workspace
   keeps upstream's internal `t3` package name for deterministic Effect service keys. The published
   manifest retains its description and license, and the publisher preserves interactive stdin for
@@ -99,3 +101,8 @@ official T3 Code without publishing to or executing the upstream `t3` package.
   upstream now contains the Alpha-carried SSH PATH and Tailscale endpoint fixes, so those duplicate
   implementations collapse through merge ancestry. Alpha's package, binary, state, and service
   identities remain required.
+- 2026-08-26, upstream `860caaa6023a3aaf616a5899816c74c195ca8de2`: `upstream-redesign`;
+  adopted upstream's portable CLI entrypoint detection and launchd PATH propagation while retaining
+  the `t3code-alpha` package, `t3-alpha` binary, `~/.t3-alpha` state, and Alpha-specific systemd and
+  launchd service identities. Canonicalizing both entrypoint paths fixes upstream's deterministic
+  symlink mismatch on macOS.

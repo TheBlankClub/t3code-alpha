@@ -3,7 +3,7 @@ id: alpha-homebrew-upgrades
 status: active
 risk: red
 introduced_by: alpha-homebrew-upgrades
-last_reconciled_with: a9cd94eb935fed8e73b0d88e599c27048f2939c3
+last_reconciled_with: 860caaa6023a3aaf616a5899816c74c195ca8de2
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -86,3 +86,6 @@ Developer account or a separate package-hosting service.
 - 2026-08-24, upstream `a9cd94eb935fed8e73b0d88e599c27048f2939c3`: `mechanical-overlap`;
   adopted the shared desktop builder's faster Windows packaging and resource-monitor reuse while
   retaining the fork-owned cask, pinned certificate, and Homebrew upgrade contract.
+- 2026-08-26, upstream `860caaa6023a3aaf616a5899816c74c195ca8de2`: `mechanical-overlap`;
+  adopted upstream's smaller macOS dependency set and signing helper while retaining the
+  fork-owned self-signed identity, pinned certificate, cask, and Homebrew upgrade contract.

@@ -3,7 +3,7 @@ id: restore-reverted-message-to-composer
 status: active
 risk: amber
 introduced_by: a47276a40
-last_reconciled_with: a9cd94eb935fed8e73b0d88e599c27048f2939c3
+last_reconciled_with: 860caaa6023a3aaf616a5899816c74c195ca8de2
 upstream_issue: pingdotgg/t3code#5685
 upstream_pr: pingdotgg/t3code#6044
 surfaces:
@@ -60,3 +60,7 @@ Let users edit and resend a reverted prompt instead of recreating its text and i
 - 2026-08-24, upstream `a9cd94eb935fed8e73b0d88e599c27048f2939c3`: `mechanical-conflict`;
   combined Alpha's revert-restoration send lock with upstream's feedback-upload lock and disabled
   reason. Reverted prompts and attachments still restore only after the checkpoint rewind settles.
+- 2026-08-26, upstream `860caaa6023a3aaf616a5899816c74c195ca8de2`: `mechanical-conflict`;
+  adopted upstream's explicit thread settlement, provider compaction, durable attachment uploads,
+  and composer changes while retaining draft stashing and reverted prompt and attachment restoration
+  after the checkpoint rewind settles.

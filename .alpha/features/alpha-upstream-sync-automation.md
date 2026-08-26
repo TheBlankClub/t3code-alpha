@@ -3,7 +3,7 @@ id: alpha-upstream-sync-automation
 status: active
 risk: red
 introduced_by: alpha-upstream-sync-automation
-last_reconciled_with: a9cd94eb935fed8e73b0d88e599c27048f2939c3
+last_reconciled_with: 860caaa6023a3aaf616a5899816c74c195ca8de2
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -85,3 +85,7 @@ reconciliation claims about Alpha-only features.
 - 2026-08-24, upstream `a9cd94eb935fed8e73b0d88e599c27048f2939c3`: `mechanical-overlap`;
   the protected official release workflow changed, so this reconciliation stayed manual. The
   six-hour classifier, journal finalizer, public runners, and CI merge gate remain unchanged.
+- 2026-08-26, upstream `860caaa6023a3aaf616a5899816c74c195ca8de2`: `mechanical-overlap`;
+  protected packaging, persistence, contracts, and a new preview workflow required manual review.
+  The preview workflow now uses a public GitHub-hosted runner; the sync classifier, journal
+  finalizer, and CI merge gates remain unchanged.
