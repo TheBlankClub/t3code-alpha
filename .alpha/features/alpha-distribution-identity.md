@@ -3,7 +3,7 @@ id: alpha-distribution-identity
 status: active
 risk: red
 introduced_by: alpha-distribution-identity
-last_reconciled_with: 860caaa6023a3aaf616a5899816c74c195ca8de2
+last_reconciled_with: ead4ce52a1624d9c55461f61524580978fc8b719
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -102,3 +102,6 @@ identity.
   adopted upstream's macOS preview, signing optimization, and service PATH changes while retaining
   Alpha's app, protocol, state, package, service, Safe Storage, and artifact identities. The fork
   preview uses a GitHub-hosted runner and an Alpha prerelease version.
+- 2026-08-27, upstream `ead4ce52a1624d9c55461f61524580978fc8b719`: `mechanical-overlap`;
+  adopted upstream's `0.0.35` package baseline and anonymous preview downloads while retaining the
+  Alpha app, package, repository, binary, artifact, runner, and prerelease identities.

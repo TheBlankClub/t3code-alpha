@@ -3,7 +3,7 @@ id: alpha-server-package
 status: active
 risk: red
 introduced_by: alpha-server-package
-last_reconciled_with: 860caaa6023a3aaf616a5899816c74c195ca8de2
+last_reconciled_with: ead4ce52a1624d9c55461f61524580978fc8b719
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -106,3 +106,6 @@ official T3 Code without publishing to or executing the upstream `t3` package.
   the `t3code-alpha` package, `t3-alpha` binary, `~/.t3-alpha` state, and Alpha-specific systemd and
   launchd service identities. Canonicalizing both entrypoint paths fixes upstream's deterministic
   symlink mismatch on macOS.
+- 2026-08-27, upstream `ead4ce52a1624d9c55461f61524580978fc8b719`: `mechanical-conflict`;
+  adopted upstream's `0.0.35` package version while retaining the Alpha package description,
+  repository, `t3-alpha` binary, state root, and service identities.

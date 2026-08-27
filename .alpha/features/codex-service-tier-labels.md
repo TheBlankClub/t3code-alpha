@@ -3,7 +3,7 @@ id: codex-service-tier-labels
 status: active
 risk: green
 introduced_by: ca4c713e01b8216d57f3ff5b0612f17d41baeb65
-last_reconciled_with: 860caaa6023a3aaf616a5899816c74c195ca8de2
+last_reconciled_with: ead4ce52a1624d9c55461f61524580978fc8b719
 upstream_issue: null
 upstream_pr: pingdotgg/t3code#4503
 surfaces:
@@ -42,3 +42,5 @@ Standard and Fast tiers.
 - 2026-08-26, upstream `860caaa6023a3aaf616a5899816c74c195ca8de2`: `unaffected`; incoming
   composer, provider, and model changes do not replace the Codex service-tier label behavior or its
   focused coverage.
+- 2026-08-27, upstream `ead4ce52a1624d9c55461f61524580978fc8b719`: `unaffected`; Codex 0.150
+  multi-agent event support does not change the web service-tier labels or their focused coverage.

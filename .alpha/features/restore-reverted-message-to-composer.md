@@ -3,7 +3,7 @@ id: restore-reverted-message-to-composer
 status: active
 risk: amber
 introduced_by: a47276a40
-last_reconciled_with: 860caaa6023a3aaf616a5899816c74c195ca8de2
+last_reconciled_with: ead4ce52a1624d9c55461f61524580978fc8b719
 upstream_issue: pingdotgg/t3code#5685
 upstream_pr: pingdotgg/t3code#6044
 surfaces:
@@ -64,3 +64,6 @@ Let users edit and resend a reverted prompt instead of recreating its text and i
   adopted upstream's explicit thread settlement, provider compaction, durable attachment uploads,
   and composer changes while retaining draft stashing and reverted prompt and attachment restoration
   after the checkpoint rewind settles.
+- 2026-08-27, upstream `ead4ce52a1624d9c55461f61524580978fc8b719`: `unaffected`; incoming Grok,
+  Codex event, usage, package, and preview changes do not touch composer draft stashing or reverted
+  prompt and attachment restoration.

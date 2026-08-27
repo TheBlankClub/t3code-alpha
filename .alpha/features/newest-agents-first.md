@@ -3,7 +3,7 @@ id: newest-agents-first
 status: active
 risk: green
 introduced_by: newest-agents-first
-last_reconciled_with: 860caaa6023a3aaf616a5899816c74c195ca8de2
+last_reconciled_with: ead4ce52a1624d9c55461f61524580978fc8b719
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -56,3 +56,6 @@ users scroll past older agents.
 - 2026-08-26, upstream `860caaa6023a3aaf616a5899816c74c195ca8de2`: `unaffected`; incoming
   provider, thread, pull-request, attachment, and mobile list changes do not touch the shared direct
   agent ordering model or row stability.
+- 2026-08-27, upstream `ead4ce52a1624d9c55461f61524580978fc8b719`: `unaffected`; incoming Codex
+  multi-agent event support and Grok provider changes do not touch direct-agent ordering or row
+  stability in the shared client runtime.

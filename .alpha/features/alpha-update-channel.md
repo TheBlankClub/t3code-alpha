@@ -3,7 +3,7 @@ id: alpha-update-channel
 status: active
 risk: red
 introduced_by: alpha-update-channel
-last_reconciled_with: 860caaa6023a3aaf616a5899816c74c195ca8de2
+last_reconciled_with: ead4ce52a1624d9c55461f61524580978fc8b719
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -111,3 +111,7 @@ automatic updater.
   adopted upstream's preview packaging, macOS file exclusions, and signing helper while retaining
   Alpha channel recognition, disabled automatic updates, fork-owned artifacts, and Alpha artwork.
   Fork preview builds now use an Alpha prerelease version instead of a Stable-shaped PR version.
+- 2026-08-27, upstream `ead4ce52a1624d9c55461f61524580978fc8b719`: `mechanical-overlap`;
+  adopted upstream's anonymous preview publishing and `0.0.35` base version while retaining Alpha
+  prerelease versions, public runners, fork-owned artifacts, and disabled automatic updates. A
+  trusted build step appends a PR marker to each preview DMG for safe replacement and cleanup.

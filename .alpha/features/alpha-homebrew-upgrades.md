@@ -3,7 +3,7 @@ id: alpha-homebrew-upgrades
 status: active
 risk: red
 introduced_by: alpha-homebrew-upgrades
-last_reconciled_with: 860caaa6023a3aaf616a5899816c74c195ca8de2
+last_reconciled_with: ead4ce52a1624d9c55461f61524580978fc8b719
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -89,3 +89,6 @@ Developer account or a separate package-hosting service.
 - 2026-08-26, upstream `860caaa6023a3aaf616a5899816c74c195ca8de2`: `mechanical-overlap`;
   adopted upstream's smaller macOS dependency set and signing helper while retaining the
   fork-owned self-signed identity, pinned certificate, cask, and Homebrew upgrade contract.
+- 2026-08-27, upstream `ead4ce52a1624d9c55461f61524580978fc8b719`: `unaffected`; the rolling
+  `desktop-preview` prerelease remains separate from versioned Alpha releases and does not change
+  the fork-owned cask, pinned certificate, or Homebrew upgrade contract.
