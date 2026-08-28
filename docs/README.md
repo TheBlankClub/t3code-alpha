@@ -14,7 +14,7 @@
 - [Install and update T3 Code Alpha](./user/alpha.md)
 - [Source control integrations](./user/source-control.md)
 - [Background service (Linux)](./user/background-service.md)
-- Providers: [Codex](./user/providers-codex.md) · [Claude](./user/providers-claude.md)
+- Providers: [Codex](./user/providers-codex.md) · [Claude](./user/providers-claude.md) · [OpenCode](./user/providers-opencode.md)
 
 Mobile app: [apps/mobile/README.md](../apps/mobile/README.md)
 

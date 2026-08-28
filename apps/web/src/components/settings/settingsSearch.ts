@@ -112,13 +112,8 @@ export const SETTINGS_SEARCH_ITEMS = [
     to: "/settings/general",
   },
   {
-    id: "auto-settle-inactive-threads",
-    title: "Auto-settle inactive threads",
-    to: "/settings/general",
-  },
-  {
-    id: "auto-settle-merged-threads",
-    title: "Auto-settle merged threads",
+    id: "thread-settling",
+    title: "Thread settling",
     to: "/settings/general",
   },
   {
@@ -155,6 +150,11 @@ export const SETTINGS_SEARCH_ITEMS = [
   {
     id: "add-project-starts-in",
     title: "Add project starts in",
+    to: "/settings/general",
+  },
+  {
+    id: "unpin-confirmation",
+    title: "Unpin confirmation",
     to: "/settings/general",
   },
   {

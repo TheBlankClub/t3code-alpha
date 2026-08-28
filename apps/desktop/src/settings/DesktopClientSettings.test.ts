@@ -21,6 +21,7 @@ const clientSettings: ClientSettings = {
   confirmQuit: true,
   confirmThreadArchive: true,
   confirmThreadDelete: false,
+  confirmThreadUnpin: false,
   dismissedProviderUpdateNotificationKeys: [],
   diffIgnoreWhitespace: true,
   environmentIdentificationMode: "artwork",
@@ -39,7 +40,7 @@ const clientSettings: ClientSettings = {
   showSkillsInSlashMenu: false,
   providerModelPreferences: {},
   sidebarAutoSettleAfterDays: 3,
-  sidebarAutoSettleOnMerge: true,
+  sidebarAutoSettleMode: "change-request",
   sidebarProjectGroupingMode: "repository_path",
   sidebarProjectGroupingOverrides: {
     "environment-1:/tmp/project-a": "separate",
