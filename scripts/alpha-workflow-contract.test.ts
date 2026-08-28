@@ -21,7 +21,7 @@ function rawWorkflow(name: string): string {
 }
 
 describe("Alpha workflow contracts", () => {
-  it("checks upstream every six hours and keeps unsafe candidates review-only", () => {
+  it("checks upstream every six hours and prepares only conflict-free candidates", () => {
     const workflow = readWorkflow("sync-upstream.yml") as {
       readonly on: { readonly schedule: ReadonlyArray<{ readonly cron: string }> };
     };
@@ -29,7 +29,12 @@ describe("Alpha workflow contracts", () => {
 
     assert.deepStrictEqual(workflow.on.schedule, [{ cron: "37 2,8,14,20 * * *" }]);
     assert.include(serialized, "classify-alpha-sync.ts");
-    assert.include(serialized, "alpha-review-required");
+    assert.include(serialized, "git merge --no-ff --no-edit upstream/main");
+    assert.include(serialized, "git merge --abort");
+    assert.include(serialized, "alpha-auto-sync");
+    assert.include(serialized, "alpha-semantic-overlap");
+    assert.notInclude(serialized, "Report review-required upstream overlap");
+    assert.notInclude(serialized, "steps.classify.outputs.safe == 'true'");
     assert.notInclude(serialized, "gh pr merge");
   });
 
@@ -40,6 +45,7 @@ describe("Alpha workflow contracts", () => {
     assert.include(serialized, "github.event.workflow_run.conclusion == 'success'");
     assert.include(serialized, "--match-head-commit");
     assert.include(serialized, "--auto");
+    assert.notInclude(serialized, "--admin");
   });
 
   it("releases only a current, successful, and previously untagged Alpha CI head", () => {

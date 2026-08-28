@@ -18,7 +18,7 @@ permissions:
 
 jobs:
   finalize:
-    name: Journal and merge safe upstream sync
+    name: Journal and merge conflict-free upstream sync
     if: >-
       github.repository == 'TheBlankClub/t3code-alpha' &&
       github.event.workflow_run.event == 'pull_request'
@@ -35,7 +35,7 @@ jobs:
           repositories: ${{ github.event.repository.name }}
 
       - id: pull_request
-        name: Resolve safe sync pull request
+        name: Resolve automatic sync pull request
         shell: bash
         env:
           GH_TOKEN: ${{ steps.app_token.outputs.token }}
@@ -63,7 +63,7 @@ jobs:
             --json labels \
             --jq '[.labels[].name]')"
           if ! jq -e 'index("alpha-auto-sync") != null' <<< "$labels" >/dev/null; then
-            echo "Pull request $pr_number is not approved for automated reconciliation."
+            echo "Pull request $pr_number is not eligible for automatic reconciliation."
             echo "eligible=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
@@ -81,7 +81,7 @@ jobs:
           set -euo pipefail
           body_file="$RUNNER_TEMP/upstream-ci-failure.md"
           {
-            echo "A policy-safe upstream candidate failed required CI and was not merged."
+            echo "A conflict-free upstream candidate failed required CI and was not merged."
             echo
             echo "- Pull request: #${{ steps.pull_request.outputs.number }}"
             echo "- CI: ${{ github.event.workflow_run.html_url }}"

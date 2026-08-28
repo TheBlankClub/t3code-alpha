@@ -64,7 +64,7 @@ Add its credentials only to `TheBlankClub/t3code-alpha` as repository Actions se
 - `ALPHA_AUTOMATION_APP_PRIVATE_KEY`
 
 The six-hour upstream sync uses the installation token to update its merge branch, manage its pull
-request, journal policy-safe candidates, auto-merge them after required CI, and report blockers. The
+request, journal conflict-free candidates, auto-merge them after required CI, and report blockers. The
 release workflow preflight verifies that the App can mint a token scoped to `t3code-alpha` before
 building or publishing anything. `homebrew-tap` needs no cross-repository token: its own scheduled
 workflow reads the public Alpha prerelease feed and commits the audited cask with its repository
@@ -115,9 +115,10 @@ Its separate `Test` workflow audits every cask change again.
 Before merging an upstream reconciliation PR, confirm that its exact head contains the intended
 upstream SHA, every active `.alpha/features/*.md` record is reconciled, and all four jobs pass.
 
-Policy-safe automated syncs perform this in two CI passes: the first validates the reconciled
+Conflict-free automated syncs perform this in two CI passes: the first validates the reconciled
 candidate, the finalizer appends the evidence-backed journal entry, and the second validates the
-journaled head before auto-merge. Any Alpha-delta overlap or protected path remains review-only.
+journaled head before auto-merge. Alpha-delta and protected-path overlap remains visible in the PR
+report and advisory label. A Git merge conflict or failed CI blocks the merge.
 
 Every successful CI run for a push to the current `alpha` head starts a release when that exact SHA
 does not already have an Alpha tag. A daily scheduled run retries an unreleased head after transient

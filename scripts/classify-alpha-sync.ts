@@ -63,8 +63,8 @@ export function renderAlphaSyncClassification(classification: AlphaSyncClassific
     "## Alpha upstream sync classification",
     "",
     classification.safe
-      ? "Result: **safe for automated reconciliation**."
-      : "Result: **human reconciliation required**.",
+      ? "Result: **no semantic overlap detected**."
+      : "Result: **semantic overlap detected**.",
     "",
   ];
 
@@ -73,13 +73,17 @@ export function renderAlphaSyncClassification(classification: AlphaSyncClassific
       "Incoming upstream paths neither overlap the current Alpha delta nor match a protected surface.",
     );
   } else {
-    lines.push("Review-required paths:", "");
+    lines.push("Attention paths:", "");
     for (const entry of classification.reviewPaths) {
       lines.push(`- \`${entry.path}\`: ${entry.reasons.join("; ")}`);
     }
   }
 
-  lines.push("");
+  lines.push(
+    "",
+    "This report is advisory. A conflict-free Git merge and required CI are the automatic merge gates.",
+    "",
+  );
   return lines.join("\n");
 }
 

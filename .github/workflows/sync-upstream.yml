@@ -140,8 +140,8 @@ jobs:
           fi
           exit 1
 
-      - name: Record safe reconciliation candidate
-        if: steps.divergence.outputs.needs_sync == 'true' && steps.classify.outputs.safe == 'true'
+      - name: Record reconciliation candidate
+        if: steps.divergence.outputs.needs_sync == 'true'
         shell: bash
         env:
           UPSTREAM_SHA: ${{ steps.divergence.outputs.upstream_sha }}
@@ -179,13 +179,13 @@ jobs:
             echo
             cat "${{ steps.classify.outputs.report }}"
             echo
-            echo "Before merging:"
+            echo "Automatic merge gates:"
             echo
-            echo "- [ ] Run the \`maintain-alpha-fork\` workflow."
-            echo "- [ ] Classify every active \`.alpha/features/*.md\` record."
-            echo "- [ ] Retire Alpha deltas that upstream supersedes."
-            echo "- [ ] Add the reconciliation journal entry and update feature records."
-            echo "- [ ] Confirm CI and retained Alpha behavior on this exact head."
+            echo "- [x] Git produced a conflict-free merge candidate."
+            echo "- [ ] Required CI must pass on this exact candidate."
+            echo "- [ ] The finalizer must append the reconciliation journal entry."
+            echo "- [ ] Required CI must pass again on the journaled head."
+            echo "- [ ] GitHub must still report the pull request as mergeable."
           } > "$body_file"
 
           pr_number="$(gh pr list \
@@ -215,7 +215,7 @@ jobs:
           echo "url=$pr_url" >> "$GITHUB_OUTPUT"
           echo "Prepared $pr_url"
 
-      - name: Apply automation safety labels
+      - name: Apply automation labels
         if: steps.pull_request.outputs.number != ''
         shell: bash
         env:
@@ -227,58 +227,26 @@ jobs:
           gh label create alpha-auto-sync \
             --repo "$GITHUB_REPOSITORY" \
             --color "1f883d" \
-            --description "Safe upstream reconciliation eligible for automatic merge" \
+            --description "Conflict-free upstream sync eligible after required CI" \
             --force
-          gh label create alpha-review-required \
+          gh label create alpha-semantic-overlap \
             --repo "$GITHUB_REPOSITORY" \
-            --color "d1242f" \
-            --description "Upstream reconciliation requires semantic review" \
+            --color "fbca04" \
+            --description "Upstream sync touches an Alpha delta or protected surface" \
             --force
 
+          gh pr edit "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --add-label alpha-auto-sync
           if [[ "$SAFE" == "true" ]]; then
-            gh pr edit "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --add-label alpha-auto-sync
             gh api --method DELETE \
-              "/repos/$GITHUB_REPOSITORY/issues/$PR_NUMBER/labels/alpha-review-required" >/dev/null 2>&1 || true
+              "/repos/$GITHUB_REPOSITORY/issues/$PR_NUMBER/labels/alpha-semantic-overlap" >/dev/null 2>&1 || true
           else
-            gh pr edit "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --add-label alpha-review-required
-            gh api --method DELETE \
-              "/repos/$GITHUB_REPOSITORY/issues/$PR_NUMBER/labels/alpha-auto-sync" >/dev/null 2>&1 || true
+            gh pr edit "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --add-label alpha-semantic-overlap
           fi
-
-      - name: Report review-required upstream overlap
-        if: steps.pull_request.outputs.number != '' && steps.classify.outputs.safe != 'true'
-        shell: bash
-        env:
-          GH_TOKEN: ${{ steps.app_token.outputs.token }}
-        run: |
-          set -euo pipefail
-          issue_body="$RUNNER_TEMP/upstream-review-required.md"
-          {
-            echo "The six-hour upstream sync prepared a clean Git merge, but Alpha safety policy requires semantic review."
-            echo
-            echo "- Pull request: ${{ steps.pull_request.outputs.url }}"
-            echo "- Alpha base: \`${{ steps.divergence.outputs.alpha_sha }}\`"
-            echo "- Upstream main: \`${{ steps.divergence.outputs.upstream_sha }}\`"
-            echo
-            cat "${{ steps.classify.outputs.report }}"
-          } > "$issue_body"
-          existing_issue="$(gh issue list \
-            --repo "$GITHUB_REPOSITORY" \
-            --state open \
-            --search 'Upstream sync is blocked in:title' \
-            --json number \
-            --jq '.[0].number // empty')"
-          if [[ -n "$existing_issue" ]]; then
-            gh issue comment "$existing_issue" --repo "$GITHUB_REPOSITORY" --body-file "$issue_body"
-          else
-            gh issue create \
-              --repo "$GITHUB_REPOSITORY" \
-              --title "Upstream sync is blocked" \
-              --body-file "$issue_body"
-          fi
+          gh api --method DELETE \
+            "/repos/$GITHUB_REPOSITORY/issues/$PR_NUMBER/labels/alpha-review-required" >/dev/null 2>&1 || true
 
       - name: Resolve previous conflict notice
-        if: steps.pull_request.outputs.number != '' && steps.classify.outputs.safe == 'true'
+        if: steps.pull_request.outputs.number != ''
         shell: bash
         env:
           GH_TOKEN: ${{ steps.app_token.outputs.token }}
@@ -293,5 +261,5 @@ jobs:
           if [[ -n "$existing_issue" ]]; then
             gh issue close "$existing_issue" \
               --repo "$GITHUB_REPOSITORY" \
-              --comment "A policy-safe upstream merge is now prepared in ${{ steps.pull_request.outputs.url }}."
+              --comment "A conflict-free upstream merge is now prepared in ${{ steps.pull_request.outputs.url }}."
           fi

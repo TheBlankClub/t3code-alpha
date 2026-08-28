@@ -11,29 +11,29 @@ surfaces:
   - operations
 tests:
   - actionlint .github/workflows/sync-upstream.yml .github/workflows/finalize-upstream-sync.yml .github/workflows/ci.yml .github/workflows/mobile-fingerprint-check.yml
-  - vp test run scripts/classify-alpha-sync.test.ts scripts/record-alpha-safe-sync.test.ts
+  - vp test run scripts/alpha-workflow-contract.test.ts scripts/classify-alpha-sync.test.ts scripts/record-alpha-safe-sync.test.ts
 ---
 
 # Intent
 
-Detect upstream changes every six hours and automatically integrate only policy-safe,
-CI-validated merge-ancestry candidates without allowing automation to make unverified semantic
-reconciliation claims about Alpha-only features.
+Detect upstream changes every six hours and automatically integrate conflict-free, CI-validated
+merge-ancestry candidates. Report semantic overlap without making unverified claims that an
+Alpha-only feature is unaffected.
 
 # Behavioral invariants
 
 - Sync candidates always start from the current `alpha` branch and merge official
   `pingdotgg/t3code` `main` with a merge commit.
-- Incoming paths are compared with the current Alpha delta and a protected-surface policy. Exact
-  overlaps and identity, persistence, contract, packaging, updater, SSH, or release changes require
-  human review even when Git merges cleanly.
-- A policy-safe merge updates one reusable automation branch and pull request, updates active
-  feature records as unaffected, and becomes eligible for automatic merge only after required CI.
+- Incoming paths are compared with the current Alpha delta and protected surfaces. The pull request
+  reports and labels semantic overlap, but overlap does not block a conflict-free candidate.
+- A conflict-free merge updates one reusable automation branch and pull request, records active
+  features as auto-merged, and becomes eligible for automatic merge only after required CI.
 - A textual merge conflict creates or updates a visible blocker issue containing the exact Alpha
   base, upstream commit, and conflicted paths.
 - A successful first CI pass causes the finalizer to append a journal entry tied to the tested
   candidate and CI run. A second CI pass over that journaled head is required before auto-merge.
-- Review-required candidates remain open with an issue and never auto-merge or trigger a release.
+- Candidates with failed CI remain open with a blocker issue and never auto-merge or trigger a
+  release.
 - Fork CI runs on standard GitHub-hosted runners and validates pushes to `alpha` plus pull requests.
 - Sync mutations use a narrowly installed GitHub App so automation-created pull requests trigger
   CI without per-run approval.
@@ -42,10 +42,11 @@ reconciliation claims about Alpha-only features.
 
 - `.github/workflows/sync-upstream.yml` performs scheduled divergence checks and maintains the
   `automation/upstream-main` sync PR.
-- `.github/workflows/finalize-upstream-sync.yml` journals tested safe candidates and enables their
+- `.github/workflows/finalize-upstream-sync.yml` journals tested conflict-free candidates and
+  enables their
   merge only after the journaled head also passes CI.
-- `.alpha/auto-sync-policy.json` and `scripts/classify-alpha-sync.ts` define the conservative
-  automatic-versus-review boundary.
+- `.alpha/auto-sync-policy.json` and `scripts/classify-alpha-sync.ts` define the advisory semantic
+  overlap report.
 - The fork's core CI and mobile fingerprint check use public GitHub-hosted runner labels rather
   than upstream's repository-specific Blacksmith runners.
 - The local `maintain-alpha-fork` skill remains the authority for semantic conflict resolution and
@@ -97,3 +98,6 @@ reconciliation claims about Alpha-only features.
   protected packaging, telemetry, persistence, contract, and workflow paths correctly required
   manual review. Fork CI keeps public runners, and the classifier, journal finalizer, and merge
   gates remain unchanged.
+- 2026-08-29, automation policy: semantic overlap is now advisory. Every conflict-free candidate
+  can auto-merge after CI passes on the candidate and journaled head. Git conflicts, failed CI,
+  and changed head SHAs remain hard blockers.

@@ -55,6 +55,7 @@ describe("classifyAlphaSync", () => {
       { path: ".github/workflows/ci.yml", reasons: ["workflow automation"] },
       { path: "packages/contracts/src/settings.ts", reasons: ["wire contracts"] },
     ]);
-    assert.include(renderAlphaSyncClassification(result), "human reconciliation required");
+    assert.include(renderAlphaSyncClassification(result), "semantic overlap detected");
+    assert.include(renderAlphaSyncClassification(result), "report is advisory");
   });
 });

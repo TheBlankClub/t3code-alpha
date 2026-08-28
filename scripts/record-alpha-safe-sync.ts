@@ -31,7 +31,7 @@ export function reconcileFeatureRecord(
   const marker = `upstream \`${upstreamSha}\``;
   if (reconciled.includes(marker)) return reconciled;
   const suffix = reconciled.endsWith("\n") ? "" : "\n";
-  return `${reconciled}${suffix}- ${date}, upstream \`${upstreamSha}\`: \`unaffected\`; automated safe-sync classification\n  found no Alpha-delta overlap or protected-path changes. Required PR CI remained the merge gate.\n`;
+  return `${reconciled}${suffix}- ${date}, upstream \`${upstreamSha}\`: \`auto-merged\`; Git produced a conflict-free\n  reconciliation candidate. Required PR CI remained the merge gate.\n`;
 }
 
 export interface AlphaReconciliationJournalEntry {
@@ -71,7 +71,7 @@ export function createSafeSyncJournalEntry(options: {
     },
     validation: [
       `required GitHub CI passed on the automated sync candidate: ${options.validationUrl}`,
-      "incoming paths did not overlap the current Alpha delta or protected auto-sync surfaces",
+      "Git produced the candidate without merge conflicts",
     ],
     outcome: "ready-for-auto-merge",
   };

@@ -13,7 +13,8 @@ describe("recordAlphaSafeSync", () => {
     );
 
     assert.include(result, `last_reconciled_with: ${upstreamSha}`);
-    assert.include(result, `2026-08-15, upstream \`${upstreamSha}\`: \`unaffected\``);
+    assert.include(result, `2026-08-15, upstream \`${upstreamSha}\`: \`auto-merged\``);
+    assert.include(result, "Git produced a conflict-free");
   });
 
   it("does not change retired records", () => {
@@ -39,7 +40,7 @@ describe("recordAlphaSafeSync", () => {
         features: { retained: ["alpha", "zeta"], rewritten: [], retired: [] },
         validation: [
           "required GitHub CI passed on the automated sync candidate: https://github.com/TheBlankClub/t3code-alpha/actions/runs/1",
-          "incoming paths did not overlap the current Alpha delta or protected auto-sync surfaces",
+          "Git produced the candidate without merge conflicts",
         ],
         outcome: "ready-for-auto-merge",
       },
