@@ -3,7 +3,7 @@ id: newest-agents-first
 status: active
 risk: green
 introduced_by: newest-agents-first
-last_reconciled_with: 0e2905eb783fd2385f358a95f0b25bbf07ff7122
+last_reconciled_with: 22c311ddecfbab2e541a374a46f2df87d4fc6305
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -62,3 +62,5 @@ users scroll past older agents.
 - 2026-08-29, upstream `0e2905eb783fd2385f358a95f0b25bbf07ff7122`: `mechanical-overlap`;
   adopted upstream's sub-agent model and effort metadata coverage in the shared runtime tests while
   retaining stable newest-first ordering for direct agents.
+- 2026-08-28, upstream `22c311ddecfbab2e541a374a46f2df87d4fc6305`: `auto-merged`; Git produced a conflict-free
+  reconciliation candidate. Required PR CI remained the merge gate.

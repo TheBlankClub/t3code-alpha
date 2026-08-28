@@ -3,7 +3,7 @@ id: alpha-release-workflow
 status: active
 risk: red
 introduced_by: alpha-release-workflow
-last_reconciled_with: 0e2905eb783fd2385f358a95f0b25bbf07ff7122
+last_reconciled_with: 22c311ddecfbab2e541a374a46f2df87d4fc6305
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -182,3 +182,5 @@ upstream's official release, hosted-web, AUR, or npm publication paths.
   adopted upstream's preload verification, WSL runtime packaging, and official nightly schedule
   adjustment. The official workflow remains repository-gated, and the Alpha release graph,
   signing identity, destinations, and manual-installer policy remain separate.
+- 2026-08-28, upstream `22c311ddecfbab2e541a374a46f2df87d4fc6305`: `auto-merged`; Git produced a conflict-free
+  reconciliation candidate. Required PR CI remained the merge gate.
