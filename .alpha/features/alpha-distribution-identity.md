@@ -3,7 +3,7 @@ id: alpha-distribution-identity
 status: active
 risk: red
 introduced_by: alpha-distribution-identity
-last_reconciled_with: ead4ce52a1624d9c55461f61524580978fc8b719
+last_reconciled_with: 0e2905eb783fd2385f358a95f0b25bbf07ff7122
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -105,3 +105,7 @@ identity.
 - 2026-08-27, upstream `ead4ce52a1624d9c55461f61524580978fc8b719`: `mechanical-overlap`;
   adopted upstream's `0.0.35` package baseline and anonymous preview downloads while retaining the
   Alpha app, package, repository, binary, artifact, runner, and prerelease identities.
+- 2026-08-29, upstream `0e2905eb783fd2385f358a95f0b25bbf07ff7122`: `mechanical-conflict`;
+  adopted upstream's packaged WSL runtime and preload verification while combining its WSL bundle
+  flag with Alpha's macOS signing identity. App, protocol, state, Safe Storage, and artifact
+  identities remain Alpha-specific.

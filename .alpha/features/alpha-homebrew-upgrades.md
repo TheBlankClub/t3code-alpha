@@ -3,7 +3,7 @@ id: alpha-homebrew-upgrades
 status: active
 risk: red
 introduced_by: alpha-homebrew-upgrades
-last_reconciled_with: ead4ce52a1624d9c55461f61524580978fc8b719
+last_reconciled_with: 0e2905eb783fd2385f358a95f0b25bbf07ff7122
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -92,3 +92,6 @@ Developer account or a separate package-hosting service.
 - 2026-08-27, upstream `ead4ce52a1624d9c55461f61524580978fc8b719`: `unaffected`; the rolling
   `desktop-preview` prerelease remains separate from versioned Alpha releases and does not change
   the fork-owned cask, pinned certificate, or Homebrew upgrade contract.
+- 2026-08-29, upstream `0e2905eb783fd2385f358a95f0b25bbf07ff7122`: `mechanical-overlap`;
+  adopted upstream's WSL runtime packaging changes while retaining the fork-owned cask, pinned
+  certificate, persistent signing identity, and Homebrew upgrade contract.

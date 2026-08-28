@@ -3,7 +3,7 @@ id: newest-agents-first
 status: active
 risk: green
 introduced_by: newest-agents-first
-last_reconciled_with: ead4ce52a1624d9c55461f61524580978fc8b719
+last_reconciled_with: 0e2905eb783fd2385f358a95f0b25bbf07ff7122
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -59,3 +59,6 @@ users scroll past older agents.
 - 2026-08-27, upstream `ead4ce52a1624d9c55461f61524580978fc8b719`: `unaffected`; incoming Codex
   multi-agent event support and Grok provider changes do not touch direct-agent ordering or row
   stability in the shared client runtime.
+- 2026-08-29, upstream `0e2905eb783fd2385f358a95f0b25bbf07ff7122`: `mechanical-overlap`;
+  adopted upstream's sub-agent model and effort metadata coverage in the shared runtime tests while
+  retaining stable newest-first ordering for direct agents.

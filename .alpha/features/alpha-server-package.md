@@ -3,7 +3,7 @@ id: alpha-server-package
 status: active
 risk: red
 introduced_by: alpha-server-package
-last_reconciled_with: ead4ce52a1624d9c55461f61524580978fc8b719
+last_reconciled_with: 0e2905eb783fd2385f358a95f0b25bbf07ff7122
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -109,3 +109,6 @@ official T3 Code without publishing to or executing the upstream `t3` package.
 - 2026-08-27, upstream `ead4ce52a1624d9c55461f61524580978fc8b719`: `mechanical-conflict`;
   adopted upstream's `0.0.35` package version while retaining the Alpha package description,
   repository, `t3-alpha` binary, state root, and service identities.
+- 2026-08-29, upstream `0e2905eb783fd2385f358a95f0b25bbf07ff7122`: `mechanical-overlap`;
+  adopted upstream's compressed WSL-local server runtime while retaining the `t3code-alpha`
+  package, `t3-alpha` binary, `~/.t3-alpha` state, and Alpha-specific service identities.

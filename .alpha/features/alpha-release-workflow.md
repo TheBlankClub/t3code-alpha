@@ -3,7 +3,7 @@ id: alpha-release-workflow
 status: active
 risk: red
 introduced_by: alpha-release-workflow
-last_reconciled_with: ead4ce52a1624d9c55461f61524580978fc8b719
+last_reconciled_with: 0e2905eb783fd2385f358a95f0b25bbf07ff7122
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -178,3 +178,7 @@ upstream's official release, hosted-web, AUR, or npm publication paths.
   adopted anonymous rolling preview downloads and cleanup with public GitHub-hosted runners. The
   versioned Alpha release graph, signing identity, destinations, and manual-installer policy remain
   separate and unchanged.
+- 2026-08-29, upstream `0e2905eb783fd2385f358a95f0b25bbf07ff7122`: `mechanical-overlap`;
+  adopted upstream's preload verification, WSL runtime packaging, and official nightly schedule
+  adjustment. The official workflow remains repository-gated, and the Alpha release graph,
+  signing identity, destinations, and manual-installer policy remain separate.

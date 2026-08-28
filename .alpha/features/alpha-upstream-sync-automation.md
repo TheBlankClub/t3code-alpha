@@ -3,7 +3,7 @@ id: alpha-upstream-sync-automation
 status: active
 risk: red
 introduced_by: alpha-upstream-sync-automation
-last_reconciled_with: ead4ce52a1624d9c55461f61524580978fc8b719
+last_reconciled_with: 0e2905eb783fd2385f358a95f0b25bbf07ff7122
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -92,4 +92,8 @@ reconciliation claims about Alpha-only features.
 - 2026-08-27, upstream `ead4ce52a1624d9c55461f61524580978fc8b719`: `mechanical-overlap`;
   protected preview, package, and contract paths correctly required manual review. The expanded
   preview workflow uses public runners, while the sync classifier, journal finalizer, and CI merge
+  gates remain unchanged.
+- 2026-08-29, upstream `0e2905eb783fd2385f358a95f0b25bbf07ff7122`: `mechanical-overlap`;
+  protected packaging, telemetry, persistence, contract, and workflow paths correctly required
+  manual review. Fork CI keeps public runners, and the classifier, journal finalizer, and merge
   gates remain unchanged.

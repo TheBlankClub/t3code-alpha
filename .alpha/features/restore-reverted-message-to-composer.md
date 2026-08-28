@@ -3,7 +3,7 @@ id: restore-reverted-message-to-composer
 status: active
 risk: amber
 introduced_by: a47276a40
-last_reconciled_with: ead4ce52a1624d9c55461f61524580978fc8b719
+last_reconciled_with: 0e2905eb783fd2385f358a95f0b25bbf07ff7122
 upstream_issue: pingdotgg/t3code#5685
 upstream_pr: pingdotgg/t3code#6044
 surfaces:
@@ -67,3 +67,7 @@ Let users edit and resend a reverted prompt instead of recreating its text and i
 - 2026-08-27, upstream `ead4ce52a1624d9c55461f61524580978fc8b719`: `unaffected`; incoming Grok,
   Codex event, usage, package, and preview changes do not touch composer draft stashing or reverted
   prompt and attachment restoration.
+- 2026-08-29, upstream `0e2905eb783fd2385f358a95f0b25bbf07ff7122`: `mechanical-conflict`;
+  adopted upstream's general file attachments and project-default model drafts while narrowing
+  revert restoration to image attachments. Prompt stashing, image restoration, send locking, and
+  soft failure behavior remain unchanged.

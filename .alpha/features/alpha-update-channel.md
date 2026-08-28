@@ -3,7 +3,7 @@ id: alpha-update-channel
 status: active
 risk: red
 introduced_by: alpha-update-channel
-last_reconciled_with: ead4ce52a1624d9c55461f61524580978fc8b719
+last_reconciled_with: 0e2905eb783fd2385f358a95f0b25bbf07ff7122
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -115,3 +115,7 @@ automatic updater.
   adopted upstream's anonymous preview publishing and `0.0.35` base version while retaining Alpha
   prerelease versions, public runners, fork-owned artifacts, and disabled automatic updates. A
   trusted build step appends a PR marker to each preview DMG for safe replacement and cleanup.
+- 2026-08-29, upstream `0e2905eb783fd2385f358a95f0b25bbf07ff7122`: `mechanical-conflict`;
+  combined upstream's WSL runtime bundle flag with Alpha's macOS signing identity in the desktop
+  build configuration. Alpha channel recognition, artwork, fork-owned artifacts, and disabled
+  automatic updates remain unchanged.

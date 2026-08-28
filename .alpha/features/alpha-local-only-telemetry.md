@@ -3,7 +3,7 @@ id: alpha-local-only-telemetry
 status: active
 risk: red
 introduced_by: alpha-local-only-telemetry
-last_reconciled_with: ead4ce52a1624d9c55461f61524580978fc8b719
+last_reconciled_with: 0e2905eb783fd2385f358a95f0b25bbf07ff7122
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -56,3 +56,6 @@ traces, or metrics to third-party telemetry services.
 - 2026-08-27, upstream `ead4ce52a1624d9c55461f61524580978fc8b719`: `unaffected`; Grok usage
   reads provider-local transcripts and does not add product analytics, OTLP export, Axiom export,
   or relay telemetry. Every Alpha outbound-telemetry guard remains in place.
+- 2026-08-29, upstream `0e2905eb783fd2385f358a95f0b25bbf07ff7122`: `mechanical-overlap`;
+  adopted upstream's connected-client and server-platform analytics properties behind Alpha's
+  disabled analytics layer. PostHog, OTLP, Axiom, and relay egress guards remain active.
