@@ -3,7 +3,7 @@ id: alpha-update-channel
 status: active
 risk: red
 introduced_by: alpha-update-channel
-last_reconciled_with: 053affbed2659f90cd1b1efaaa7a75865c4131c7
+last_reconciled_with: c0e09f323ac9f6bf4b9119cbad841db3379588d6
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -124,3 +124,6 @@ automatic updater.
 - 2026-08-29, upstream `053affbed2659f90cd1b1efaaa7a75865c4131c7`: `mechanical-conflict`;
   adopted upstream's provider-settings and environment-theme redesign while retaining Alpha's
   fixed update track, disabled unsigned updates, fork-owned feed, and artwork controls.
+- 2026-08-30, upstream `c0e09f323ac9f6bf4b9119cbad841db3379588d6`: `unaffected`; incoming
+  product changes do not alter Alpha's fixed update track, disabled unsigned updates, fork-owned
+  feed, or artwork controls.

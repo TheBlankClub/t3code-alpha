@@ -3,7 +3,7 @@ id: alpha-local-only-telemetry
 status: active
 risk: red
 introduced_by: alpha-local-only-telemetry
-last_reconciled_with: 053affbed2659f90cd1b1efaaa7a75865c4131c7
+last_reconciled_with: c0e09f323ac9f6bf4b9119cbad841db3379588d6
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -64,3 +64,6 @@ traces, or metrics to third-party telemetry services.
 - 2026-08-29, upstream `053affbed2659f90cd1b1efaaa7a75865c4131c7`: `mechanical-overlap`;
   adopted upstream's environment-theme server tests and Expo 57 client changes without enabling
   PostHog, OTLP, Axiom, or relay telemetry egress.
+- 2026-08-30, upstream `c0e09f323ac9f6bf4b9119cbad841db3379588d6`: `unaffected`; incoming
+  markdown, preview, composer, pull-request, and title-retry changes add no product analytics,
+  OTLP, Axiom, or relay telemetry egress.

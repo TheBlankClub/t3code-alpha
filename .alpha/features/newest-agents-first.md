@@ -3,7 +3,7 @@ id: newest-agents-first
 status: active
 risk: green
 introduced_by: newest-agents-first
-last_reconciled_with: 053affbed2659f90cd1b1efaaa7a75865c4131c7
+last_reconciled_with: c0e09f323ac9f6bf4b9119cbad841db3379588d6
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -67,3 +67,6 @@ users scroll past older agents.
 - 2026-08-29, upstream `053affbed2659f90cd1b1efaaa7a75865c4131c7`: `unaffected`; incoming
   client attachment, server descriptor, and settling changes do not alter direct-agent ordering or
   row stability.
+- 2026-08-30, upstream `c0e09f323ac9f6bf4b9119cbad841db3379588d6`: `unaffected`; incoming
+  markdown, preview, composer, pull-request, and title-retry changes do not alter direct-agent
+  ordering or row stability.

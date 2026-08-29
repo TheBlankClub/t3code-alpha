@@ -3,7 +3,7 @@ id: fork-steward
 status: active
 risk: green
 introduced_by: alpha-foundation
-last_reconciled_with: 053affbed2659f90cd1b1efaaa7a75865c4131c7
+last_reconciled_with: c0e09f323ac9f6bf4b9119cbad841db3379588d6
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -84,3 +84,6 @@ retiring fork code when upstream provides an equivalent or better implementation
 - 2026-08-29, upstream `053affbed2659f90cd1b1efaaa7a75865c4131c7`: `unaffected`; retained the
   feature ledger, merge-ancestry policy, reconciliation tooling, and human review boundary while
   adopting the incoming mobile, web, provider, package, and contract changes.
+- 2026-08-30, upstream `c0e09f323ac9f6bf4b9119cbad841db3379588d6`: `unaffected`; retained the
+  feature ledger, merge-ancestry policy, reconciliation tooling, and human review boundary while
+  adopting the incoming web, desktop, client-runtime, and server changes.

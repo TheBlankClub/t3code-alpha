@@ -3,7 +3,7 @@ id: alpha-distribution-identity
 status: active
 risk: red
 introduced_by: alpha-distribution-identity
-last_reconciled_with: 053affbed2659f90cd1b1efaaa7a75865c4131c7
+last_reconciled_with: c0e09f323ac9f6bf4b9119cbad841db3379588d6
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -114,3 +114,6 @@ identity.
 - 2026-08-29, upstream `053affbed2659f90cd1b1efaaa7a75865c4131c7`: `mechanical-overlap`;
   adopted upstream's `0.0.36` desktop package baseline and Expo 57 mobile stack while retaining
   Alpha's app, protocol, state, Safe Storage, service, and artifact identities.
+- 2026-08-30, upstream `c0e09f323ac9f6bf4b9119cbad841db3379588d6`: `unaffected`; incoming
+  markdown, preview, composer, pull-request, and title-retry changes do not alter Alpha app,
+  protocol, state, Safe Storage, service, package, or artifact identities.

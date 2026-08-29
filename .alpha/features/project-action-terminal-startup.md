@@ -3,7 +3,7 @@ id: project-action-terminal-startup
 status: active
 risk: amber
 introduced_by: 438019e36
-last_reconciled_with: 053affbed2659f90cd1b1efaaa7a75865c4131c7
+last_reconciled_with: c0e09f323ac9f6bf4b9119cbad841db3379588d6
 upstream_issue: pingdotgg/t3code#6337
 upstream_pr: pingdotgg/t3code#6338
 surfaces:
@@ -76,3 +76,6 @@ is still initializing.
 - 2026-08-29, upstream `053affbed2659f90cd1b1efaaa7a75865c4131c7`: `mechanical-overlap`;
   adopted upstream's environment-theme and attachment wire contracts while retaining terminal
   initial-command handling, acknowledgement, and older-server fallback behavior.
+- 2026-08-30, upstream `c0e09f323ac9f6bf4b9119cbad841db3379588d6`: `unaffected`; upstream's
+  preview manager deduplication does not alter terminal initial-command handling,
+  acknowledgement, or older-server fallback behavior.
