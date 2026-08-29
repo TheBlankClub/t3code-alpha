@@ -3,7 +3,7 @@ id: alpha-update-channel
 status: active
 risk: red
 introduced_by: alpha-update-channel
-last_reconciled_with: 22c311ddecfbab2e541a374a46f2df87d4fc6305
+last_reconciled_with: 053affbed2659f90cd1b1efaaa7a75865c4131c7
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -121,3 +121,6 @@ automatic updater.
   automatic updates remain unchanged.
 - 2026-08-28, upstream `22c311ddecfbab2e541a374a46f2df87d4fc6305`: `auto-merged`; Git produced a conflict-free
   reconciliation candidate. Required PR CI remained the merge gate.
+- 2026-08-29, upstream `053affbed2659f90cd1b1efaaa7a75865c4131c7`: `mechanical-conflict`;
+  adopted upstream's provider-settings and environment-theme redesign while retaining Alpha's
+  fixed update track, disabled unsigned updates, fork-owned feed, and artwork controls.

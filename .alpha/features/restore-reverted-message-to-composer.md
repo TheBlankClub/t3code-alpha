@@ -3,7 +3,7 @@ id: restore-reverted-message-to-composer
 status: active
 risk: amber
 introduced_by: a47276a40
-last_reconciled_with: 22c311ddecfbab2e541a374a46f2df87d4fc6305
+last_reconciled_with: 053affbed2659f90cd1b1efaaa7a75865c4131c7
 upstream_issue: pingdotgg/t3code#5685
 upstream_pr: pingdotgg/t3code#6044
 surfaces:
@@ -73,3 +73,6 @@ Let users edit and resend a reverted prompt instead of recreating its text and i
   soft failure behavior remain unchanged.
 - 2026-08-28, upstream `22c311ddecfbab2e541a374a46f2df87d4fc6305`: `auto-merged`; Git produced a conflict-free
   reconciliation candidate. Required PR CI remained the merge gate.
+- 2026-08-29, upstream `053affbed2659f90cd1b1efaaa7a75865c4131c7`: `mechanical-conflict`;
+  adopted upstream's general file attachments, persistent draft files, and updated stash behavior
+  while retaining reverted prompt stashing, image-only restoration, send locking, and soft failure.

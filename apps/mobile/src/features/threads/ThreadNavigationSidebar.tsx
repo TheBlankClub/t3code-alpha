@@ -26,7 +26,6 @@ import { ControlPillMenu } from "../../components/ControlPill";
 import { SymbolView } from "../../components/AppSymbol";
 import { NATIVE_LIQUID_GLASS_SUPPORTED } from "../../native/native-glass";
 import { NativeStackScreenOptions } from "../../native/StackHeader";
-import { resolveMobileAutoSettlePreferences } from "../../persistence/mobile-preferences";
 import { scopedProjectKey, scopedThreadKey } from "../../lib/scopedEntities";
 import { useProjects, useThreadShells } from "../../state/entities";
 import { mobilePreferencesAtom } from "../../state/preferences";
@@ -166,9 +165,9 @@ function ThreadNavigationSidebarPane(
   } = useThreadListActions();
   const threadListV2Enabled = useThreadListV2Enabled();
   const preferencesResult = useAtomValue(mobilePreferencesAtom);
-  const autoSettlePreferences = resolveMobileAutoSettlePreferences(
-    AsyncResult.isSuccess(preferencesResult) ? preferencesResult.value : {},
-  );
+  const autoSettleOnMerge =
+    !AsyncResult.isSuccess(preferencesResult) ||
+    preferencesResult.value.autoSettleOnMerge !== false;
   const pendingTasks = usePendingNewTasks();
   const { openPendingTask, confirmDeletePendingTask } = usePendingTaskListActions();
   const environments = useMemo(
@@ -511,8 +510,7 @@ function ThreadNavigationSidebarPane(
       searchQuery: props.searchQuery,
       matchedThreadKeys,
       changeRequestByKey,
-      autoSettleAfterDays: autoSettlePreferences.autoSettleAfterDays,
-      autoSettleMode: autoSettlePreferences.autoSettleMode,
+      autoSettleOnMerge,
       settlementEnvironmentIds,
       snoozeEnvironmentIds,
       settledLimit: settledVisibleCount,
@@ -524,8 +522,7 @@ function ThreadNavigationSidebarPane(
     });
   }, [
     changeRequestByKey,
-    autoSettlePreferences.autoSettleAfterDays,
-    autoSettlePreferences.autoSettleMode,
+    autoSettleOnMerge,
     nowMinute,
     snoozeWakeTick,
     snoozedShelfExpanded,
@@ -1161,12 +1158,14 @@ function ThreadNavigationSidebarPane(
     return (
       <>
         <NativeStackScreenOptions
-          optionsVersion={nativeHeaderItems}
+          optionsVersion={[nativeHeaderItems, props.width]}
           options={{
             // Re-applies the shell's static brand slot with the
             // connection-status swap so reconnects surface in the header
             // instead of shifting the list.
             ...getConnectionAwareBrandHeaderOptions({
+              headerWidth: props.width,
+              trailingItemCount: nativeHeaderItems.length,
               onOpenEnvironments: props.onOpenEnvironmentSettings,
               fallbackTitleStyle: { fontSize: 18, fontWeight: "800" },
             }),

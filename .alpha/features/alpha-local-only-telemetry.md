@@ -3,7 +3,7 @@ id: alpha-local-only-telemetry
 status: active
 risk: red
 introduced_by: alpha-local-only-telemetry
-last_reconciled_with: 22c311ddecfbab2e541a374a46f2df87d4fc6305
+last_reconciled_with: 053affbed2659f90cd1b1efaaa7a75865c4131c7
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -61,3 +61,6 @@ traces, or metrics to third-party telemetry services.
   disabled analytics layer. PostHog, OTLP, Axiom, and relay egress guards remain active.
 - 2026-08-28, upstream `22c311ddecfbab2e541a374a46f2df87d4fc6305`: `auto-merged`; Git produced a conflict-free
   reconciliation candidate. Required PR CI remained the merge gate.
+- 2026-08-29, upstream `053affbed2659f90cd1b1efaaa7a75865c4131c7`: `mechanical-overlap`;
+  adopted upstream's environment-theme server tests and Expo 57 client changes without enabling
+  PostHog, OTLP, Axiom, or relay telemetry egress.

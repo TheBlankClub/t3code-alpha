@@ -9,6 +9,7 @@
 - [Review usage](./user/usage.md)
 - [Customize a project icon](./user/project-settings.md)
 - [Mobile appearance](./user/mobile-appearance.md)
+- [Environment themes](./user/environment-theme.md)
 - [Remote access](./user/remote-access.md)
 - [Keeping app and server in sync](./user/updating.md)
 - [Install and update T3 Code Alpha](./user/alpha.md)

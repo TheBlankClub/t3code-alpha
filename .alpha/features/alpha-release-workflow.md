@@ -3,7 +3,7 @@ id: alpha-release-workflow
 status: active
 risk: red
 introduced_by: alpha-release-workflow
-last_reconciled_with: 22c311ddecfbab2e541a374a46f2df87d4fc6305
+last_reconciled_with: 053affbed2659f90cd1b1efaaa7a75865c4131c7
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -184,3 +184,6 @@ upstream's official release, hosted-web, AUR, or npm publication paths.
   signing identity, destinations, and manual-installer policy remain separate.
 - 2026-08-28, upstream `22c311ddecfbab2e541a374a46f2df87d4fc6305`: `auto-merged`; Git produced a conflict-free
   reconciliation candidate. Required PR CI remained the merge gate.
+- 2026-08-29, upstream `053affbed2659f90cd1b1efaaa7a75865c4131c7`: `mechanical-overlap`;
+  adopted upstream's `0.0.36` package baseline. The Alpha release graph, signing identity,
+  prerelease versions, manual installers, and fork-owned destinations remain separate.
