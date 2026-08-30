@@ -3,7 +3,7 @@ id: codex-service-tier-labels
 status: active
 risk: green
 introduced_by: ca4c713e01b8216d57f3ff5b0612f17d41baeb65
-last_reconciled_with: c0e09f323ac9f6bf4b9119cbad841db3379588d6
+last_reconciled_with: 2daff8c25adf701fddd062ae93b94cc57d420ec2
 upstream_issue: null
 upstream_pr: pingdotgg/t3code#4503
 surfaces:
@@ -55,3 +55,5 @@ Standard and Fast tiers.
 - 2026-08-30, upstream `c0e09f323ac9f6bf4b9119cbad841db3379588d6`: `unaffected`; incoming
   markdown, preview, composer spacing, pull-request, and title-retry changes do not alter Codex
   service-tier labels or fast-mode behavior.
+- 2026-08-30, upstream `2daff8c25adf701fddd062ae93b94cc57d420ec2`: `auto-merged`; Git produced a conflict-free
+  reconciliation candidate. Required PR CI remained the merge gate.

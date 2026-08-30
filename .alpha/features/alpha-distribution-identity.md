@@ -3,7 +3,7 @@ id: alpha-distribution-identity
 status: active
 risk: red
 introduced_by: alpha-distribution-identity
-last_reconciled_with: c0e09f323ac9f6bf4b9119cbad841db3379588d6
+last_reconciled_with: 2daff8c25adf701fddd062ae93b94cc57d420ec2
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -117,3 +117,5 @@ identity.
 - 2026-08-30, upstream `c0e09f323ac9f6bf4b9119cbad841db3379588d6`: `unaffected`; incoming
   markdown, preview, composer, pull-request, and title-retry changes do not alter Alpha app,
   protocol, state, Safe Storage, service, package, or artifact identities.
+- 2026-08-30, upstream `2daff8c25adf701fddd062ae93b94cc57d420ec2`: `auto-merged`; Git produced a conflict-free
+  reconciliation candidate. Required PR CI remained the merge gate.
