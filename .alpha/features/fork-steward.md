@@ -3,7 +3,7 @@ id: fork-steward
 status: active
 risk: green
 introduced_by: alpha-foundation
-last_reconciled_with: c0e09f323ac9f6bf4b9119cbad841db3379588d6
+last_reconciled_with: 2daff8c25adf701fddd062ae93b94cc57d420ec2
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -87,3 +87,5 @@ retiring fork code when upstream provides an equivalent or better implementation
 - 2026-08-30, upstream `c0e09f323ac9f6bf4b9119cbad841db3379588d6`: `unaffected`; retained the
   feature ledger, merge-ancestry policy, reconciliation tooling, and human review boundary while
   adopting the incoming web, desktop, client-runtime, and server changes.
+- 2026-08-30, upstream `2daff8c25adf701fddd062ae93b94cc57d420ec2`: `auto-merged`; Git produced a conflict-free
+  reconciliation candidate. Required PR CI remained the merge gate.

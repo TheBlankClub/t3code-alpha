@@ -3,7 +3,7 @@ id: alpha-upstream-sync-automation
 status: active
 risk: red
 introduced_by: alpha-upstream-sync-automation
-last_reconciled_with: c0e09f323ac9f6bf4b9119cbad841db3379588d6
+last_reconciled_with: 2daff8c25adf701fddd062ae93b94cc57d420ec2
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -109,3 +109,5 @@ Alpha-only feature is unaffected.
 - 2026-08-30, upstream `c0e09f323ac9f6bf4b9119cbad841db3379588d6`: `unaffected`; the classifier
   correctly flagged the Alpha composer overlap and protected title-generation paths for manual
   review. Fork sync, journal, public-runner, and CI gates remain unchanged.
+- 2026-08-30, upstream `2daff8c25adf701fddd062ae93b94cc57d420ec2`: `auto-merged`; Git produced a conflict-free
+  reconciliation candidate. Required PR CI remained the merge gate.
