@@ -3,7 +3,7 @@ id: alpha-local-only-telemetry
 status: active
 risk: red
 introduced_by: alpha-local-only-telemetry
-last_reconciled_with: 2daff8c25adf701fddd062ae93b94cc57d420ec2
+last_reconciled_with: 352710d497cc640553e3e18e23fb5a5f3f890466
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -69,3 +69,6 @@ traces, or metrics to third-party telemetry services.
   OTLP, Axiom, or relay telemetry egress.
 - 2026-08-30, upstream `2daff8c25adf701fddd062ae93b94cc57d420ec2`: `auto-merged`; Git produced a conflict-free
   reconciliation candidate. Required PR CI remained the merge gate.
+- 2026-08-31, upstream `352710d497cc640553e3e18e23fb5a5f3f890466`: `mechanical-overlap`;
+  adopted upstream's video asset HTTP changes without changing the guarded OTLP export path.
+  PostHog, OTLP, Axiom, and relay telemetry egress remain disabled.
