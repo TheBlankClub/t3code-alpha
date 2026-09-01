@@ -3,7 +3,7 @@ id: newest-agents-first
 status: active
 risk: green
 introduced_by: newest-agents-first
-last_reconciled_with: 352710d497cc640553e3e18e23fb5a5f3f890466
+last_reconciled_with: 2d156a83b96ebf2e4a9c6017251baad357ae6ab1
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -74,4 +74,7 @@ users scroll past older agents.
   reconciliation candidate. Required PR CI remained the merge gate.
 - 2026-08-31, upstream `352710d497cc640553e3e18e23fb5a5f3f890466`: `unaffected`; incoming
   attachment, artifact-template, interim-turn, and mobile changes do not alter direct-agent
+  ordering or row stability.
+- 2026-09-02, upstream `2d156a83b96ebf2e4a9c6017251baad357ae6ab1`: `unaffected`; incoming agent
+  activity visibility, work-log, provider, and client-runtime changes do not alter direct-agent
   ordering or row stability.

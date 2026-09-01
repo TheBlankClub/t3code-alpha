@@ -30,12 +30,7 @@ import {
 } from "@t3tools/client-runtime/connection";
 import { wasBootstrapThreadDeleted } from "@t3tools/client-runtime/errors";
 import { type CodexArtifactTemplate } from "@t3tools/client-runtime/codex-artifact-templates";
-import {
-  changeRequestAutoSettles,
-  effectiveSettled,
-  effectiveSnoozed,
-  threadWokeAt,
-} from "@t3tools/client-runtime/state/thread-settled";
+import { effectiveSnoozed, threadWokeAt } from "@t3tools/client-runtime/state/thread-settled";
 import {
   codexFeedbackMessage,
   parseCodexFeedbackCommand,
@@ -53,9 +48,9 @@ import {
   createModelSelection,
   resolvePromptInjectedEffort,
 } from "@t3tools/shared/model";
-import { CHAT_LIST_ANCHOR_OFFSET } from "@t3tools/shared/chatList";
 import { projectScriptCwd, projectScriptRuntimeEnv } from "@t3tools/shared/projectScripts";
 import { truncate } from "@t3tools/shared/String";
+import { resolveThreadReferenceCopyTarget } from "@t3tools/shared/threadReference";
 import {
   getTerminalLabel,
   nextTerminalId,
@@ -102,14 +97,17 @@ import {
   deriveTimelineEntries,
   deriveActiveWorkStartedAt,
   deriveActivePlanState,
-  deriveTurnPlans,
   findLatestProposedPlan,
   deriveWorkLogEntries,
   hasActionableProposedPlan,
   isLatestTurnSettled,
 } from "../session-logic";
 import { type LegendListRef } from "@legendapp/list/react";
-import { getAnchoredTurnMetrics, type TimelineScrollMode } from "./chat/timelineScrollAnchoring";
+import {
+  CHAT_TIMELINE_ANCHOR_OFFSET,
+  getAnchoredTurnMetrics,
+  type TimelineScrollMode,
+} from "./chat/timelineScrollAnchoring";
 import {
   buildPendingUserInputAnswers,
   derivePendingUserInputProgress,
@@ -323,14 +321,14 @@ import {
   threadChangeRequestSnapshotsAtom,
   useLinkedThreadPullRequest,
 } from "./ThreadStatusIndicators";
-import { ComposerBannerStack, type ComposerBannerStackItem } from "./chat/ComposerBannerStack";
+import type { ComposerBannerStackItem } from "./chat/ComposerBannerStack";
+import { ComposerSurface } from "./chat/ComposerSurface";
 import {
   hasAvailableClaudeCompactionProvider,
   hasDismissedResumeCompaction,
   shouldOfferResumeCompaction,
 } from "./chat/ContextWindowMeter.logic";
 import { deriveLatestContextWindowSnapshot, formatContextWindowTokens } from "../lib/contextWindow";
-import { ThreadSyncStatusPill } from "./chat/ThreadSyncStatusPill";
 import {
   DRAFT_HERO_TRANSITION_ANIMATION_ID,
   DRAFT_HERO_TRANSITION_DURATION_MS,
@@ -359,7 +357,6 @@ import {
   shouldDockDraftHeroForSubmission,
   shouldReleaseTimelineAnchorForToolActivity,
   shouldShowBranchMismatchBanner,
-  shoulderTabReserve,
   shouldShowPlanFollowUpPrompt,
   getStartedThreadModelChangeBlockReason,
   LAST_INVOKED_SCRIPT_BY_PROJECT_KEY,
@@ -413,10 +410,16 @@ import {
   AlertDialogTitle,
 } from "./ui/alert-dialog";
 import { Tooltip, TooltipPopup, TooltipTrigger } from "./ui/tooltip";
-import { ServerUpdateAction, ServerUpdateProgress } from "./ServerUpdateAction";
+import { ServerUpdateAction } from "./ServerUpdateAction";
+import {
+  ComposerServerUpdateIcon,
+  ComposerServerUpdateStatus,
+} from "./chat/ComposerServerUpdateStatus";
 import {
   buildVersionMismatchDismissalKey,
+  dismissServerUpdateFailure,
   dismissVersionMismatch,
+  isServerUpdateFailureDismissed,
   isVersionMismatchDismissed,
   resolveServerConfigVersionMismatch,
   resolveServerSelfUpdateCapability,
@@ -529,7 +532,11 @@ const TYPE_TO_FOCUS_INTERACTIVE_SELECTOR = [
   '[role="tab"]',
 ].join(",");
 const TYPE_TO_FOCUS_FLOATING_LAYER_SELECTOR = [
-  '[data-slot="dialog"]',
+  '[data-slot="alert-dialog-popup"]:is([data-open],[data-ending-style])',
+  '[data-slot="command-dialog-popup"]:is([data-open],[data-ending-style])',
+  '[data-slot="dialog-popup"]:is([data-open],[data-ending-style])',
+  '[data-slot="sheet-popup"]:is([data-open],[data-ending-style])',
+  '[data-slot="sidebar"][data-mobile="true"]:is([data-open],[data-ending-style])',
   '[data-slot="menu-popup"]',
   '[data-slot="select-popup"]',
   '[data-slot="popover-popup"]',
@@ -2251,6 +2258,12 @@ function ChatViewContent(props: ChatViewProps) {
   const serverUpdateState = useAtomValue(
     serverEnvironment.updateStateAtom(serverUpdateEnvironmentId),
   );
+  const [dismissedServerUpdateState, setDismissedServerUpdateState] = useState<
+    typeof serverUpdateState | null
+  >(null);
+  const serverUpdateFailureDismissed =
+    serverUpdateState === dismissedServerUpdateState ||
+    isServerUpdateFailureDismissed(serverUpdateState);
   const systemComposerBannerItems = useMemo<ComposerBannerStackItem[]>(() => {
     const items: ComposerBannerStackItem[] = [];
     const updateRunning = serverUpdateState.status === "running";
@@ -2278,8 +2291,8 @@ function ChatViewContent(props: ChatViewProps) {
         items.push({
           id: `environment-unavailable:${activeEnvironmentUnavailableState.environmentId}`,
           variant: "default",
-          // Live connection status: calm styling, but it must front the stack.
-          urgent: true,
+          // Prioritize live connection progress among the notices.
+          priority: "urgent",
           icon: (
             <span
               className="size-1.5 animate-status-pulse rounded-full bg-foreground"
@@ -2326,29 +2339,24 @@ function ChatViewContent(props: ChatViewProps) {
     if (
       serverUpdateEnvironmentId &&
       !reconnectingThroughVersionSkew &&
-      (serverUpdateState.status !== "idle" ||
-        (showVersionMismatchBanner && versionMismatch && versionMismatchDismissKey))
+      (serverUpdateState.status === "idle"
+        ? showVersionMismatchBanner
+        : !serverUpdateFailureDismissed)
     ) {
       const updateInProgress = serverUpdateState.status === "running";
       const updateFailed = serverUpdateState.status === "failed";
       items.push({
         id: `server-version:${serverUpdateEnvironmentId}`,
         variant: updateFailed ? "error" : "default",
-        // A running update is live progress the user is waiting on; only the
-        // idle "update available" offer is calm enough to stack behind.
-        urgent: updateInProgress,
-        // In-flight and failed states carry their own status dot inside
-        // ServerUpdateProgress; only the idle offer needs an icon.
-        icon:
-          updateInProgress || updateFailed ? null : (
-            <span
-              className="size-1.5 rounded-full border border-muted-foreground/40"
-              aria-hidden="true"
-            />
-          ),
+        // Prioritize update progress over passive notices, but keep activity attached.
+        priority: updateInProgress ? "urgent" : "notice",
+        icon: <ComposerServerUpdateIcon status={serverUpdateState.status} />,
         title:
           updateInProgress || updateFailed ? (
-            `${updateFailed ? "Could not update" : "Updating"} ${versionMismatchServerLabel}`
+            <ComposerServerUpdateStatus
+              state={serverUpdateState}
+              serverLabel={versionMismatchServerLabel}
+            />
           ) : versionMismatch ? (
             <Tooltip>
               <TooltipTrigger
@@ -2367,11 +2375,9 @@ function ChatViewContent(props: ChatViewProps) {
             "Server update available"
           ),
         description:
-          updateInProgress || updateFailed ? (
-            <ServerUpdateProgress state={serverUpdateState} />
-          ) : versionMismatchSelfUpdate === "desktop-managed" ? (
-            serverUpdateGuidance(versionMismatchSelfUpdate, versionMismatchServerLabel)
-          ) : null,
+          !updateInProgress && !updateFailed && versionMismatchSelfUpdate === "desktop-managed"
+            ? serverUpdateGuidance(versionMismatchSelfUpdate, versionMismatchServerLabel)
+            : undefined,
         // The desktop-managed guidance is already the description; the action
         // slot would only repeat it.
         actions:
@@ -2386,11 +2392,15 @@ function ChatViewContent(props: ChatViewProps) {
               label={updateFailed ? "Retry" : "Update"}
             />
           ),
-        ...(updateInProgress || updateFailed || !versionMismatchDismissKey
+        ...(updateInProgress || (!updateFailed && !versionMismatchDismissKey)
           ? {}
           : {
               dismissLabel: "Dismiss update notice",
               onDismiss: () => {
+                if (updateFailed) {
+                  dismissServerUpdateFailure(serverUpdateState);
+                  setDismissedServerUpdateState(serverUpdateState);
+                }
                 dismissVersionMismatch(versionMismatchDismissKey);
                 setDismissedVersionMismatchKey(versionMismatchDismissKey);
               },
@@ -2405,6 +2415,7 @@ function ChatViewContent(props: ChatViewProps) {
     navigate,
     setDismissedVersionMismatchKey,
     showVersionMismatchBanner,
+    serverUpdateFailureDismissed,
     serverUpdateState,
     versionMismatch,
     versionMismatchDismissKey,
@@ -2432,7 +2443,6 @@ function ChatViewContent(props: ChatViewProps) {
     [threadActivities],
   );
   const workLogEntries = useMemo(() => deriveWorkLogEntries(threadActivities), [threadActivities]);
-  const turnPlans = useMemo(() => deriveTurnPlans(threadActivities), [threadActivities]);
   // Native subagent fold: memoized by activity-list identity, shared by the
   // Agents surface, live strip, and workflow cards. v2Projection is null
   // until orchestration-v2 lands (source precedence lives in the derive).
@@ -2499,21 +2509,6 @@ function ChatViewContent(props: ChatViewProps) {
     () => deriveActivePlanState(threadActivities, activeLatestTurn?.turnId ?? undefined),
     [activeLatestTurn?.turnId, threadActivities],
   );
-  // Current step for the in-chat working row: only for the running turn's own
-  // plan (deriveActivePlanState falls back to older turns' plans, which must
-  // not label fresh work). Falls back to the first pending step so an
-  // all-pending freshly written plan labels the row, matching the chip and
-  // the server's planProgress.
-  const workingStepLabel = useMemo(() => {
-    if (!activePlan || activePlan.turnId !== (activeLatestTurn?.turnId ?? null)) {
-      return null;
-    }
-    return (
-      activePlan.steps.find((step) => step.status === "inProgress")?.step ??
-      activePlan.steps.find((step) => step.status === "pending")?.step ??
-      null
-    );
-  }, [activeLatestTurn?.turnId, activePlan]);
   const showPlanFollowUpPrompt = shouldShowPlanFollowUpPrompt({
     pendingUserInputCount: pendingUserInputs.length,
     interactionMode,
@@ -2918,13 +2913,8 @@ function ChatViewContent(props: ChatViewProps) {
   ]);
   const timelineEntries = useMemo(
     () =>
-      deriveTimelineEntries(
-        timelineMessages,
-        activeThread?.proposedPlans ?? [],
-        workLogEntries,
-        turnPlans,
-      ),
-    [activeThread?.proposedPlans, timelineMessages, turnPlans, workLogEntries],
+      deriveTimelineEntries(timelineMessages, activeThread?.proposedPlans ?? [], workLogEntries),
+    [activeThread?.proposedPlans, timelineMessages, workLogEntries],
   );
   const [dockedDraftHeroThreadKey, setDockedDraftHeroThreadKey] = useState<string | null>(null);
   const draftHeroDockRequested =
@@ -4220,7 +4210,7 @@ function ChatViewContent(props: ChatViewProps) {
         state,
         anchorIndex,
         composerOverlayHeight,
-        anchorOffset: CHAT_LIST_ANCHOR_OFFSET,
+        anchorOffset: CHAT_TIMELINE_ANCHOR_OFFSET,
       });
     },
     [composerOverlayHeight],
@@ -4248,7 +4238,7 @@ function ChatViewContent(props: ChatViewProps) {
       const realContentBottom = lastRowTop + Math.max(1, lastRowHeight);
       const visibleScrollLength = Math.max(
         0,
-        (state.scrollLength ?? 0) - composerOverlayHeight - CHAT_LIST_ANCHOR_OFFSET,
+        (state.scrollLength ?? 0) - composerOverlayHeight - CHAT_TIMELINE_ANCHOR_OFFSET,
       );
       return realContentBottom > visibleScrollLength;
     },
@@ -4436,7 +4426,7 @@ function ChatViewContent(props: ChatViewProps) {
             index: anchorIndex,
             animated: true,
             viewPosition: 0,
-            viewOffset: CHAT_LIST_ANCHOR_OFFSET,
+            viewOffset: CHAT_TIMELINE_ANCHOR_OFFSET,
           })
           .then(() => {
             if (positionedTimelineAnchorRef.current !== messageId) {
@@ -4831,19 +4821,26 @@ function ChatViewContent(props: ChatViewProps) {
         : null,
     [activeThreadBranch, activeWorktreePath, envMode, gitStatusQuery.data?.refName, isServerThread],
   );
-  // Settled state of the open thread, resolved exactly like the sidebar
-  // partition (same shell, same capability gate, same PR auto-settle input)
-  // so the banner and the sidebar row never disagree.
+  // The server-projected settled state keeps the banner and sidebar in sync.
   const activeThreadShell = useThreadShell(isServerThread ? activeThreadRef : null);
-  const activeComposerTasksProgress =
-    activeLatestTurn !== null && !latestTurnSettled
-      ? (activeThreadShell?.planProgress ?? null)
-      : null;
+  const activeComposerTasksProgress = useMemo(() => {
+    if (!activeLatestTurn || latestTurnSettled || activePlan?.turnId !== activeLatestTurn.turnId) {
+      return null;
+    }
+    const currentStep =
+      activePlan.steps.find((step) => step.status === "inProgress") ??
+      activePlan.steps.find((step) => step.status === "pending");
+    if (!currentStep) return null;
+    return {
+      step: currentStep.step,
+      completedSteps: activePlan.steps.filter((step) => step.status === "completed").length,
+      totalSteps: activePlan.steps.length,
+    };
+  }, [activeLatestTurn, activePlan, latestTurnSettled]);
   const activeComposerTaskSteps =
     activeComposerTasksProgress && activePlan && activePlan.turnId === activeLatestTurn?.turnId
       ? activePlan.steps
       : null;
-
   useLayoutEffect(() => {
     if (!composerOverlayElement) return;
 
@@ -4853,9 +4850,8 @@ function ChatViewContent(props: ChatViewProps) {
       setComposerOverlayHeight((currentHeight) =>
         currentHeight === nextHeight ? currentHeight : nextHeight,
       );
-      const nextClearance = Math.max(0, nextHeight - shoulderTabReserve(composerOverlayElement));
       setScrollToEndClearance((currentClearance) =>
-        currentClearance === nextClearance ? currentClearance : nextClearance,
+        currentClearance === nextHeight ? currentClearance : nextHeight,
       );
     };
 
@@ -4864,16 +4860,10 @@ function ChatViewContent(props: ChatViewProps) {
 
     const resizeObserver = new ResizeObserver(updateHeight);
     resizeObserver.observe(composerOverlayElement);
-    const tabObserver = new MutationObserver(updateHeight);
-    tabObserver.observe(composerOverlayElement, { childList: true, subtree: true });
     return () => {
       resizeObserver.disconnect();
-      tabObserver.disconnect();
     };
   }, [composerOverlayElement]);
-
-  const autoSettleAfterDays = useClientSettings((settings) => settings.sidebarAutoSettleAfterDays);
-  const autoSettleOnMerge = useClientSettings((settings) => settings.sidebarAutoSettleOnMerge);
   const linkedPullRequestStatus = useLinkedThreadPullRequest(
     activeThreadRef?.environmentId ?? null,
     linkedThreadPullRequest,
@@ -4886,6 +4876,41 @@ function ChatViewContent(props: ChatViewProps) {
     linkedPullRequest: linkedThreadPullRequest,
     linkedPullRequestStatus,
   });
+  const activeThreadReferenceCopyTarget = useMemo(
+    () =>
+      activeThreadId === null || !isServerThread
+        ? null
+        : resolveThreadReferenceCopyTarget({
+            threadId: activeThreadId,
+            linkedPullRequestUrl: linkedThreadPullRequest?.url ?? null,
+            detectedPullRequestUrl: activeThreadPr?.url ?? null,
+          }),
+    [activeThreadId, activeThreadPr?.url, isServerThread, linkedThreadPullRequest?.url],
+  );
+  const copyActiveThreadReference = useCallback(() => {
+    const target = activeThreadReferenceCopyTarget;
+    if (target === null) return;
+    void writeTextToClipboard(target.value, target.clipboardTarget).then(
+      (didCopy) => {
+        if (!didCopy) return;
+        toastManager.add({
+          type: "success",
+          title: target.successTitle,
+          description: target.value,
+        });
+      },
+      (error) => {
+        console.error(error);
+        toastManager.add(
+          stackedThreadToast({
+            type: "error",
+            title: target.failureTitle,
+            description: error instanceof Error ? error.message : "An error occurred.",
+          }),
+        );
+      },
+    );
+  }, [activeThreadReferenceCopyTarget]);
   // The right panel offers the thread's own change request, so it can only offer it once the
   // branch has one; until then the picker says so rather than opening an empty panel.
   const addPullRequestSurface = useCallback(() => {
@@ -4894,18 +4919,6 @@ function ChatViewContent(props: ChatViewProps) {
   }, [activeThreadPr, openThreadPullRequest]);
   const pullRequestSurfaceAvailable =
     supportsPullRequests && activeThreadPr !== null && threadRepository !== null;
-  // Primitive slice of the displayed PR for the settle-rule memos below:
-  // resolveDisplayedThreadPr returns a fresh object every render, so memoize
-  // on the fields the rules read instead of the object identity.
-  const activeThreadPrState = activeThreadPr?.state ?? null;
-  const activeThreadPrUpdatedAt = activeThreadPr?.updatedAt ?? null;
-  const activeThreadChangeRequest = useMemo(
-    () =>
-      activeThreadPrState === null
-        ? null
-        : { state: activeThreadPrState, updatedAt: activeThreadPrUpdatedAt },
-    [activeThreadPrState, activeThreadPrUpdatedAt],
-  );
   const supportsSettlement = serverConfig?.environment.capabilities.threadSettlement === true;
   const supportsSnooze = serverConfig?.environment.capabilities.threadSnooze === true;
   const supportsPinning = serverConfig?.environment.capabilities.threadPinning === true;
@@ -4936,21 +4949,13 @@ function ChatViewContent(props: ChatViewProps) {
     if (activeThreadRef === null || activeThreadWokeAt === null) return;
     markThreadVisited(scopedThreadKey(activeThreadRef), activeThreadWokeAt);
   }, [activeThreadRef, activeThreadWokeAt, markThreadVisited]);
-  // Mirror of the sidebar's Woke pill for the open thread. It uses the same
-  // visit comparison and change request settle rule.
+  // Mirror of the sidebar's Woke pill for the open thread.
   const activeThreadLastVisitedAt = useUiStateStore((store) =>
     activeThreadKey === null ? undefined : store.threadLastVisitedAtById[activeThreadKey],
   );
   const activeThreadWokeVisible = useMemo(() => {
     if (activeThreadWokeAt === null) return false;
-    if (
-      changeRequestAutoSettles(activeThreadChangeRequest, {
-        autoSettleOnMerge,
-        thread: activeThreadShell,
-      })
-    ) {
-      return false;
-    }
+    if (activeThreadShell?.settledOverride === "settled") return false;
     const wokeAtMs = Date.parse(activeThreadWokeAt);
     if (Number.isNaN(wokeAtMs)) return false;
     // Having the thread open counts as a visit at completedAt (the effect
@@ -4970,28 +4975,11 @@ function ChatViewContent(props: ChatViewProps) {
   }, [
     activeLatestTurn?.completedAt,
     activeThreadLastVisitedAt,
-    activeThreadChangeRequest,
     activeThreadShell,
     activeThreadWokeAt,
-    autoSettleOnMerge,
   ]);
-  const activeThreadSettled = useMemo(() => {
-    if (activeThreadShell === null || !supportsSettlement) return false;
-    return effectiveSettled(activeThreadShell, {
-      now: `${nowMinute}:00.000Z`,
-      autoSettleAfterDays,
-      autoSettleOnMerge,
-      changeRequest: activeThreadChangeRequest,
-    });
-  }, [
-    activeThreadChangeRequest,
-    activeThreadShell,
-    autoSettleAfterDays,
-    autoSettleOnMerge,
-    changeRequestSnapshotByKey,
-    nowMinute,
-    supportsSettlement,
-  ]);
+  const activeThreadSettled =
+    supportsSettlement && activeThreadShell?.settledOverride === "settled";
   const unsettleThreadMutation = useAtomCommand(threadEnvironment.unsettle, {
     reportFailure: false,
   });
@@ -5196,6 +5184,7 @@ function ChatViewContent(props: ChatViewProps) {
     return {
       id: `background-liveness:${activeThread.id}`,
       variant: "default",
+      priority: "activity",
       icon: (
         <span
           className={cn("size-1.5 rounded-full bg-foreground", working && "animate-status-pulse")}
@@ -5242,13 +5231,6 @@ function ChatViewContent(props: ChatViewProps) {
       onDismiss: acknowledgeActiveThreadWoke,
     };
   }, [acknowledgeActiveThreadWoke, activeThread?.id, activeThreadWokeVisible]);
-  // The stack renders items[0] front-most and tucks the rest behind hover, so
-  // ordering is priority: urgent system banners (error/warning variants plus
-  // calm-styled live states flagged `urgent`, like update progress), then
-  // background liveness — its Stop button is the only stop affordance for
-  // settled turns, so a passive "update available" notice must not cover it —
-  // then calm system banners, the woke and branch-mismatch notices, and the
-  // informational parked-thread banner last — it must never cover another.
   const parkedThreadBannerItem = useMemo<ComposerBannerStackItem | null>(() => {
     if (!activeThreadSnoozed && !activeThreadSettled) {
       return null;
@@ -5399,10 +5381,6 @@ function ChatViewContent(props: ChatViewProps) {
     void handleSwitchCheckoutToThread();
   }, [gitStatusQuery.data?.hasWorkingTreeChanges, handleSwitchCheckoutToThread]);
   const composerBannerItems = useMemo<ComposerBannerStackItem[]>(() => {
-    const isUrgentSystemItem = (item: ComposerBannerStackItem) =>
-      item.urgent === true || item.variant === "error" || item.variant === "warning";
-    const urgentSystemItems = systemComposerBannerItems.filter(isUrgentSystemItem);
-    const calmSystemItems = systemComposerBannerItems.filter((item) => !isUrgentSystemItem(item));
     const backgroundLivenessItems =
       backgroundLivenessBannerItem === null ? [] : [backgroundLivenessBannerItem];
     const resumeCompactionItems =
@@ -5411,18 +5389,16 @@ function ChatViewContent(props: ChatViewProps) {
     const parkedThreadItems = parkedThreadBannerItem === null ? [] : [parkedThreadBannerItem];
     if (!localCheckoutBranchMismatch || !showBranchMismatchBanner || !activeBranchMismatchKey) {
       return [
-        ...urgentSystemItems,
+        ...systemComposerBannerItems,
         ...backgroundLivenessItems,
-        ...calmSystemItems,
         ...resumeCompactionItems,
         ...wokeThreadItems,
         ...parkedThreadItems,
       ];
     }
     return [
-      ...urgentSystemItems,
+      ...systemComposerBannerItems,
       ...backgroundLivenessItems,
-      ...calmSystemItems,
       ...resumeCompactionItems,
       ...wokeThreadItems,
       {
@@ -5599,6 +5575,13 @@ function ChatViewContent(props: ChatViewProps) {
       });
       if (!command) return;
 
+      if (command === "thread.copyReference") {
+        event.preventDefault();
+        event.stopPropagation();
+        if (!event.repeat) copyActiveThreadReference();
+        return;
+      }
+
       if (command === "thread.settle") {
         event.preventDefault();
         event.stopPropagation();
@@ -5768,6 +5751,7 @@ function ChatViewContent(props: ChatViewProps) {
     supportsPinning,
     supportsSettlement,
     confirmAndUnpinThread,
+    copyActiveThreadReference,
     toggleRightPanel,
     toggleRightPanelMaximized,
     toggleTerminalVisibility,
@@ -6500,7 +6484,6 @@ function ChatViewContent(props: ChatViewProps) {
                 : {}),
             }
           : undefined;
-      beginLocalDispatch({ preparingWorktree: false });
       const backgroundThreadRef =
         resolvedSubmissionIntent === "background"
           ? scopeThreadRef(activeThread.environmentId, threadIdForSend)
@@ -7485,8 +7468,6 @@ function ChatViewContent(props: ChatViewProps) {
     setDragActive: setIsWorkspaceFileDragActive,
     addFiles: (files) => composerRef.current?.addDroppedFiles(files),
   });
-  const externalComposerDrawerAttached =
-    composerBannerItems.length > 0 || Boolean(threadSyncPhase && !activeEnvironmentUnavailable);
 
   return (
     <div className="relative flex min-h-0 min-w-0 flex-1 overflow-hidden bg-background">
@@ -7515,7 +7496,6 @@ function ChatViewContent(props: ChatViewProps) {
             {...(routeKind === "draft" && draftId ? { draftId } : {})}
             activeThreadTitle={activeThread.title}
             isServerThread={isServerThread}
-            changeRequest={activeThreadChangeRequest}
             activeProjectName={activeProject?.title}
             activeProjectCwd={activeProject?.workspaceRoot ?? null}
             activeProjectFaviconPath={activeProject?.faviconPath ?? null}
@@ -7584,7 +7564,7 @@ function ChatViewContent(props: ChatViewProps) {
                 onOpenAgents={addAgentsSurface}
                 key={activeThread.id}
                 isWorking={isWorking}
-                workingStepLabel={workingStepLabel}
+                isPreparingWorktree={isPreparingWorktree}
                 activeTurnStartedAt={activeWorkStartedAt}
                 listRef={legendListRef}
                 timelineEntries={timelineEntries}
@@ -7655,7 +7635,7 @@ function ChatViewContent(props: ChatViewProps) {
                   {isDraftHeroState ? (
                     <div className="absolute inset-x-0 bottom-full z-0">
                       <div
-                        className="pb-8 group-has-[.chat-composer-shoulder-tab]/composer-stack:pb-4"
+                        className="pb-8 group-has-data-[composer-shoulder-tab]/composer-stack:pb-4"
                         style={
                           forceExpandedMobileComposer
                             ? {
@@ -7669,13 +7649,7 @@ function ChatViewContent(props: ChatViewProps) {
                           activeProjectTitle={activeProject?.title ?? null}
                         />
                       </div>
-                      <ComposerBannerStack className="relative z-0" items={composerBannerItems} />
                     </div>
-                  ) : (
-                    <ComposerBannerStack className="relative z-0" items={composerBannerItems} />
-                  )}
-                  {threadSyncPhase && !activeEnvironmentUnavailable ? (
-                    <ThreadSyncStatusPill phase={threadSyncPhase} />
                   ) : null}
                   <div
                     className="relative"
@@ -7685,14 +7659,8 @@ function ChatViewContent(props: ChatViewProps) {
                         : undefined
                     }
                   >
-                    <div
-                      className={cn(
-                        "chat-composer-glass-shell relative mx-auto w-full max-w-3xl",
-                        externalComposerDrawerAttached && "chat-composer-glass-shell-attached",
-                        showComposerContextStrip && "chat-composer-glass-shell-with-context",
-                      )}
-                    >
-                      <div className="chat-composer-glass-host relative z-10 w-full rounded-[22px]">
+                    <ComposerSurface.Shell contextStrip={showComposerContextStrip}>
+                      <ComposerSurface.Host>
                         <div ref={attachDraftHeroComposerAnchorRef} className="relative z-10">
                           <ChatComposer
                             composerRef={composerRef}
@@ -7722,7 +7690,7 @@ function ChatViewContent(props: ChatViewProps) {
                                   : null
                             }
                             isPreparingWorktree={isPreparingWorktree}
-                            externalDrawerAttached={externalComposerDrawerAttached}
+                            bannerItems={composerBannerItems}
                             environmentUnavailable={activeEnvironmentUnavailableState}
                             activePendingApproval={activePendingApproval}
                             pendingApprovals={pendingApprovals}
@@ -7737,6 +7705,7 @@ function ChatViewContent(props: ChatViewProps) {
                             activeProposedPlan={activeProposedPlan}
                             activeTasksProgress={activeComposerTasksProgress}
                             activeTaskSteps={activeComposerTaskSteps}
+                            threadSyncPhase={activeEnvironmentUnavailable ? null : threadSyncPhase}
                             runtimeMode={runtimeMode}
                             interactionMode={interactionMode}
                             lockedProvider={lockedProvider}
@@ -7785,7 +7754,7 @@ function ChatViewContent(props: ChatViewProps) {
                             openingVideoAttachmentId={openingVideoAttachmentId}
                           />
                         </div>
-                      </div>
+                      </ComposerSurface.Host>
                       <div className="min-h-0">
                         <div
                           data-terminal-open={terminalUiState.terminalOpen ? "true" : undefined}
@@ -7823,7 +7792,7 @@ function ChatViewContent(props: ChatViewProps) {
                           )}
                         </div>
                       </div>
-                    </div>
+                    </ComposerSurface.Shell>
                     <div
                       aria-hidden
                       className="h-[calc(env(safe-area-inset-bottom)+1rem)] sm:h-[calc(env(safe-area-inset-bottom)+1.25rem)]"

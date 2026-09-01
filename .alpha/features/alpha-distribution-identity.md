@@ -3,7 +3,7 @@ id: alpha-distribution-identity
 status: active
 risk: red
 introduced_by: alpha-distribution-identity
-last_reconciled_with: 352710d497cc640553e3e18e23fb5a5f3f890466
+last_reconciled_with: 2d156a83b96ebf2e4a9c6017251baad357ae6ab1
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -122,3 +122,6 @@ identity.
 - 2026-08-31, upstream `352710d497cc640553e3e18e23fb5a5f3f890466`: `mechanical-overlap`;
   adopted upstream's video attachment CSP and asset serving changes while retaining Alpha's app,
   protocol, state, Safe Storage, service, package, and artifact identities.
+- 2026-09-02, upstream `2d156a83b96ebf2e4a9c6017251baad357ae6ab1`: `mechanical-conflict`;
+  adopted upstream's `0.0.37` package baseline and Electron 43.4.1 while retaining Alpha's app,
+  protocol, state, Safe Storage, package, service, repository, and artifact identities.

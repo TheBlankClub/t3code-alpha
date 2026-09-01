@@ -3,7 +3,7 @@ id: alpha-local-only-telemetry
 status: active
 risk: red
 introduced_by: alpha-local-only-telemetry
-last_reconciled_with: 352710d497cc640553e3e18e23fb5a5f3f890466
+last_reconciled_with: 2d156a83b96ebf2e4a9c6017251baad357ae6ab1
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -72,3 +72,6 @@ traces, or metrics to third-party telemetry services.
 - 2026-08-31, upstream `352710d497cc640553e3e18e23fb5a5f3f890466`: `mechanical-overlap`;
   adopted upstream's video asset HTTP changes without changing the guarded OTLP export path.
   PostHog, OTLP, Axiom, and relay telemetry egress remain disabled.
+- 2026-09-02, upstream `2d156a83b96ebf2e4a9c6017251baad357ae6ab1`: `mechanical-overlap`;
+  adopted upstream's resource diagnostics and server HTTP performance changes while retaining the
+  disabled PostHog, OTLP, Axiom, and relay telemetry egress guards.

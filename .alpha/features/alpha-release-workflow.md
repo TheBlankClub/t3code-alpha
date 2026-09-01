@@ -3,7 +3,7 @@ id: alpha-release-workflow
 status: active
 risk: red
 introduced_by: alpha-release-workflow
-last_reconciled_with: 352710d497cc640553e3e18e23fb5a5f3f890466
+last_reconciled_with: 2d156a83b96ebf2e4a9c6017251baad357ae6ab1
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -195,3 +195,6 @@ upstream's official release, hosted-web, AUR, or npm publication paths.
 - 2026-08-31, upstream `352710d497cc640553e3e18e23fb5a5f3f890466`: `unaffected`; incoming
   product and dependency changes do not alter the Alpha release graph, signing identity,
   prerelease versions, manual installers, or fork-owned destinations.
+- 2026-09-02, upstream `2d156a83b96ebf2e4a9c6017251baad357ae6ab1`: `mechanical-overlap`;
+  adopted upstream's `0.0.37` package and Electron 43.4.1 baselines while retaining the Alpha
+  release graph, signing identity, prerelease versions, manual installers, and destinations.

@@ -30,7 +30,6 @@ import * as Persistence from "../platform/persistence.ts";
 import type { WsRpcProtocolClient } from "../rpc/protocol.ts";
 import type { RpcSession } from "../rpc/session.ts";
 import {
-  applyServerConfigProjection,
   makeEnvironmentServerConfigState,
   isLegacyUpdateHandoffLoss,
   matchesServerUpdateReadyEvent,
@@ -45,6 +44,7 @@ import {
   ServerUpdateTerminalError,
   validateServerUpdateReadyEvent,
 } from "./server.ts";
+import { applyServerConfigProjection } from "./serverConfigProjection.ts";
 
 const CONFIG = {
   availableEditors: [],
@@ -76,6 +76,7 @@ function session(client: WsRpcProtocolClient): RpcSession {
   return {
     client,
     initialConfig: Effect.succeed(CONFIG),
+    subscribeServerConfig: (input) => client.subscribeServerConfig(input),
     ready: Effect.void,
     probe: Effect.void,
     closed: Effect.never,

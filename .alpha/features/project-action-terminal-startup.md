@@ -3,7 +3,7 @@ id: project-action-terminal-startup
 status: active
 risk: amber
 introduced_by: 438019e36
-last_reconciled_with: 352710d497cc640553e3e18e23fb5a5f3f890466
+last_reconciled_with: 2d156a83b96ebf2e4a9c6017251baad357ae6ab1
 upstream_issue: pingdotgg/t3code#6337
 upstream_pr: pingdotgg/t3code#6338
 surfaces:
@@ -84,3 +84,6 @@ is still initializing.
 - 2026-08-31, upstream `352710d497cc640553e3e18e23fb5a5f3f890466`: `unaffected`; upstream's
   generated source-control prompt and shell fixes do not alter terminal initial-command handling,
   acknowledgement, or older-server fallback behavior.
+- 2026-09-02, upstream `2d156a83b96ebf2e4a9c6017251baad357ae6ab1`: `unaffected`; incoming IPC,
+  keybinding, provider child-session, and shell changes do not alter terminal initial-command
+  handling, acknowledgement, or older-server fallback behavior.
