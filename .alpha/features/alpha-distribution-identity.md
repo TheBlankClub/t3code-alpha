@@ -3,7 +3,7 @@ id: alpha-distribution-identity
 status: active
 risk: red
 introduced_by: alpha-distribution-identity
-last_reconciled_with: 2d156a83b96ebf2e4a9c6017251baad357ae6ab1
+last_reconciled_with: 60cef47ec983637ddc68faed7b1488b6f3c3a175
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -125,3 +125,6 @@ identity.
 - 2026-09-02, upstream `2d156a83b96ebf2e4a9c6017251baad357ae6ab1`: `mechanical-conflict`;
   adopted upstream's `0.0.37` package baseline and Electron 43.4.1 while retaining Alpha's app,
   protocol, state, Safe Storage, package, service, repository, and artifact identities.
+- 2026-09-02, upstream `60cef47ec983637ddc68faed7b1488b6f3c3a175`: `mechanical-conflict`;
+  adopted upstream's `0.0.38` package baseline and preview runtime fixes while retaining Alpha's
+  app, protocol, state, Safe Storage, package, service, repository, and artifact identities.

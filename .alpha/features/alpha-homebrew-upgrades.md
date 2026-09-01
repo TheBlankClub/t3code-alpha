@@ -3,7 +3,7 @@ id: alpha-homebrew-upgrades
 status: active
 risk: red
 introduced_by: alpha-homebrew-upgrades
-last_reconciled_with: 2d156a83b96ebf2e4a9c6017251baad357ae6ab1
+last_reconciled_with: 60cef47ec983637ddc68faed7b1488b6f3c3a175
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -110,4 +110,7 @@ Developer account or a separate package-hosting service.
   certificate, signing identity, checksums, or Homebrew upgrade contract.
 - 2026-09-02, upstream `2d156a83b96ebf2e4a9c6017251baad357ae6ab1`: `mechanical-overlap`;
   adopted upstream's Electron 43.4.1 dependency baseline while retaining the fork-owned cask,
+  certificate, signing identity, checksums, and Homebrew upgrade contract.
+- 2026-09-02, upstream `60cef47ec983637ddc68faed7b1488b6f3c3a175`: `mechanical-overlap`;
+  adopted upstream's `0.0.38` desktop version baseline while retaining the fork-owned cask,
   certificate, signing identity, checksums, and Homebrew upgrade contract.

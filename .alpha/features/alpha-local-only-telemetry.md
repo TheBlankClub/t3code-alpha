@@ -3,7 +3,7 @@ id: alpha-local-only-telemetry
 status: active
 risk: red
 introduced_by: alpha-local-only-telemetry
-last_reconciled_with: 2d156a83b96ebf2e4a9c6017251baad357ae6ab1
+last_reconciled_with: 60cef47ec983637ddc68faed7b1488b6f3c3a175
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -75,3 +75,6 @@ traces, or metrics to third-party telemetry services.
 - 2026-09-02, upstream `2d156a83b96ebf2e4a9c6017251baad357ae6ab1`: `mechanical-overlap`;
   adopted upstream's resource diagnostics and server HTTP performance changes while retaining the
   disabled PostHog, OTLP, Axiom, and relay telemetry egress guards.
+- 2026-09-02, upstream `60cef47ec983637ddc68faed7b1488b6f3c3a175`: `unaffected`; incoming
+  preview, provider-model, chat, settings, mobile, and package changes add no PostHog, OTLP,
+  Axiom, or relay telemetry egress.

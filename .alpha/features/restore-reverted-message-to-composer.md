@@ -3,7 +3,7 @@ id: restore-reverted-message-to-composer
 status: active
 risk: amber
 introduced_by: a47276a40
-last_reconciled_with: 2d156a83b96ebf2e4a9c6017251baad357ae6ab1
+last_reconciled_with: 60cef47ec983637ddc68faed7b1488b6f3c3a175
 upstream_issue: pingdotgg/t3code#5685
 upstream_pr: pingdotgg/t3code#6044
 surfaces:
@@ -87,3 +87,6 @@ Let users edit and resend a reverted prompt instead of recreating its text and i
 - 2026-09-02, upstream `2d156a83b96ebf2e4a9c6017251baad357ae6ab1`: `upstream-redesign`;
   adopted upstream's composer surface, banner, update-status, and activity presentation redesign,
   removed its obsolete shoulder-layout helper, and retained reverted prompt and image restoration.
+- 2026-09-02, upstream `60cef47ec983637ddc68faed7b1488b6f3c3a175`: `mechanical-overlap`;
+  adopted upstream's project-switch draft and pull-request refresh fixes while retaining reverted
+  prompt stashing, image restoration, send locking, cleanup, and soft failure behavior.

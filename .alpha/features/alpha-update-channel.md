@@ -3,7 +3,7 @@ id: alpha-update-channel
 status: active
 risk: red
 introduced_by: alpha-update-channel
-last_reconciled_with: 2d156a83b96ebf2e4a9c6017251baad357ae6ab1
+last_reconciled_with: 60cef47ec983637ddc68faed7b1488b6f3c3a175
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -135,3 +135,6 @@ automatic updater.
 - 2026-09-02, upstream `2d156a83b96ebf2e4a9c6017251baad357ae6ab1`: `mechanical-conflict`;
   adopted upstream's failed-server-update dismissal state and Electron 43.4.1 while retaining the
   fixed Alpha track, disabled automatic updates, fork-owned package command, feed, and artwork.
+- 2026-09-02, upstream `60cef47ec983637ddc68faed7b1488b6f3c3a175`: `mechanical-overlap`;
+  adopted upstream's quit-shortcut settings, preview fixes, and `0.0.38` baseline while retaining
+  the fixed Alpha track, disabled automatic updates, fork-owned feed, and artwork.

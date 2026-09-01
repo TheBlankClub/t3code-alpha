@@ -3,7 +3,7 @@ id: codex-service-tier-labels
 status: active
 risk: green
 introduced_by: ca4c713e01b8216d57f3ff5b0612f17d41baeb65
-last_reconciled_with: 2d156a83b96ebf2e4a9c6017251baad357ae6ab1
+last_reconciled_with: 60cef47ec983637ddc68faed7b1488b6f3c3a175
 upstream_issue: null
 upstream_pr: pingdotgg/t3code#4503
 surfaces:
@@ -63,3 +63,6 @@ Standard and Fast tiers.
 - 2026-09-02, upstream `2d156a83b96ebf2e4a9c6017251baad357ae6ab1`: `unaffected`; incoming chat,
   provider, settings, and command-menu changes do not alter Codex service-tier labels or fast-mode
   behavior.
+- 2026-09-02, upstream `60cef47ec983637ddc68faed7b1488b6f3c3a175`: `unaffected`; incoming Claude
+  model discovery, chat activity, settings, and provider changes do not alter Codex service-tier
+  labels or fast-mode behavior.
