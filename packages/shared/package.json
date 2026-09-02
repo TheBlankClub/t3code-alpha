@@ -179,6 +179,10 @@
       "types": "./src/composerInlineTokens.ts",
       "import": "./src/composerInlineTokens.ts"
     },
+    "./assistantCitations": {
+      "types": "./src/assistantCitations.ts",
+      "import": "./src/assistantCitations.ts"
+    },
     "./terminalLabels": {
       "types": "./src/terminalLabels.ts",
       "import": "./src/terminalLabels.ts"
@@ -238,6 +242,10 @@
     "./alphaDistribution": {
       "types": "./src/alphaDistribution.ts",
       "import": "./src/alphaDistribution.ts"
+    },
+    "./desktopAppControl": {
+      "types": "./src/desktopAppControl.ts",
+      "import": "./src/desktopAppControl.ts"
     },
     "./claudeCompaction": {
       "types": "./src/claudeCompaction.ts",

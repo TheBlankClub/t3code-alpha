@@ -3,7 +3,7 @@ id: alpha-upstream-sync-automation
 status: active
 risk: red
 introduced_by: alpha-upstream-sync-automation
-last_reconciled_with: 60cef47ec983637ddc68faed7b1488b6f3c3a175
+last_reconciled_with: 70cd258d8aac43ea57494527b00bf36de3efa6c0
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -120,3 +120,6 @@ Alpha-only feature is unaffected.
 - 2026-09-02, upstream `60cef47ec983637ddc68faed7b1488b6f3c3a175`: `unaffected`; the classifier
   flagged Alpha package, chat, settings, contract, and lockfile overlaps for review. Fork sync,
   journal, public-runner, and CI gates remain unchanged.
+- 2026-09-02, upstream `70cd258d8aac43ea57494527b00bf36de3efa6c0`: `unaffected`; the classifier
+  flagged identity, updater, service, contract, persistence, and lockfile paths for review. Fork
+  sync, journal, public-runner, and CI gates remain unchanged.

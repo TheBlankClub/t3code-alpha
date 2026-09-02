@@ -3,7 +3,7 @@ id: alpha-server-package
 status: active
 risk: red
 introduced_by: alpha-server-package
-last_reconciled_with: 60cef47ec983637ddc68faed7b1488b6f3c3a175
+last_reconciled_with: 70cd258d8aac43ea57494527b00bf36de3efa6c0
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -131,3 +131,6 @@ official T3 Code without publishing to or executing the upstream `t3` package.
 - 2026-09-02, upstream `60cef47ec983637ddc68faed7b1488b6f3c3a175`: `mechanical-conflict`;
   adopted upstream's `0.0.38` package baseline and provider-model changes while retaining the
   `t3code-alpha` package, `t3-alpha` binary, Alpha repository, state root, and service identities.
+- 2026-09-02, upstream `70cd258d8aac43ea57494527b00bf36de3efa6c0`: `upstream-redesign`;
+  adopted upstream's service downgrade protection, restart-safe self-updates, and desktop-managed
+  updates while retaining `t3code-alpha`, `t3-alpha`, `~/.t3-alpha`, and Alpha service identities.

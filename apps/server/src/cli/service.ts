@@ -3,11 +3,12 @@ import * as Console from "effect/Console";
 import * as Effect from "effect/Effect";
 import * as Layer from "effect/Layer";
 import * as Terminal from "effect/Terminal";
-import { Command, GlobalFlag, Prompt } from "effect/unstable/cli";
+import { Command, Flag, GlobalFlag, Prompt } from "effect/unstable/cli";
 
 import { ALPHA_DISTRIBUTION } from "@t3tools/shared/alphaDistribution";
 import packageJson from "../../package.json" with { type: "json" };
 import * as BootService from "../cloud/bootService.ts";
+import { compareExactServiceVersions } from "../cloud/serviceProtocol.ts";
 import type * as ServerConfig from "../config.ts";
 import * as ProcessRunner from "../processRunner.ts";
 import { projectLocationFlags, resolveCliAuthConfig } from "./config.ts";
@@ -31,13 +32,25 @@ export type ServiceReconcileResult =
     };
 
 /** Install, update, or repair the service using the CLI version running this command. */
-export const reconcileService = Effect.fn("cli.service.reconcile")(function* () {
+export const reconcileService = Effect.fn("cli.service.reconcile")(function* (options?: {
+  readonly allowDowngrade?: boolean;
+}) {
   const service = yield* BootService.BootService;
   const status = yield* service.status;
   if (status.installed && status.current) {
     return { changed: false, status } satisfies ServiceReconcileResult;
   }
-  const plan = yield* service.install;
+  if (
+    status.installedVersion !== undefined &&
+    options?.allowDowngrade !== true &&
+    compareExactServiceVersions(packageJson.version, status.installedVersion) < 0
+  ) {
+    return yield* new BootService.BootServiceDowngradeRefusedError({
+      installedVersion: status.installedVersion,
+      targetVersion: packageJson.version,
+    });
+  }
+  const plan = yield* service.install(options);
   return {
     changed: true,
     previouslyInstalled: status.installed,
@@ -55,9 +68,23 @@ export function formatServiceStatus(
   if (!status.installed) {
     return `T3 Code Alpha service\n  Status: not installed\n  Next: Run \`${ALPHA_DISTRIBUTION.serverBinaryName} service install\`.`;
   }
+  const installedVersion = status.installedVersion ?? cliVersion;
+  if (
+    !status.current &&
+    status.installedVersion !== undefined &&
+    compareExactServiceVersions(status.installedVersion, cliVersion) > 0
+  ) {
+    return [
+      "T3 Code Alpha service",
+      `  Status: installed · ${ALPHA_DISTRIBUTION.serverPackageName}@${installedVersion} (newer than this ${ALPHA_DISTRIBUTION.serverPackageName}@${cliVersion} CLI)`,
+      `  Unit: ${status.unitPath}`,
+      `  Logs: ${status.logPath}`,
+      `  Next: Use \`npx ${ALPHA_DISTRIBUTION.serverPackageName}@${installedVersion} service update\` to repair it, or pass \`--allow-downgrade\` explicitly.`,
+    ].join("\n");
+  }
   return [
     "T3 Code Alpha service",
-    `  Status: ${status.current ? `installed · ${ALPHA_DISTRIBUTION.serverPackageName}@${cliVersion}` : "needs an update or repair"}`,
+    `  Status: ${status.current ? `installed · ${ALPHA_DISTRIBUTION.serverPackageName}@${installedVersion}` : "needs an update or repair"}`,
     `  Unit: ${status.unitPath}`,
     `  Logs: ${status.logPath}`,
     ...(status.current
@@ -77,13 +104,21 @@ const runServiceCommand = Effect.fn("cli.service.run")(function* <A, E>(
   return yield* run.pipe(Effect.provide(bootServiceLayer(config)));
 });
 
-const serviceInstallCommand = Command.make("install", projectLocationFlags).pipe(
+const serviceReconcileFlags = {
+  ...projectLocationFlags,
+  allowDowngrade: Flag.boolean("allow-downgrade").pipe(
+    Flag.withDescription("Allow replacing a newer installed service with this older CLI version."),
+    Flag.withDefault(false),
+  ),
+};
+
+const serviceInstallCommand = Command.make("install", serviceReconcileFlags).pipe(
   Command.withDescription("Install T3 Code Alpha as a background service for this user."),
   Command.withHandler((flags) =>
     runServiceCommand(
       flags,
       Effect.gen(function* () {
-        const result = yield* reconcileService();
+        const result = yield* reconcileService({ allowDowngrade: flags.allowDowngrade });
         if (!result.changed) {
           yield* Console.log(
             `T3 Code Alpha service is already installed with ${ALPHA_DISTRIBUTION.serverPackageName}@${packageJson.version}.`,
@@ -98,7 +133,7 @@ const serviceInstallCommand = Command.make("install", projectLocationFlags).pipe
   ),
 );
 
-const serviceUpdateCommand = Command.make("update", projectLocationFlags).pipe(
+const serviceUpdateCommand = Command.make("update", serviceReconcileFlags).pipe(
   Command.withDescription(
     `Update or repair the background service using this CLI version. Use \`npx ${ALPHA_DISTRIBUTION.serverPackageName}@${ALPHA_DISTRIBUTION.serverNpmDistTag} service update\` for the latest Alpha release.`,
   ),
@@ -106,7 +141,7 @@ const serviceUpdateCommand = Command.make("update", projectLocationFlags).pipe(
     runServiceCommand(
       flags,
       Effect.gen(function* () {
-        const result = yield* reconcileService();
+        const result = yield* reconcileService({ allowDowngrade: flags.allowDowngrade });
         if (!result.changed) {
           yield* Console.log(
             `T3 Code Alpha service is already using ${ALPHA_DISTRIBUTION.serverPackageName}@${packageJson.version}.`,
@@ -140,7 +175,7 @@ const serviceUninstallCommand = Command.make("uninstall", projectLocationFlags).
 );
 
 const serviceStatusCommand = Command.make("status", projectLocationFlags).pipe(
-  Command.withDescription("Show whether the T3 Code background service is installed."),
+  Command.withDescription("Show whether the T3 Code Alpha background service is installed."),
   Command.withHandler((flags) =>
     runServiceCommand(
       flags,
@@ -154,13 +189,25 @@ const serviceStatusCommand = Command.make("status", projectLocationFlags).pipe(
 
 export const offerServiceDuringOnboarding = Effect.gen(function* () {
   const service = yield* BootService.BootService;
-  const { supported, installed, current } = yield* service.status;
+  const status = yield* service.status;
+  const { supported, installed, current } = status;
   if (!supported) {
     return false;
   }
   if (installed && current) {
-    yield* Console.log("T3 Code is already set up to run in the background on this machine.");
+    yield* Console.log("T3 Code Alpha is already set up to run in the background on this machine.");
     return true;
+  }
+  if (
+    installed &&
+    status.installedVersion !== undefined &&
+    compareExactServiceVersions(status.installedVersion, packageJson.version) > 0
+  ) {
+    yield* Console.log(
+      `A newer ${ALPHA_DISTRIBUTION.serverPackageName}@${status.installedVersion} background service is installed. Leaving it unchanged.`,
+    );
+    // This CLI cannot verify the newer service. Keep the manual fallback available.
+    return false;
   }
   // A LaunchAgent starts at login and dies at logout; there is no
   // enable-linger equivalent on macOS. Do not promise more than that.
@@ -168,11 +215,11 @@ export const offerServiceDuringOnboarding = Effect.gen(function* () {
   const wanted = yield* Prompt.run(
     Prompt.confirm({
       message: installed
-        ? "The installed T3 Code service needs an update or repair. Update it now?"
+        ? "The installed T3 Code Alpha service needs an update or repair. Update it now?"
         : platform === "darwin"
-          ? "Run T3 Code in the background whenever you log in to this Mac? " +
+          ? "Run T3 Code Alpha in the background whenever you log in to this Mac? " +
             "It stays reachable through T3 Connect while you are logged in."
-          : "Run T3 Code in the background whenever this machine boots? " +
+          : "Run T3 Code Alpha in the background whenever this machine boots? " +
             "It stays reachable through T3 Connect even after you log out.",
       initial: true,
     }),
@@ -203,11 +250,13 @@ export const recoverServiceOnboardingOffer = <R>(
         Console.warn(`Background setup did not finish: ${error.message}`).pipe(Effect.as(false)),
       BootServiceUpdatePendingError: (error) =>
         Console.warn(`Background setup did not finish: ${error.message}`).pipe(Effect.as(false)),
+      BootServiceDowngradeRefusedError: (error) =>
+        Console.warn(`Background setup did not finish: ${error.message}`).pipe(Effect.as(false)),
     }),
   );
 
 export const serviceCommand = Command.make("service").pipe(
-  Command.withDescription("Manage the T3 Code background service."),
+  Command.withDescription("Manage the T3 Code Alpha background service."),
   Command.withSubcommands([
     serviceInstallCommand,
     serviceUninstallCommand,

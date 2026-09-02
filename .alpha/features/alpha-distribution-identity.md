@@ -3,7 +3,7 @@ id: alpha-distribution-identity
 status: active
 risk: red
 introduced_by: alpha-distribution-identity
-last_reconciled_with: 60cef47ec983637ddc68faed7b1488b6f3c3a175
+last_reconciled_with: 70cd258d8aac43ea57494527b00bf36de3efa6c0
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -128,3 +128,6 @@ identity.
 - 2026-09-02, upstream `60cef47ec983637ddc68faed7b1488b6f3c3a175`: `mechanical-conflict`;
   adopted upstream's `0.0.38` package baseline and preview runtime fixes while retaining Alpha's
   app, protocol, state, Safe Storage, package, service, repository, and artifact identities.
+- 2026-09-02, upstream `70cd258d8aac43ea57494527b00bf36de3efa6c0`: `upstream-redesign`;
+  adopted upstream's desktop activation broker, remote desktop updates, and service downgrade
+  controls while retaining Alpha's app, protocol, state, package, service, and artifact identities.

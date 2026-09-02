@@ -3,7 +3,7 @@ id: project-action-terminal-startup
 status: active
 risk: amber
 introduced_by: 438019e36
-last_reconciled_with: 60cef47ec983637ddc68faed7b1488b6f3c3a175
+last_reconciled_with: 70cd258d8aac43ea57494527b00bf36de3efa6c0
 upstream_issue: pingdotgg/t3code#6337
 upstream_pr: pingdotgg/t3code#6338
 surfaces:
@@ -89,4 +89,7 @@ is still initializing.
   handling, acknowledgement, or older-server fallback behavior.
 - 2026-09-02, upstream `60cef47ec983637ddc68faed7b1488b6f3c3a175`: `mechanical-overlap`; adopted
   upstream's preview and quit-shortcut IPC changes while retaining terminal initial-command
+  handling, acknowledgement, and older-server fallback behavior.
+- 2026-09-02, upstream `70cd258d8aac43ea57494527b00bf36de3efa6c0`: `mechanical-overlap`; adopted
+  upstream's desktop activation IPC and ChatView changes while retaining terminal initial-command
   handling, acknowledgement, and older-server fallback behavior.

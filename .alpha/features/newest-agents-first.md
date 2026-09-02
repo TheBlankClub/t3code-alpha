@@ -3,7 +3,7 @@ id: newest-agents-first
 status: active
 risk: green
 introduced_by: newest-agents-first
-last_reconciled_with: 60cef47ec983637ddc68faed7b1488b6f3c3a175
+last_reconciled_with: 70cd258d8aac43ea57494527b00bf36de3efa6c0
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -80,4 +80,7 @@ users scroll past older agents.
   ordering or row stability.
 - 2026-09-02, upstream `60cef47ec983637ddc68faed7b1488b6f3c3a175`: `unaffected`; incoming chat
   activity, mobile work-log, and provider-model changes do not alter direct-agent ordering or row
+  stability.
+- 2026-09-02, upstream `70cd258d8aac43ea57494527b00bf36de3efa6c0`: `unaffected`; incoming chat,
+  task-progress, provider, and mobile work-log changes do not alter direct-agent ordering or row
   stability.

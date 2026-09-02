@@ -3,7 +3,7 @@ id: alpha-release-workflow
 status: active
 risk: red
 introduced_by: alpha-release-workflow
-last_reconciled_with: 60cef47ec983637ddc68faed7b1488b6f3c3a175
+last_reconciled_with: 70cd258d8aac43ea57494527b00bf36de3efa6c0
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -201,3 +201,6 @@ upstream's official release, hosted-web, AUR, or npm publication paths.
 - 2026-09-02, upstream `60cef47ec983637ddc68faed7b1488b6f3c3a175`: `mechanical-overlap`;
   adopted upstream's `0.0.38` package baseline while retaining the Alpha release graph, signing
   identity, prerelease versions, manual installers, and fork-owned destinations.
+- 2026-09-02, upstream `70cd258d8aac43ea57494527b00bf36de3efa6c0`: `mechanical-overlap`;
+  adopted upstream's release cleanup and desktop build changes while retaining the repository gate,
+  Alpha release graph, signing identity, prerelease versions, and fork-owned destinations.
