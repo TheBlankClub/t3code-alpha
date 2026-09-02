@@ -3,7 +3,7 @@ id: alpha-upstream-sync-automation
 status: active
 risk: red
 introduced_by: alpha-upstream-sync-automation
-last_reconciled_with: 70cd258d8aac43ea57494527b00bf36de3efa6c0
+last_reconciled_with: 57a66608b918d673eeec7e6c94ea5906b756fcd0
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -123,3 +123,5 @@ Alpha-only feature is unaffected.
 - 2026-09-02, upstream `70cd258d8aac43ea57494527b00bf36de3efa6c0`: `unaffected`; the classifier
   flagged identity, updater, service, contract, persistence, and lockfile paths for review. Fork
   sync, journal, public-runner, and CI gates remain unchanged.
+- 2026-09-02, upstream `57a66608b918d673eeec7e6c94ea5906b756fcd0`: `auto-merged`; Git produced a conflict-free
+  reconciliation candidate. Required PR CI remained the merge gate.
