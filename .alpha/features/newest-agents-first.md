@@ -3,7 +3,7 @@ id: newest-agents-first
 status: active
 risk: green
 introduced_by: newest-agents-first
-last_reconciled_with: 70cd258d8aac43ea57494527b00bf36de3efa6c0
+last_reconciled_with: 5b8445b7a777ab1070aa97b062b1618971073a96
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -84,3 +84,5 @@ users scroll past older agents.
 - 2026-09-02, upstream `70cd258d8aac43ea57494527b00bf36de3efa6c0`: `unaffected`; incoming chat,
   task-progress, provider, and mobile work-log changes do not alter direct-agent ordering or row
   stability.
+- 2026-09-03, upstream `5b8445b7a777ab1070aa97b062b1618971073a96`: `auto-merged`; Git produced a conflict-free
+  reconciliation candidate. Required PR CI remained the merge gate.

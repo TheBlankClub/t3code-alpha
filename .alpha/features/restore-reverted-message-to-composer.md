@@ -3,7 +3,7 @@ id: restore-reverted-message-to-composer
 status: active
 risk: amber
 introduced_by: a47276a40
-last_reconciled_with: 1aa44a071f66bdfd9430356ab824b5a6985fb459
+last_reconciled_with: 5b8445b7a777ab1070aa97b062b1618971073a96
 upstream_issue: pingdotgg/t3code#5685
 upstream_pr: pingdotgg/t3code#6044
 surfaces:
@@ -97,3 +97,5 @@ Let users edit and resend a reverted prompt instead of recreating its text and i
   kept the reverted-message helpers and cross-thread draft release beside upstream's new
   browser-close confirmation and proactive-panel helpers, and dropped only the video-preview
   request tracking that upstream's unified media previews removed.
+- 2026-09-03, upstream `5b8445b7a777ab1070aa97b062b1618971073a96`: `auto-merged`; Git produced a conflict-free
+  reconciliation candidate. Required PR CI remained the merge gate.
