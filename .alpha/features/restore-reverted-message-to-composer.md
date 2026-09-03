@@ -3,7 +3,7 @@ id: restore-reverted-message-to-composer
 status: active
 risk: amber
 introduced_by: a47276a40
-last_reconciled_with: 70cd258d8aac43ea57494527b00bf36de3efa6c0
+last_reconciled_with: 1aa44a071f66bdfd9430356ab824b5a6985fb459
 upstream_issue: pingdotgg/t3code#5685
 upstream_pr: pingdotgg/t3code#6044
 surfaces:
@@ -93,3 +93,7 @@ Let users edit and resend a reverted prompt instead of recreating its text and i
 - 2026-09-02, upstream `70cd258d8aac43ea57494527b00bf36de3efa6c0`: `mechanical-conflict`;
   adopted upstream's worktree-setup draft preservation and composer changes while retaining
   reverted prompt stashing, image restoration, send locking, cleanup, and soft failure behavior.
+- 2026-09-03, upstream `1aa44a071f66bdfd9430356ab824b5a6985fb459`: `mechanical-conflict`;
+  kept the reverted-message helpers and cross-thread draft release beside upstream's new
+  browser-close confirmation and proactive-panel helpers, and dropped only the video-preview
+  request tracking that upstream's unified media previews removed.

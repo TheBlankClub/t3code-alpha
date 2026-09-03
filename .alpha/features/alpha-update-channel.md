@@ -3,7 +3,7 @@ id: alpha-update-channel
 status: active
 risk: red
 introduced_by: alpha-update-channel
-last_reconciled_with: 70cd258d8aac43ea57494527b00bf36de3efa6c0
+last_reconciled_with: 1aa44a071f66bdfd9430356ab824b5a6985fb459
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -141,3 +141,6 @@ automatic updater.
 - 2026-09-02, upstream `70cd258d8aac43ea57494527b00bf36de3efa6c0`: `upstream-redesign`;
   adopted upstream's remote desktop update flow and update-state subscriptions while retaining the
   fixed Alpha track, disabled unsigned updates, fork-owned installer guidance, and artwork.
+- 2026-09-03, upstream `1aa44a071f66bdfd9430356ab824b5a6985fb459`: `mechanical-conflict`;
+  kept the fixed Alpha track badge over upstream's restyled Stable/Nightly selector from the
+  settings control-sizing pass; updater, packaging, and artwork behavior were untouched.
