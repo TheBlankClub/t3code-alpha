@@ -3,7 +3,7 @@ id: alpha-distribution-identity
 status: active
 risk: red
 introduced_by: alpha-distribution-identity
-last_reconciled_with: 70cd258d8aac43ea57494527b00bf36de3efa6c0
+last_reconciled_with: 1aa44a071f66bdfd9430356ab824b5a6985fb459
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -131,3 +131,8 @@ identity.
 - 2026-09-02, upstream `70cd258d8aac43ea57494527b00bf36de3efa6c0`: `upstream-redesign`;
   adopted upstream's desktop activation broker, remote desktop updates, and service downgrade
   controls while retaining Alpha's app, protocol, state, package, service, and artifact identities.
+- 2026-09-03, upstream `1aa44a071f66bdfd9430356ab824b5a6985fb459`: `mechanical-conflict`;
+  repointed the nightly-to-alpha migration script at `@t3tools/shared/nodeSqliteClient` after
+  upstream moved the node:sqlite Effect SQL client into shared, and adapted the new `t3 app`
+  CLI tests to search the fork's `.t3-alpha` default home. Both were semantic overlaps the
+  Git merge did not flag; the previous sync had left the `t3 app` tests failing on `alpha`.
