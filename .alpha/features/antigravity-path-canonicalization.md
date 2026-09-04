@@ -3,7 +3,7 @@ id: antigravity-path-canonicalization
 status: active
 risk: amber
 introduced_by: antigravity-path-canonicalization
-last_reconciled_with: caab2fdbac041ac2e851ad4fa3ac4a40a1d4a8f6
+last_reconciled_with: c3b8825bf476cbce5e061c0f99570cf1f6723b89
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -44,3 +44,6 @@ session workspace.
 - 2026-09-04, upstream `caab2fdbac041ac2e851ad4fa3ac4a40a1d4a8f6`: `mechanical-conflict`;
   fixed two macOS failures in the new Antigravity provider and added a cross-platform regression
   test for missing descendants below a symlink that exits the workspace.
+- 2026-09-04, upstream `c3b8825bf476cbce5e061c0f99570cf1f6723b89`: `mechanical-overlap`;
+  adopted upstream's Antigravity runtime instructions and batch task identity while retaining
+  executable and nearest-existing-parent path canonicalization.

@@ -3,7 +3,7 @@ id: alpha-distribution-identity
 status: active
 risk: red
 introduced_by: alpha-distribution-identity
-last_reconciled_with: caab2fdbac041ac2e851ad4fa3ac4a40a1d4a8f6
+last_reconciled_with: c3b8825bf476cbce5e061c0f99570cf1f6723b89
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -141,3 +141,6 @@ identity.
 - 2026-09-04, upstream `caab2fdbac041ac2e851ad4fa3ac4a40a1d4a8f6`: `mechanical-conflict`;
   adopted upstream browser-import dependencies, desktop runtime wiring, and Linux build libraries
   while retaining Alpha app, profile, protocol, package, service, and artifact identities.
+- 2026-09-04, upstream `c3b8825bf476cbce5e061c0f99570cf1f6723b89`: `unaffected`;
+  incoming settings, task-state, and tool-rendering changes do not alter Alpha's app, profile,
+  protocol, package, service, or artifact identities.

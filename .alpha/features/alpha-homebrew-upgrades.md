@@ -3,7 +3,7 @@ id: alpha-homebrew-upgrades
 status: active
 risk: red
 introduced_by: alpha-homebrew-upgrades
-last_reconciled_with: caab2fdbac041ac2e851ad4fa3ac4a40a1d4a8f6
+last_reconciled_with: c3b8825bf476cbce5e061c0f99570cf1f6723b89
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -122,3 +122,6 @@ Developer account or a separate package-hosting service.
 - 2026-09-04, upstream `caab2fdbac041ac2e851ad4fa3ac4a40a1d4a8f6`: `mechanical-overlap`;
   adopted upstream desktop build dependencies without changing Alpha signing, verification,
   prerelease artifacts, or Homebrew publication.
+- 2026-09-04, upstream `c3b8825bf476cbce5e061c0f99570cf1f6723b89`: `unaffected`;
+  incoming application changes do not alter Alpha signing, verification, prerelease artifacts, or
+  Homebrew publication.

@@ -3,7 +3,7 @@ id: project-action-terminal-startup
 status: active
 risk: amber
 introduced_by: 438019e36
-last_reconciled_with: caab2fdbac041ac2e851ad4fa3ac4a40a1d4a8f6
+last_reconciled_with: c3b8825bf476cbce5e061c0f99570cf1f6723b89
 upstream_issue: pingdotgg/t3code#6337
 upstream_pr: pingdotgg/t3code#6338
 surfaces:
@@ -97,3 +97,5 @@ is still initializing.
   reconciliation candidate. Required PR CI remained the merge gate.
 - 2026-09-04, upstream `caab2fdbac041ac2e851ad4fa3ac4a40a1d4a8f6`: `unaffected`; incoming
   contracts, shell-label, and project setup changes do not replace the initial-command handshake.
+- 2026-09-04, upstream `c3b8825bf476cbce5e061c0f99570cf1f6723b89`: `unaffected`; incoming
+  settings, task-state, and tool-rendering changes do not replace the initial-command handshake.

@@ -3,7 +3,7 @@ id: restore-reverted-message-to-composer
 status: active
 risk: amber
 introduced_by: a47276a40
-last_reconciled_with: caab2fdbac041ac2e851ad4fa3ac4a40a1d4a8f6
+last_reconciled_with: c3b8825bf476cbce5e061c0f99570cf1f6723b89
 upstream_issue: pingdotgg/t3code#5685
 upstream_pr: pingdotgg/t3code#6044
 surfaces:
@@ -102,3 +102,5 @@ Let users edit and resend a reverted prompt instead of recreating its text and i
 - 2026-09-04, upstream `caab2fdbac041ac2e851ad4fa3ac4a40a1d4a8f6`: `mechanical-conflict`;
   composed reverted-message restoration and draft stashing with upstream context compaction,
   paste-to-focus, composer selection holding, and menu-state changes.
+- 2026-09-04, upstream `c3b8825bf476cbce5e061c0f99570cf1f6723b89`: `unaffected`; incoming
+  settings and tool-rendering changes do not alter reverted-message restoration or draft stashing.

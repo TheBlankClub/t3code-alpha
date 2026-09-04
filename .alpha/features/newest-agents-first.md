@@ -3,7 +3,7 @@ id: newest-agents-first
 status: active
 risk: green
 introduced_by: newest-agents-first
-last_reconciled_with: caab2fdbac041ac2e851ad4fa3ac4a40a1d4a8f6
+last_reconciled_with: c3b8825bf476cbce5e061c0f99570cf1f6723b89
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -88,4 +88,7 @@ users scroll past older agents.
   reconciliation candidate. Required PR CI remained the merge gate.
 - 2026-09-04, upstream `caab2fdbac041ac2e851ad4fa3ac4a40a1d4a8f6`: `mechanical-overlap`;
   adopted upstream Antigravity subagent lifecycle fixes while retaining newest-first direct-agent
+  ordering and stable row positions.
+- 2026-09-04, upstream `c3b8825bf476cbce5e061c0f99570cf1f6723b89`: `mechanical-overlap`;
+  adopted upstream's batch identity and idle presentation while retaining newest-first direct-agent
   ordering and stable row positions.

@@ -3,7 +3,7 @@ id: codex-service-tier-labels
 status: active
 risk: green
 introduced_by: ca4c713e01b8216d57f3ff5b0612f17d41baeb65
-last_reconciled_with: caab2fdbac041ac2e851ad4fa3ac4a40a1d4a8f6
+last_reconciled_with: c3b8825bf476cbce5e061c0f99570cf1f6723b89
 upstream_issue: null
 upstream_pr: pingdotgg/t3code#4503
 surfaces:
@@ -73,3 +73,5 @@ Standard and Fast tiers.
   reconciliation candidate. Required PR CI remained the merge gate.
 - 2026-09-04, upstream `caab2fdbac041ac2e851ad4fa3ac4a40a1d4a8f6`: `unaffected`; incoming
   composer, model-picker, and Codex changes do not replace the fork's readable service-tier labels.
+- 2026-09-04, upstream `c3b8825bf476cbce5e061c0f99570cf1f6723b89`: `unaffected`; incoming
+  provider runtime instructions do not replace the fork's readable Codex service-tier labels.

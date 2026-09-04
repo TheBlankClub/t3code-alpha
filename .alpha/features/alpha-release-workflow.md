@@ -3,7 +3,7 @@ id: alpha-release-workflow
 status: active
 risk: red
 introduced_by: alpha-release-workflow
-last_reconciled_with: caab2fdbac041ac2e851ad4fa3ac4a40a1d4a8f6
+last_reconciled_with: c3b8825bf476cbce5e061c0f99570cf1f6723b89
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -209,3 +209,5 @@ upstream's official release, hosted-web, AUR, or npm publication paths.
 - 2026-09-04, upstream `caab2fdbac041ac2e851ad4fa3ac4a40a1d4a8f6`: `mechanical-overlap`;
   adopted upstream dependency-verification caching and browser-secret build requirements while
   keeping the fork-owned Alpha release workflow and destinations unchanged.
+- 2026-09-04, upstream `c3b8825bf476cbce5e061c0f99570cf1f6723b89`: `unaffected`;
+  incoming application changes do not alter the fork-owned Alpha release workflow or destinations.

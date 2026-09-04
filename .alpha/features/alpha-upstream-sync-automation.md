@@ -3,7 +3,7 @@ id: alpha-upstream-sync-automation
 status: active
 risk: red
 introduced_by: alpha-upstream-sync-automation
-last_reconciled_with: caab2fdbac041ac2e851ad4fa3ac4a40a1d4a8f6
+last_reconciled_with: c3b8825bf476cbce5e061c0f99570cf1f6723b89
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -128,3 +128,6 @@ Alpha-only feature is unaffected.
 - 2026-09-04, upstream `caab2fdbac041ac2e851ad4fa3ac4a40a1d4a8f6`: `mechanical-overlap`;
   adopted upstream CI build-library setup and the on-demand Windows workflow while preserving the
   fork's GitHub-hosted runners, semantic classifier, journal finalizer, and merge-ancestry flow.
+- 2026-09-04, upstream `c3b8825bf476cbce5e061c0f99570cf1f6723b89`: `unaffected`;
+  incoming application changes do not alter the classifier, journal finalizer, runner policy, or
+  merge-ancestry flow.

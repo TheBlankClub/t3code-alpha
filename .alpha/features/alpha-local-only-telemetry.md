@@ -3,7 +3,7 @@ id: alpha-local-only-telemetry
 status: active
 risk: red
 introduced_by: alpha-local-only-telemetry
-last_reconciled_with: caab2fdbac041ac2e851ad4fa3ac4a40a1d4a8f6
+last_reconciled_with: c3b8825bf476cbce5e061c0f99570cf1f6723b89
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -86,3 +86,6 @@ traces, or metrics to third-party telemetry services.
 - 2026-09-04, upstream `caab2fdbac041ac2e851ad4fa3ac4a40a1d4a8f6`: `unaffected`;
   incoming provider, usage-limit, desktop, and client changes do not enable PostHog, OTLP, Axiom,
   or other T3 telemetry egress.
+- 2026-09-04, upstream `c3b8825bf476cbce5e061c0f99570cf1f6723b89`: `unaffected`;
+  incoming usage settings, provider prompts, task-state, and tool-rendering changes do not enable
+  PostHog, OTLP, Axiom, or other T3 telemetry egress.

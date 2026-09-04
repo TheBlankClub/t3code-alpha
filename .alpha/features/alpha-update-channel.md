@@ -3,7 +3,7 @@ id: alpha-update-channel
 status: active
 risk: red
 introduced_by: alpha-update-channel
-last_reconciled_with: caab2fdbac041ac2e851ad4fa3ac4a40a1d4a8f6
+last_reconciled_with: c3b8825bf476cbce5e061c0f99570cf1f6723b89
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -149,3 +149,6 @@ automatic updater.
 - 2026-09-04, upstream `caab2fdbac041ac2e851ad4fa3ac4a40a1d4a8f6`: `mechanical-conflict`;
   adopted upstream's reorganized Settings pages and desktop build changes while keeping Alpha as a
   fixed update track isolated from the official Stable and Nightly feeds.
+- 2026-09-04, upstream `c3b8825bf476cbce5e061c0f99570cf1f6723b89`: `mechanical-overlap`;
+  adopted upstream's usage settings and tool-status colors while retaining Alpha's fixed update
+  track, fork-owned feed, and artwork.

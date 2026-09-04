@@ -3,7 +3,7 @@ id: alpha-server-package
 status: active
 risk: red
 introduced_by: alpha-server-package
-last_reconciled_with: caab2fdbac041ac2e851ad4fa3ac4a40a1d4a8f6
+last_reconciled_with: c3b8825bf476cbce5e061c0f99570cf1f6723b89
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -139,3 +139,6 @@ official T3 Code without publishing to or executing the upstream `t3` package.
 - 2026-09-04, upstream `caab2fdbac041ac2e851ad4fa3ac4a40a1d4a8f6`: `mechanical-overlap`;
   adopted upstream Antigravity archive dependencies, managed-runtime work, and server changes while
   retaining the `t3code-alpha` package, `t3-alpha` binary, state root, and service identities.
+- 2026-09-04, upstream `c3b8825bf476cbce5e061c0f99570cf1f6723b89`: `unaffected`;
+  incoming provider prompt changes do not alter the `t3code-alpha` package, `t3-alpha` binary,
+  state root, or service identities.

@@ -3,7 +3,7 @@ id: fork-steward
 status: active
 risk: green
 introduced_by: alpha-foundation
-last_reconciled_with: caab2fdbac041ac2e851ad4fa3ac4a40a1d4a8f6
+last_reconciled_with: c3b8825bf476cbce5e061c0f99570cf1f6723b89
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -106,3 +106,6 @@ retiring fork code when upstream provides an equivalent or better implementation
 - 2026-09-04, upstream `caab2fdbac041ac2e851ad4fa3ac4a40a1d4a8f6`: `mechanical-overlap`;
   reconciled five textual conflicts and 65 protected or overlapping paths through the feature
   ledger. The fork policy and skill remain unchanged.
+- 2026-09-04, upstream `c3b8825bf476cbce5e061c0f99570cf1f6723b89`: `mechanical-overlap`;
+  reviewed five same-file overlaps from four incoming commits. Git merged them without conflicts,
+  and the fork policy and skill remain unchanged.
