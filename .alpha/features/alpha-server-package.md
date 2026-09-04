@@ -3,7 +3,7 @@ id: alpha-server-package
 status: active
 risk: red
 introduced_by: alpha-server-package
-last_reconciled_with: 5b8445b7a777ab1070aa97b062b1618971073a96
+last_reconciled_with: caab2fdbac041ac2e851ad4fa3ac4a40a1d4a8f6
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -136,3 +136,6 @@ official T3 Code without publishing to or executing the upstream `t3` package.
   updates while retaining `t3code-alpha`, `t3-alpha`, `~/.t3-alpha`, and Alpha service identities.
 - 2026-09-03, upstream `5b8445b7a777ab1070aa97b062b1618971073a96`: `auto-merged`; Git produced a conflict-free
   reconciliation candidate. Required PR CI remained the merge gate.
+- 2026-09-04, upstream `caab2fdbac041ac2e851ad4fa3ac4a40a1d4a8f6`: `mechanical-overlap`;
+  adopted upstream Antigravity archive dependencies, managed-runtime work, and server changes while
+  retaining the `t3code-alpha` package, `t3-alpha` binary, state root, and service identities.

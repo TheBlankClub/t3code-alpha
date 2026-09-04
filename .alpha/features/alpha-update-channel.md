@@ -3,7 +3,7 @@ id: alpha-update-channel
 status: active
 risk: red
 introduced_by: alpha-update-channel
-last_reconciled_with: 5b8445b7a777ab1070aa97b062b1618971073a96
+last_reconciled_with: caab2fdbac041ac2e851ad4fa3ac4a40a1d4a8f6
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -146,3 +146,6 @@ automatic updater.
   settings control-sizing pass; updater, packaging, and artwork behavior were untouched.
 - 2026-09-03, upstream `5b8445b7a777ab1070aa97b062b1618971073a96`: `auto-merged`; Git produced a conflict-free
   reconciliation candidate. Required PR CI remained the merge gate.
+- 2026-09-04, upstream `caab2fdbac041ac2e851ad4fa3ac4a40a1d4a8f6`: `mechanical-conflict`;
+  adopted upstream's reorganized Settings pages and desktop build changes while keeping Alpha as a
+  fixed update track isolated from the official Stable and Nightly feeds.

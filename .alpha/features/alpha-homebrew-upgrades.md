@@ -3,7 +3,7 @@ id: alpha-homebrew-upgrades
 status: active
 risk: red
 introduced_by: alpha-homebrew-upgrades
-last_reconciled_with: 5b8445b7a777ab1070aa97b062b1618971073a96
+last_reconciled_with: caab2fdbac041ac2e851ad4fa3ac4a40a1d4a8f6
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -119,3 +119,6 @@ Developer account or a separate package-hosting service.
   certificate, signing identity, checksums, and Homebrew upgrade contract.
 - 2026-09-03, upstream `5b8445b7a777ab1070aa97b062b1618971073a96`: `auto-merged`; Git produced a conflict-free
   reconciliation candidate. Required PR CI remained the merge gate.
+- 2026-09-04, upstream `caab2fdbac041ac2e851ad4fa3ac4a40a1d4a8f6`: `mechanical-overlap`;
+  adopted upstream desktop build dependencies without changing Alpha signing, verification,
+  prerelease artifacts, or Homebrew publication.

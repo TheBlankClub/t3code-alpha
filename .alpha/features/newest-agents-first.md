@@ -3,7 +3,7 @@ id: newest-agents-first
 status: active
 risk: green
 introduced_by: newest-agents-first
-last_reconciled_with: 5b8445b7a777ab1070aa97b062b1618971073a96
+last_reconciled_with: caab2fdbac041ac2e851ad4fa3ac4a40a1d4a8f6
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -86,3 +86,6 @@ users scroll past older agents.
   stability.
 - 2026-09-03, upstream `5b8445b7a777ab1070aa97b062b1618971073a96`: `auto-merged`; Git produced a conflict-free
   reconciliation candidate. Required PR CI remained the merge gate.
+- 2026-09-04, upstream `caab2fdbac041ac2e851ad4fa3ac4a40a1d4a8f6`: `mechanical-overlap`;
+  adopted upstream Antigravity subagent lifecycle fixes while retaining newest-first direct-agent
+  ordering and stable row positions.
