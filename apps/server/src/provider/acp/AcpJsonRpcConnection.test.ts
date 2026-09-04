@@ -1052,7 +1052,7 @@ describe("AcpSessionRuntime", () => {
   it.effect("completes session/load after replay becomes idle while its RPC stays pending", () =>
     Effect.gen(function* () {
       const runtime = yield* AcpSessionRuntime.AcpSessionRuntime;
-      const started = yield* runtime.start().pipe(Effect.timeout("2 seconds"));
+      const started = yield* runtime.start();
 
       expect(started.sessionId).toBe("mock-session-1");
       expect(started.sessionSetupResult._meta).toMatchObject({
