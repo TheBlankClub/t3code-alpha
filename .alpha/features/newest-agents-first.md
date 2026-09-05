@@ -3,7 +3,7 @@ id: newest-agents-first
 status: active
 risk: green
 introduced_by: newest-agents-first
-last_reconciled_with: e5a87e8b9ca9db21e0291ddbd54438c5fe56b277
+last_reconciled_with: 07d2497db89014ccd71aa077fc809aff47e4af91
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -35,6 +35,9 @@ users scroll past older agents.
   across activity updates.
 
 # Reconciliation notes
+
+- 2026-09-05, upstream `07d2497db89014ccd71aa077fc809aff47e4af91`: `unaffected`; provider
+  settings field-reader cleanup does not alter direct-agent ordering.
 
 - 2026-09-05, upstream `e5a87e8b9ca9db21e0291ddbd54438c5fe56b277`: `unaffected`; pull request
   filter deduplication does not alter direct-agent ordering.

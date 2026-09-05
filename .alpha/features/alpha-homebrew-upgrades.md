@@ -3,7 +3,7 @@ id: alpha-homebrew-upgrades
 status: active
 risk: red
 introduced_by: alpha-homebrew-upgrades
-last_reconciled_with: e5a87e8b9ca9db21e0291ddbd54438c5fe56b277
+last_reconciled_with: 07d2497db89014ccd71aa077fc809aff47e4af91
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -54,6 +54,9 @@ Developer account or a separate package-hosting service.
   same package identity and repository boundaries.
 
 # Reconciliation notes
+
+- 2026-09-05, upstream `07d2497db89014ccd71aa077fc809aff47e4af91`: `unaffected`; provider
+  settings field-reader cleanup does not alter the fork-owned Homebrew upgrade path.
 
 - 2026-09-05, upstream `e5a87e8b9ca9db21e0291ddbd54438c5fe56b277`: `unaffected`; pull request
   filter deduplication does not alter the fork-owned Homebrew upgrade path.

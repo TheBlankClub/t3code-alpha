@@ -3,7 +3,7 @@ id: codex-service-tier-labels
 status: active
 risk: green
 introduced_by: ca4c713e01b8216d57f3ff5b0612f17d41baeb65
-last_reconciled_with: e5a87e8b9ca9db21e0291ddbd54438c5fe56b277
+last_reconciled_with: 07d2497db89014ccd71aa077fc809aff47e4af91
 upstream_issue: null
 upstream_pr: pingdotgg/t3code#4503
 surfaces:
@@ -36,6 +36,9 @@ Standard and Fast tiers.
   and non-fast service tiers.
 
 # Reconciliation notes
+
+- 2026-09-05, upstream `07d2497db89014ccd71aa077fc809aff47e4af91`: `unaffected`; provider
+  settings field-reader cleanup does not alter Codex service-tier labels.
 
 - 2026-09-05, upstream `e5a87e8b9ca9db21e0291ddbd54438c5fe56b277`: `unaffected`; pull request
   filter deduplication does not alter Codex service-tier labels.

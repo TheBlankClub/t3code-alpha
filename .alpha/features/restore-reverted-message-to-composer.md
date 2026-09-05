@@ -3,7 +3,7 @@ id: restore-reverted-message-to-composer
 status: active
 risk: amber
 introduced_by: a47276a40
-last_reconciled_with: e5a87e8b9ca9db21e0291ddbd54438c5fe56b277
+last_reconciled_with: 07d2497db89014ccd71aa077fc809aff47e4af91
 upstream_issue: pingdotgg/t3code#5685
 upstream_pr: pingdotgg/t3code#6044
 surfaces:
@@ -38,6 +38,9 @@ Let users edit and resend a reverted prompt instead of recreating its text and i
   implementation and focused coverage satisfy every invariant above.
 
 # Reconciliation notes
+
+- 2026-09-05, upstream `07d2497db89014ccd71aa077fc809aff47e4af91`: `unaffected`; provider
+  settings field-reader cleanup does not alter reverted-message restoration or draft stashing.
 
 - 2026-09-05, upstream `e5a87e8b9ca9db21e0291ddbd54438c5fe56b277`: `unaffected`; pull request
   filter deduplication does not alter reverted-message restoration or draft stashing.

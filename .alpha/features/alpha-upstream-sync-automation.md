@@ -3,7 +3,7 @@ id: alpha-upstream-sync-automation
 status: active
 risk: red
 introduced_by: alpha-upstream-sync-automation
-last_reconciled_with: e5a87e8b9ca9db21e0291ddbd54438c5fe56b277
+last_reconciled_with: 07d2497db89014ccd71aa077fc809aff47e4af91
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -58,6 +58,9 @@ Alpha-only feature is unaffected.
   semantic feature reconciliation, visible conflict escalation, and configurable runner pools.
 
 # Reconciliation notes
+
+- 2026-09-05, upstream `07d2497db89014ccd71aa077fc809aff47e4af91`: `unaffected`; provider
+  settings field-reader cleanup does not alter Alpha sync automation.
 
 - 2026-09-05, upstream `e5a87e8b9ca9db21e0291ddbd54438c5fe56b277`: `unaffected`; pull request
   filter deduplication does not alter Alpha sync automation or its gates.
