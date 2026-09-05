@@ -3,7 +3,7 @@ id: alpha-server-package
 status: active
 risk: red
 introduced_by: alpha-server-package
-last_reconciled_with: 2fa5ef4c7bf3aafabe98392d25be7eb86847ce8f
+last_reconciled_with: e5a87e8b9ca9db21e0291ddbd54438c5fe56b277
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -66,6 +66,9 @@ official T3 Code without publishing to or executing the upstream `t3` package.
   commands, and background-service registration.
 
 # Reconciliation notes
+
+- 2026-09-05, upstream `e5a87e8b9ca9db21e0291ddbd54438c5fe56b277`: `unaffected`; pull request
+  filter deduplication does not alter Alpha package, binary, service, or remote runtime identity.
 
 - 2026-09-05, upstream `2fa5ef4c7bf3aafabe98392d25be7eb86847ce8f`: `upstream-redesign`;
   adopted exact-version repair diagnostics, service prerequisite checks, installer ownership, and

@@ -3,7 +3,7 @@ id: alpha-release-workflow
 status: active
 risk: red
 introduced_by: alpha-release-workflow
-last_reconciled_with: 2fa5ef4c7bf3aafabe98392d25be7eb86847ce8f
+last_reconciled_with: e5a87e8b9ca9db21e0291ddbd54438c5fe56b277
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -86,6 +86,9 @@ upstream's official release, hosted-web, AUR, or npm publication paths.
   release destination without touching official distribution channels.
 
 # Reconciliation notes
+
+- 2026-09-05, upstream `e5a87e8b9ca9db21e0291ddbd54438c5fe56b277`: `unaffected`; pull request
+  filter deduplication does not alter Alpha release gates or publication.
 
 - 2026-09-05, upstream `2fa5ef4c7bf3aafabe98392d25be7eb86847ce8f`: `mechanical-conflict`;
   adopted upstream CI mirror and Windows release fixes while keeping the official release workflow

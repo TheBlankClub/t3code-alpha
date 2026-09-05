@@ -3,7 +3,7 @@ id: alpha-upstream-sync-automation
 status: active
 risk: red
 introduced_by: alpha-upstream-sync-automation
-last_reconciled_with: 2fa5ef4c7bf3aafabe98392d25be7eb86847ce8f
+last_reconciled_with: e5a87e8b9ca9db21e0291ddbd54438c5fe56b277
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -58,6 +58,9 @@ Alpha-only feature is unaffected.
   semantic feature reconciliation, visible conflict escalation, and configurable runner pools.
 
 # Reconciliation notes
+
+- 2026-09-05, upstream `e5a87e8b9ca9db21e0291ddbd54438c5fe56b277`: `unaffected`; pull request
+  filter deduplication does not alter Alpha sync automation or its gates.
 
 - 2026-09-05, upstream `2fa5ef4c7bf3aafabe98392d25be7eb86847ce8f`: `mechanical-conflict`;
   adopted upstream CI mirror setup while retaining Alpha branch triggers, GitHub-hosted runners,

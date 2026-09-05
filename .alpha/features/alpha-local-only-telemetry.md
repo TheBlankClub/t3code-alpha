@@ -3,7 +3,7 @@ id: alpha-local-only-telemetry
 status: active
 risk: red
 introduced_by: alpha-local-only-telemetry
-last_reconciled_with: 2fa5ef4c7bf3aafabe98392d25be7eb86847ce8f
+last_reconciled_with: e5a87e8b9ca9db21e0291ddbd54438c5fe56b277
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -44,6 +44,9 @@ traces, or metrics to third-party telemetry services.
   accurate public privacy disclosure.
 
 # Reconciliation notes
+
+- 2026-09-05, upstream `e5a87e8b9ca9db21e0291ddbd54438c5fe56b277`: `unaffected`; pull request
+  filter deduplication does not alter Alpha telemetry policy or egress controls.
 
 - 2026-09-05, upstream `2fa5ef4c7bf3aafabe98392d25be7eb86847ce8f`: `mechanical-conflict`;
   adopted upstream server and configuration test changes while retaining disabled outbound

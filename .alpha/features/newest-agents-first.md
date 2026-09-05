@@ -3,7 +3,7 @@ id: newest-agents-first
 status: active
 risk: green
 introduced_by: newest-agents-first
-last_reconciled_with: 2fa5ef4c7bf3aafabe98392d25be7eb86847ce8f
+last_reconciled_with: e5a87e8b9ca9db21e0291ddbd54438c5fe56b277
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -35,6 +35,9 @@ users scroll past older agents.
   across activity updates.
 
 # Reconciliation notes
+
+- 2026-09-05, upstream `e5a87e8b9ca9db21e0291ddbd54438c5fe56b277`: `unaffected`; pull request
+  filter deduplication does not alter direct-agent ordering.
 
 - 2026-09-05, upstream `2fa5ef4c7bf3aafabe98392d25be7eb86847ce8f`: `unaffected`; incoming
   provider, runtime-diagnostic, and client presentation changes do not alter newest-first direct
