@@ -3,7 +3,7 @@ id: alpha-server-package
 status: active
 risk: red
 introduced_by: alpha-server-package
-last_reconciled_with: c3b8825bf476cbce5e061c0f99570cf1f6723b89
+last_reconciled_with: 2fa5ef4c7bf3aafabe98392d25be7eb86847ce8f
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -66,6 +66,11 @@ official T3 Code without publishing to or executing the upstream `t3` package.
   commands, and background-service registration.
 
 # Reconciliation notes
+
+- 2026-09-05, upstream `2fa5ef4c7bf3aafabe98392d25be7eb86847ce8f`: `upstream-redesign`;
+  adopted exact-version repair diagnostics, service prerequisite checks, installer ownership, and
+  direct managed SSH execution while retaining `t3code-alpha`, `t3-alpha`, `.t3-alpha`, and the
+  Alpha systemd and launchd identities in commands, tests, and runtime paths.
 
 - 2026-08-15, upstream `74f7b434865c2d758c7b1cd5f52f4c96b76d03fb`: created the isolated
   Alpha CLI/server package foundation. The package name was unclaimed in a current npm registry

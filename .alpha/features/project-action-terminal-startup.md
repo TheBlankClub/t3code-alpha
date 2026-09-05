@@ -3,7 +3,7 @@ id: project-action-terminal-startup
 status: active
 risk: amber
 introduced_by: 438019e36
-last_reconciled_with: c3b8825bf476cbce5e061c0f99570cf1f6723b89
+last_reconciled_with: 2fa5ef4c7bf3aafabe98392d25be7eb86847ce8f
 upstream_issue: pingdotgg/t3code#6337
 upstream_pr: pingdotgg/t3code#6338
 surfaces:
@@ -42,6 +42,10 @@ is still initializing.
   contract, server, client fallback, and focused tests satisfy every invariant above.
 
 # Reconciliation notes
+
+- 2026-09-05, upstream `2fa5ef4c7bf3aafabe98392d25be7eb86847ce8f`: `mechanical-conflict`;
+  adopted upstream terminal truecolor and input changes while retaining fresh-shell initial command
+  handling, acknowledgement, restart behavior, and older-server fallback.
 
 - 2026-08-16, upstream `2f486ab80c748b4d8e3d3b17e49b5a327cb93335`: added the current upstream
   PR implementation as a temporary Alpha carry patch; the existing Alpha terminal-related release

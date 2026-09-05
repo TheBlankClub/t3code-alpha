@@ -3,7 +3,7 @@ id: antigravity-path-canonicalization
 status: active
 risk: amber
 introduced_by: antigravity-path-canonicalization
-last_reconciled_with: c3b8825bf476cbce5e061c0f99570cf1f6723b89
+last_reconciled_with: 2fa5ef4c7bf3aafabe98392d25be7eb86847ce8f
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -40,6 +40,10 @@ session workspace.
   parents while preserving the same workspace escape checks.
 
 # Reconciliation notes
+
+- 2026-09-05, upstream `2fa5ef4c7bf3aafabe98392d25be7eb86847ce8f`: `mechanical-conflict`;
+  adopted host-platform Antigravity fixtures and the Windows skip while retaining canonical
+  executable results and the missing-descendant symlink escape check.
 
 - 2026-09-04, upstream `caab2fdbac041ac2e851ad4fa3ac4a40a1d4a8f6`: `mechanical-conflict`;
   fixed two macOS failures in the new Antigravity provider and added a cross-platform regression

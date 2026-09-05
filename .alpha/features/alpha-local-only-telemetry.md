@@ -3,7 +3,7 @@ id: alpha-local-only-telemetry
 status: active
 risk: red
 introduced_by: alpha-local-only-telemetry
-last_reconciled_with: c3b8825bf476cbce5e061c0f99570cf1f6723b89
+last_reconciled_with: 2fa5ef4c7bf3aafabe98392d25be7eb86847ce8f
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -44,6 +44,10 @@ traces, or metrics to third-party telemetry services.
   accurate public privacy disclosure.
 
 # Reconciliation notes
+
+- 2026-09-05, upstream `2fa5ef4c7bf3aafabe98392d25be7eb86847ce8f`: `mechanical-conflict`;
+  adopted upstream server and configuration test changes while retaining disabled outbound
+  analytics, trace, and metric export across Alpha surfaces.
 
 - 2026-08-23, upstream `035058a23e651ea5f407c9ab73cf5329cc40c102`: added the Alpha-only
   local telemetry invariant after auditing PostHog and Axiom/OTLP tracking paths.

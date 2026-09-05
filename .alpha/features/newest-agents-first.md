@@ -3,7 +3,7 @@ id: newest-agents-first
 status: active
 risk: green
 introduced_by: newest-agents-first
-last_reconciled_with: c3b8825bf476cbce5e061c0f99570cf1f6723b89
+last_reconciled_with: 2fa5ef4c7bf3aafabe98392d25be7eb86847ce8f
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -35,6 +35,10 @@ users scroll past older agents.
   across activity updates.
 
 # Reconciliation notes
+
+- 2026-09-05, upstream `2fa5ef4c7bf3aafabe98392d25be7eb86847ce8f`: `unaffected`; incoming
+  provider, runtime-diagnostic, and client presentation changes do not alter newest-first direct
+  agent ordering or stable row positions.
 
 - 2026-08-17, upstream `cd096b9ad5a4156ffeab85de617cbb219057007f`: `unaffected`; current
   upstream still orders direct agents oldest-first and incoming changes do not touch the subagent

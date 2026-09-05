@@ -69,6 +69,9 @@ export function formatServiceStatus(
     return `T3 Code Alpha service\n  Status: not installed\n  Next: Run \`${ALPHA_DISTRIBUTION.serverBinaryName} service install\`.`;
   }
   const installedVersion = status.installedVersion ?? cliVersion;
+  const problems = (status.problems ?? []).map(
+    (problem) => `  [${problem}] ${BootService.formatBootServiceProblem(problem)}`,
+  );
   if (
     !status.current &&
     status.installedVersion !== undefined &&
@@ -79,6 +82,7 @@ export function formatServiceStatus(
       `  Status: installed · ${ALPHA_DISTRIBUTION.serverPackageName}@${installedVersion} (newer than this ${ALPHA_DISTRIBUTION.serverPackageName}@${cliVersion} CLI)`,
       `  Unit: ${status.unitPath}`,
       `  Logs: ${status.logPath}`,
+      ...problems,
       `  Next: Use \`npx ${ALPHA_DISTRIBUTION.serverPackageName}@${installedVersion} service update\` to repair it, or pass \`--allow-downgrade\` explicitly.`,
     ].join("\n");
   }
@@ -87,10 +91,11 @@ export function formatServiceStatus(
     `  Status: ${status.current ? `installed · ${ALPHA_DISTRIBUTION.serverPackageName}@${installedVersion}` : "needs an update or repair"}`,
     `  Unit: ${status.unitPath}`,
     `  Logs: ${status.logPath}`,
+    ...problems,
     ...(status.current
       ? []
       : [
-          `  Next: Run \`npx ${ALPHA_DISTRIBUTION.serverPackageName}@${ALPHA_DISTRIBUTION.serverNpmDistTag} service update\`.`,
+          `  Next: Run \`npx ${ALPHA_DISTRIBUTION.serverPackageName}@${cliVersion} service update\`.`,
         ]),
   ].join("\n");
 }
@@ -198,6 +203,9 @@ export const offerServiceDuringOnboarding = Effect.gen(function* () {
     yield* Console.log("T3 Code Alpha is already set up to run in the background on this machine.");
     return true;
   }
+  for (const problem of status.problems ?? []) {
+    yield* Console.warn(`[${problem}] ${BootService.formatBootServiceProblem(problem)}`);
+  }
   if (
     installed &&
     status.installedVersion !== undefined &&
@@ -247,6 +255,8 @@ export const recoverServiceOnboardingOffer = <R>(
       BootServiceCommandError: (error) =>
         Console.warn(`Background setup did not finish: ${error.message}`).pipe(Effect.as(false)),
       BootServiceInstallError: (error) =>
+        Console.warn(`Background setup did not finish: ${error.message}`).pipe(Effect.as(false)),
+      BootServicePrerequisiteError: (error) =>
         Console.warn(`Background setup did not finish: ${error.message}`).pipe(Effect.as(false)),
       BootServiceUpdatePendingError: (error) =>
         Console.warn(`Background setup did not finish: ${error.message}`).pipe(Effect.as(false)),

@@ -3,7 +3,7 @@ id: codex-service-tier-labels
 status: active
 risk: green
 introduced_by: ca4c713e01b8216d57f3ff5b0612f17d41baeb65
-last_reconciled_with: c3b8825bf476cbce5e061c0f99570cf1f6723b89
+last_reconciled_with: 2fa5ef4c7bf3aafabe98392d25be7eb86847ce8f
 upstream_issue: null
 upstream_pr: pingdotgg/t3code#4503
 surfaces:
@@ -36,6 +36,10 @@ Standard and Fast tiers.
   and non-fast service tiers.
 
 # Reconciliation notes
+
+- 2026-09-05, upstream `2fa5ef4c7bf3aafabe98392d25be7eb86847ce8f`: `unaffected`; incoming web
+  file editing, prompt history, focus, pull request, and composer changes do not alter Codex service
+  tier labels.
 
 - 2026-08-23, upstream `a9cd94eb935fed8e73b0d88e599c27048f2939c3`: added the focused Alpha
   carry from `pingdotgg/t3code#4503` while that behavior remained absent upstream.

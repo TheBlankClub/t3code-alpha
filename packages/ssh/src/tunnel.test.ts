@@ -105,8 +105,7 @@ describe("ssh tunnel scripts", () => {
 
     assert.include(script, "T3_NODE_SCRIPT_PATH=''");
     assert.include(script, 'exec t3-alpha "$@"');
-    assert.include(script, "exec npx --yes 't3code-alpha@latest' \"$@\"");
-    assert.include(script, "exec npm exec --yes 't3code-alpha@latest' -- \"$@\"");
+    assert.include(script, 'exec "$T3_CLI_PATH" "$@"');
     assert.include(script, "could not install 't3code-alpha@latest'");
     assert.include(script, "require_installed_t3_cli npx --yes --package 't3code-alpha@latest'");
     assert.include(
@@ -144,8 +143,6 @@ describe("ssh tunnel scripts", () => {
       packageSpec: "t3@nightly; touch /tmp/t3-owned",
     });
 
-    assert.include(script, "exec npx --yes 't3@nightly; touch /tmp/t3-owned' \"$@\"");
-    assert.include(script, "exec npm exec --yes 't3@nightly; touch /tmp/t3-owned' -- \"$@\"");
     assert.include(
       script,
       "require_installed_t3_cli npx --yes --package 't3@nightly; touch /tmp/t3-owned'",

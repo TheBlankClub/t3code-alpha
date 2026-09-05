@@ -3,7 +3,7 @@ id: alpha-distribution-identity
 status: active
 risk: red
 introduced_by: alpha-distribution-identity
-last_reconciled_with: c3b8825bf476cbce5e061c0f99570cf1f6723b89
+last_reconciled_with: 2fa5ef4c7bf3aafabe98392d25be7eb86847ce8f
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -62,6 +62,11 @@ identity.
   can express every invariant through that upstream model without bespoke runtime code.
 
 # Reconciliation notes
+
+- 2026-09-05, upstream `2fa5ef4c7bf3aafabe98392d25be7eb86847ce8f`: `upstream-redesign`;
+  adopted host-portable launcher paths, background-service diagnostics, managed SSH execution, and
+  Windows packaging fixes while retaining Alpha app, profile, protocol, package, service, and
+  artifact identities.
 
 - 2026-08-15, upstream `9885a845c97325b1099b095011da8385485616f5`: created the isolated
   Alpha distribution identity on top of upstream's `DesktopEnvironment` and build configuration.

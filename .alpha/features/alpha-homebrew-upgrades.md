@@ -3,7 +3,7 @@ id: alpha-homebrew-upgrades
 status: active
 risk: red
 introduced_by: alpha-homebrew-upgrades
-last_reconciled_with: c3b8825bf476cbce5e061c0f99570cf1f6723b89
+last_reconciled_with: 2fa5ef4c7bf3aafabe98392d25be7eb86847ce8f
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -54,6 +54,10 @@ Developer account or a separate package-hosting service.
   same package identity and repository boundaries.
 
 # Reconciliation notes
+
+- 2026-09-05, upstream `2fa5ef4c7bf3aafabe98392d25be7eb86847ce8f`: `unaffected`; upstream
+  release, packaging, and CI fixes do not replace the fork-owned cask, pinned certificate, or
+  Alpha prerelease source.
 
 - 2026-08-15, upstream `804cba4305b15f929937833c93e85db0835d8903`: added the fork-owned
   Homebrew cask path for unsigned Alpha macOS upgrades.

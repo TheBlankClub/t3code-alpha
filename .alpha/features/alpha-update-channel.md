@@ -3,7 +3,7 @@ id: alpha-update-channel
 status: active
 risk: red
 introduced_by: alpha-update-channel
-last_reconciled_with: c3b8825bf476cbce5e061c0f99570cf1f6723b89
+last_reconciled_with: 2fa5ef4c7bf3aafabe98392d25be7eb86847ce8f
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -69,6 +69,10 @@ automatic updater.
   cross-platform source and export support.
 
 # Reconciliation notes
+
+- 2026-09-05, upstream `2fa5ef4c7bf3aafabe98392d25be7eb86847ce8f`: `mechanical-conflict`;
+  adopted host-portable launcher and signed-build test paths while retaining Alpha icons, protocol,
+  app ID, fixed update track, and manual-installer policy.
 
 - 2026-08-15, upstream `9885a845c97325b1099b095011da8385485616f5`: added the Alpha
   channel and deterministic cross-platform artwork, including the macOS 27 legacy-render fallback.

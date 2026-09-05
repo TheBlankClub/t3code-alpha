@@ -3,7 +3,7 @@ id: fork-steward
 status: active
 risk: green
 introduced_by: alpha-foundation
-last_reconciled_with: c3b8825bf476cbce5e061c0f99570cf1f6723b89
+last_reconciled_with: 2fa5ef4c7bf3aafabe98392d25be7eb86847ce8f
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -39,6 +39,10 @@ retiring fork code when upstream provides an equivalent or better implementation
   semantic feature retirement, Alpha release isolation, and the same safety gates.
 
 # Reconciliation notes
+
+- 2026-09-05, upstream `2fa5ef4c7bf3aafabe98392d25be7eb86847ce8f`: `unaffected`; incoming
+  product, test, documentation, and CI changes do not replace the Alpha feature ledger or local
+  reconciliation workflow.
 
 - 2026-08-15, upstream `9885a845c97325b1099b095011da8385485616f5`: created the initial
   repository-owned stewardship foundation. Product identity and release behavior remain unchanged.
