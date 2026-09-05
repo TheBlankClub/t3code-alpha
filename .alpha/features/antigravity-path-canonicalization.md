@@ -3,7 +3,7 @@ id: antigravity-path-canonicalization
 status: active
 risk: amber
 introduced_by: antigravity-path-canonicalization
-last_reconciled_with: 07d2497db89014ccd71aa077fc809aff47e4af91
+last_reconciled_with: 32142cff186c607c8cae644927cee8d6c9cba757
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -57,3 +57,5 @@ session workspace.
 - 2026-09-04, upstream `c3b8825bf476cbce5e061c0f99570cf1f6723b89`: `mechanical-overlap`;
   adopted upstream's Antigravity runtime instructions and batch task identity while retaining
   executable and nearest-existing-parent path canonicalization.
+- 2026-09-05, upstream `32142cff186c607c8cae644927cee8d6c9cba757`: `auto-merged`; Git produced a conflict-free
+  reconciliation candidate. Required PR CI remained the merge gate.
