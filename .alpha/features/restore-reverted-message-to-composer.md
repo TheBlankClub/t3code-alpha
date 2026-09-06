@@ -3,7 +3,7 @@ id: restore-reverted-message-to-composer
 status: active
 risk: amber
 introduced_by: a47276a40
-last_reconciled_with: 07d2497db89014ccd71aa077fc809aff47e4af91
+last_reconciled_with: e5d086c262daab13a8adbb253e281c07ab235533
 upstream_issue: pingdotgg/t3code#5685
 upstream_pr: pingdotgg/t3code#6044
 surfaces:
@@ -29,8 +29,8 @@ Let users edit and resend a reverted prompt instead of recreating its text and i
 
 # Current delta
 
-- The implementation is carried from `pingdotgg/t3code#6044` without behavioral changes while that
-  pull request remains open upstream.
+- Composer restoration originates from `pingdotgg/t3code#6044`. The client reducer retains
+  checkpoint bounds for loaded history alongside upstream imported-message and timestamp handling.
 
 # Retirement conditions
 
@@ -38,6 +38,8 @@ Let users edit and resend a reverted prompt instead of recreating its text and i
   implementation and focused coverage satisfy every invariant above.
 
 # Reconciliation notes
+
+- 2026-09-06, upstream `e5d086c262daab13a8adbb253e281c07ab235533`: `upstream-redesign`. Adopted imported-history retention and absolute timestamp fallback. Retained checkpoint bounds for paginated history and steering messages, with coverage for imported messages inside a loaded window. Composer restoration and draft stashing remain.
 
 - 2026-09-05, upstream `07d2497db89014ccd71aa077fc809aff47e4af91`: `unaffected`; provider
   settings field-reader cleanup does not alter reverted-message restoration or draft stashing.

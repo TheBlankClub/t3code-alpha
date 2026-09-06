@@ -1,9 +1,9 @@
 ---
 id: codex-service-tier-labels
-status: active
+status: retired
 risk: green
 introduced_by: ca4c713e01b8216d57f3ff5b0612f17d41baeb65
-last_reconciled_with: 07d2497db89014ccd71aa077fc809aff47e4af91
+last_reconciled_with: e5d086c262daab13a8adbb253e281c07ab235533
 upstream_issue: null
 upstream_pr: pingdotgg/t3code#4503
 surfaces:
@@ -26,9 +26,7 @@ Standard and Fast tiers.
 
 # Current delta
 
-- The web traits picker treats only Codex Standard and Fast as fast-mode states and keeps every
-  other service tier in the visible label.
-- The focused picker tests cover combined, sole-trait, non-fast-tier, boolean, and ultrathink cases.
+- None. Upstream commit `dedcd99a9` supplies the implementation and focused coverage.
 
 # Retirement conditions
 
@@ -36,6 +34,8 @@ Standard and Fast tiers.
   and non-fast service tiers.
 
 # Reconciliation notes
+
+- 2026-09-06, upstream `e5d086c262daab13a8adbb253e281c07ab235533`: `upstream-equivalent`. Retired: upstream commit dedcd99a9 implements the readable Codex service-tier labels. TraitsPicker.tsx and TraitsPicker.test.ts match upstream, and the focused tests pass.
 
 - 2026-09-05, upstream `07d2497db89014ccd71aa077fc809aff47e4af91`: `unaffected`; provider
   settings field-reader cleanup does not alter Codex service-tier labels.

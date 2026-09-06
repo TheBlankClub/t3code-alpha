@@ -3,7 +3,7 @@ id: alpha-release-workflow
 status: active
 risk: red
 introduced_by: alpha-release-workflow
-last_reconciled_with: 07d2497db89014ccd71aa077fc809aff47e4af91
+last_reconciled_with: e5d086c262daab13a8adbb253e281c07ab235533
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -86,6 +86,8 @@ upstream's official release, hosted-web, AUR, or npm publication paths.
   release destination without touching official distribution channels.
 
 # Reconciliation notes
+
+- 2026-09-06, upstream `e5d086c262daab13a8adbb253e281c07ab235533`: `unaffected`. Retained the fork release workflow, package identity, certificate, and manual installer policy.
 
 - 2026-09-05, upstream `07d2497db89014ccd71aa077fc809aff47e4af91`: `unaffected`; provider
   settings field-reader cleanup does not alter Alpha release gates or publication.

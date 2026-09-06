@@ -3,7 +3,7 @@ id: alpha-server-package
 status: active
 risk: red
 introduced_by: alpha-server-package
-last_reconciled_with: 07d2497db89014ccd71aa077fc809aff47e4af91
+last_reconciled_with: e5d086c262daab13a8adbb253e281c07ab235533
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -15,7 +15,7 @@ tests:
   - vp test run apps/server/scripts/cli.test.ts
   - vp test run packages/ssh/src/command.test.ts packages/ssh/src/tunnel.test.ts
   - vp test run apps/server/src/cloud/pinnedRuntime.test.ts apps/server/src/cloud/selfUpdate.test.ts apps/server/src/serviceLauncher.test.ts apps/server/src/cloud/bootService.test.ts apps/server/src/cli/invocation.test.ts apps/server/src/cli/service.test.ts apps/server/src/bin.test.ts apps/server/src/cloud/http.test.ts
-  - vp test run apps/server/src/cloud/cliAuthHtml.test.ts apps/server/src/os-jank.test.ts scripts/dev-runner.test.ts
+  - vp test run apps/server/src/os-jank.test.ts scripts/dev-runner.test.ts
   - vp test run apps/web/src/versionSkew.test.ts apps/web/src/components/ServerUpdateAction.test.tsx
   - vp test run packages/client-runtime/src/state/server.test.ts
   - vp run --filter @t3tools/shared --filter @t3tools/ssh --filter @t3tools/client-runtime --filter t3 --filter @t3tools/web typecheck
@@ -66,6 +66,8 @@ official T3 Code without publishing to or executing the upstream `t3` package.
   commands, and background-service registration.
 
 # Reconciliation notes
+
+- 2026-09-06, upstream `e5d086c262daab13a8adbb253e281c07ab235533`: `mechanical-conflict`. Adopted private CLI and SSH helpers, command-level tests, and install-failure reporting while retaining Alpha package, binary, and home paths. Accepted upstream removal of static OAuth HTML snapshots.
 
 - 2026-09-05, upstream `07d2497db89014ccd71aa077fc809aff47e4af91`: `unaffected`; provider
   settings field-reader cleanup does not alter Alpha server package or service identity.

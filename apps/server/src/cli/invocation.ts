@@ -19,7 +19,7 @@ export type CliRunner = "npx" | "pnpm dlx" | "bunx";
  * Global installs and repo checkouts match none of these and return null.
  * Detection is best-effort; callers must fail closed to the Alpha binary.
  */
-export function detectCliRunner(entryPath: string): CliRunner | null {
+function detectCliRunner(entryPath: string): CliRunner | null {
   const path = entryPath.replaceAll("\\", "/");
   if (path.includes("/_npx/")) {
     return "npx";
@@ -41,7 +41,7 @@ export function detectCliRunner(entryPath: string): CliRunner | null {
  * The Alpha package spec to suggest. Package-runner cache paths do not retain
  * the literal spec reliably, so all non-exact suggestions follow the Alpha tag.
  */
-export function suggestedPackageSpec(_version: string): string {
+function suggestedPackageSpec(_version: string): string {
   return `${ALPHA_DISTRIBUTION.serverPackageName}@${ALPHA_DISTRIBUTION.serverNpmDistTag}`;
 }
 

@@ -3,7 +3,7 @@ id: project-action-terminal-startup
 status: active
 risk: amber
 introduced_by: 438019e36
-last_reconciled_with: 07d2497db89014ccd71aa077fc809aff47e4af91
+last_reconciled_with: e5d086c262daab13a8adbb253e281c07ab235533
 upstream_issue: pingdotgg/t3code#6337
 upstream_pr: pingdotgg/t3code#6338
 surfaces:
@@ -42,6 +42,8 @@ is still initializing.
   contract, server, client fallback, and focused tests satisfy every invariant above.
 
 # Reconciliation notes
+
+- 2026-09-06, upstream `e5d086c262daab13a8adbb253e281c07ab235533`: `mechanical-conflict`. Combined provider-instance terminal environments with the initial-command handshake and older-server fallback.
 
 - 2026-09-05, upstream `07d2497db89014ccd71aa077fc809aff47e4af91`: `unaffected`; provider
   settings field-reader cleanup does not alter project-action terminal startup.

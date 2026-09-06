@@ -12,6 +12,8 @@ import type {
   OrchestrationThreadActivity,
   TurnId,
 } from "@t3tools/contracts";
+import { isImportedAgentSessionMessageId } from "@t3tools/contracts";
+import { compareDateTimeStrings } from "@t3tools/shared/dateTime";
 
 export type ThreadDetailReducerResult =
   | { readonly kind: "updated"; readonly thread: OrchestrationThread }
@@ -555,6 +557,7 @@ export function applyThreadDetailEvent(
       const messages = retainMessagesAfterRevert(
         thread.messages,
         retainedTurnIds,
+        event.payload.turnCount,
         latestCheckpoint,
       );
       const proposedPlans = pipe(
@@ -747,18 +750,56 @@ function rebindCheckpointAssistantMessage(
 function retainMessagesAfterRevert(
   messages: ReadonlyArray<OrchestrationMessage>,
   retainedTurnIds: ReadonlySet<string>,
+  turnCount: number,
   latestCheckpoint: OrchestrationCheckpointSummary | null,
 ): OrchestrationMessage[] {
-  const checkpointMessageId = latestCheckpoint?.assistantMessageId ?? null;
-  const checkpointMessageIndex =
-    checkpointMessageId === null
-      ? -1
-      : messages.findIndex((message) => message.id === checkpointMessageId);
+  // A loaded checkpoint bounds paginated history and keeps same-turn steering messages.
+  if (latestCheckpoint !== null) {
+    const checkpointMessageIndex = messages.findIndex(
+      (message) => message.id === latestCheckpoint.assistantMessageId,
+    );
+    return messages.filter((message, index) => {
+      if (message.role === "system" || isImportedAgentSessionMessageId(message.id)) return true;
+      if (message.turnId !== null) return retainedTurnIds.has(message.turnId);
+      if (checkpointMessageIndex >= 0) return index <= checkpointMessageIndex;
+      return compareDateTimeStrings(message.createdAt, latestCheckpoint.completedAt) <= 0;
+    });
+  }
 
-  return messages.filter((message, index) => {
-    if (message.role === "system") return true;
-    if (message.turnId !== null) return retainedTurnIds.has(message.turnId);
-    if (checkpointMessageIndex >= 0) return index <= checkpointMessageIndex;
-    return latestCheckpoint !== null && message.createdAt <= latestCheckpoint.completedAt;
-  });
+  const retainedMessageIds = new Set<string>();
+  for (const message of messages) {
+    if (message.role === "system" || isImportedAgentSessionMessageId(message.id)) {
+      retainedMessageIds.add(message.id);
+    } else if (message.turnId !== null && retainedTurnIds.has(message.turnId)) {
+      retainedMessageIds.add(message.id);
+    }
+  }
+
+  for (const role of ["user", "assistant"] as const) {
+    const retainedCount = messages.filter(
+      (message) =>
+        message.role === role &&
+        !isImportedAgentSessionMessageId(message.id) &&
+        retainedMessageIds.has(message.id),
+    ).length;
+    const missingCount = Math.max(0, turnCount - retainedCount);
+    const fallbackMessages = messages
+      .filter(
+        (message) =>
+          message.role === role &&
+          !retainedMessageIds.has(message.id) &&
+          (message.turnId === null || retainedTurnIds.has(message.turnId)),
+      )
+      .toSorted(
+        (left, right) =>
+          compareDateTimeStrings(left.createdAt, right.createdAt) ||
+          left.id.localeCompare(right.id),
+      )
+      .slice(0, missingCount);
+    for (const message of fallbackMessages) {
+      retainedMessageIds.add(message.id);
+    }
+  }
+
+  return Arr.filter(messages, (message) => retainedMessageIds.has(message.id));
 }
