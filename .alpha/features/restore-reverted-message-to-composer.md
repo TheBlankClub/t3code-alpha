@@ -3,13 +3,15 @@ id: restore-reverted-message-to-composer
 status: active
 risk: amber
 introduced_by: a47276a40
-last_reconciled_with: e5d086c262daab13a8adbb253e281c07ab235533
+last_reconciled_with: f57d3832c0219b4f6fbe2e86f824fedd232492c0
 upstream_issue: pingdotgg/t3code#5685
 upstream_pr: pingdotgg/t3code#6044
 surfaces:
   - web
   - client-runtime
 tests:
+  - apps/web/src/components/chat/MessagesTimeline.logic.test.ts
+  - apps/web/src/components/chat/MessagesTimeline.test.tsx
   - apps/web/src/components/ChatView.logic.test.ts
   - packages/client-runtime/src/state/threadReducer.test.ts
 ---
@@ -38,6 +40,8 @@ Let users edit and resend a reverted prompt instead of recreating its text and i
   implementation and focused coverage satisfy every invariant above.
 
 # Reconciliation notes
+
+- 2026-09-07, upstream `f57d3832c0219b4f6fbe2e86f824fedd232492c0`: `upstream-redesign`. Adopted timeline-owned checkpoint selection. The stable revert callback carries the selected message ID so Alpha can restore its prompt and images, stash drafts, and retain checkpoint bounds in loaded history.
 
 - 2026-09-06, upstream `e5d086c262daab13a8adbb253e281c07ab235533`: `upstream-redesign`. Adopted imported-history retention and absolute timestamp fallback. Retained checkpoint bounds for paginated history and steering messages, with coverage for imported messages inside a loaded window. Composer restoration and draft stashing remain.
 

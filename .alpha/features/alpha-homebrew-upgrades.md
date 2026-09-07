@@ -3,7 +3,7 @@ id: alpha-homebrew-upgrades
 status: active
 risk: red
 introduced_by: alpha-homebrew-upgrades
-last_reconciled_with: e5d086c262daab13a8adbb253e281c07ab235533
+last_reconciled_with: f57d3832c0219b4f6fbe2e86f824fedd232492c0
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -54,6 +54,8 @@ Developer account or a separate package-hosting service.
   same package identity and repository boundaries.
 
 # Reconciliation notes
+
+- 2026-09-07, upstream `f57d3832c0219b4f6fbe2e86f824fedd232492c0`: `unaffected`. The fork certificate, cask generator, and Homebrew upgrade path remain unchanged.
 
 - 2026-09-06, upstream `e5d086c262daab13a8adbb253e281c07ab235533`: `unaffected`. The fork certificate, cask, release destinations, and state-preserving upgrade path remain unchanged.
 

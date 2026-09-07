@@ -3,7 +3,7 @@ id: alpha-update-channel
 status: active
 risk: red
 introduced_by: alpha-update-channel
-last_reconciled_with: e5d086c262daab13a8adbb253e281c07ab235533
+last_reconciled_with: f57d3832c0219b4f6fbe2e86f824fedd232492c0
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -69,6 +69,8 @@ automatic updater.
   cross-platform source and export support.
 
 # Reconciliation notes
+
+- 2026-09-07, upstream `f57d3832c0219b4f6fbe2e86f824fedd232492c0`: `unaffected`. The fixed Alpha update channel, manual installers, and artwork remain unchanged.
 
 - 2026-09-06, upstream `e5d086c262daab13a8adbb253e281c07ab235533`: `mechanical-conflict`. Retained Alpha update disabling, channel recognition, and artwork. Adopted upstream removal of tests that asserted private styling; retained Alpha identity and unique SVG ID coverage.
 
