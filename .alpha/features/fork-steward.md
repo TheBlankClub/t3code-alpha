@@ -3,7 +3,7 @@ id: fork-steward
 status: active
 risk: green
 introduced_by: alpha-foundation
-last_reconciled_with: dc39615aec702ea6d402168f80b4d1613f4f2e0f
+last_reconciled_with: 8b2838e0e8a73d3fa6476940445c372e47b99db4
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -126,3 +126,5 @@ retiring fork code when upstream provides an equivalent or better implementation
 - 2026-09-04, upstream `c3b8825bf476cbce5e061c0f99570cf1f6723b89`: `mechanical-overlap`;
   reviewed five same-file overlaps from four incoming commits. Git merged them without conflicts,
   and the fork policy and skill remain unchanged.
+- 2026-09-07, upstream `8b2838e0e8a73d3fa6476940445c372e47b99db4`: `auto-merged`; Git produced a conflict-free
+  reconciliation candidate. Required PR CI remained the merge gate.
