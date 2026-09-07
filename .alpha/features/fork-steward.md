@@ -3,7 +3,7 @@ id: fork-steward
 status: active
 risk: green
 introduced_by: alpha-foundation
-last_reconciled_with: f57d3832c0219b4f6fbe2e86f824fedd232492c0
+last_reconciled_with: 71297974c666b0db50a3e3b1a861742f2cdd4d7d
 upstream_issue: null
 upstream_pr: null
 surfaces:

@@ -3,7 +3,7 @@ id: project-action-terminal-startup
 status: active
 risk: amber
 introduced_by: 438019e36
-last_reconciled_with: f57d3832c0219b4f6fbe2e86f824fedd232492c0
+last_reconciled_with: 71297974c666b0db50a3e3b1a861742f2cdd4d7d
 upstream_issue: pingdotgg/t3code#6337
 upstream_pr: pingdotgg/t3code#6338
 surfaces:
