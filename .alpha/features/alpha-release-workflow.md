@@ -3,7 +3,7 @@ id: alpha-release-workflow
 status: active
 risk: red
 introduced_by: alpha-release-workflow
-last_reconciled_with: 71297974c666b0db50a3e3b1a861742f2cdd4d7d
+last_reconciled_with: dc39615aec702ea6d402168f80b4d1613f4f2e0f
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -36,8 +36,10 @@ upstream's official release, hosted-web, AUR, or npm publication paths.
   the gate already proves CI succeeded for that exact SHA. On the scheduled and manual paths the
   gate gives no such proof, so those runs publish without verifying the source commit.
 - Versions use `X.Y.Z-alpha.YYYYMMDD.RUN`; GitHub releases are prereleases and never become latest.
-- macOS arm64/x64, Linux x64, and Windows x64 artifacts use upstream's desktop builder and Alpha
-  artifact identities.
+- Only the macOS arm64 DMG uses upstream's desktop builder and Alpha artifact identity.
+- The CLI retains resource-monitor binaries for macOS arm64/x64, Linux x64, and Windows x64.
+  The arm64 desktop build supplies its binary; separate Rust-only jobs supply the other three.
+  npm publication requires all four binaries.
 - Desktop artifacts are intentionally not signed with platform developer credentials. macOS builds
   use the fork's persistent self-signed identity, while GitHub releases contain manual installers
   only, not updater manifests, blockmaps, or macOS ZIP update payloads.
@@ -76,8 +78,8 @@ upstream's official release, hosted-web, AUR, or npm publication paths.
   branch-protection, and first-release gates.
 - `scripts/resolve-alpha-release.ts` reuses upstream's next-patch version calculation and adds the
   Alpha prerelease metadata contract.
-- `scripts/render-alpha-homebrew-cask.ts` binds the cask version and architecture checksums to the
-  exact macOS artifacts produced by the release.
+- `scripts/render-alpha-homebrew-cask.ts` binds the cask version and arm64 checksum to the
+  exact macOS DMG produced by the release.
 
 # Retirement conditions
 
@@ -86,6 +88,9 @@ upstream's official release, hosted-web, AUR, or npm publication paths.
   release destination without touching official distribution channels.
 
 # Reconciliation notes
+
+- 2026-09-07, upstream `dc39615aec702ea6d402168f80b4d1613f4f2e0f`: `unaffected`. The five incoming mobile
+  fixes and LegendList patch do not change this feature. The Alpha release changes remain intact.
 
 - 2026-09-07, upstream `f57d3832c0219b4f6fbe2e86f824fedd232492c0`: `mechanical-conflict`. Adopted upstream release commit resolution and marketing deployment behind the official repository gate. Alpha publication remains separate.
 

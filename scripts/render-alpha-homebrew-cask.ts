@@ -16,7 +16,6 @@ const AlphaVersion = Schema.String.check(Schema.isPattern(/^\d+\.\d+\.\d+-alpha\
 export interface AlphaHomebrewCaskInput {
   readonly version: string;
   readonly arm64Sha256: string;
-  readonly x64Sha256: string;
 }
 
 function sha256(contents: Uint8Array): string {
@@ -28,18 +27,16 @@ export function renderAlphaHomebrewCask(input: AlphaHomebrewCaskInput): string {
 # frozen_string_literal: true
 
 cask "t3code-alpha" do
-  arch arm: "arm64", intel: "x64"
-
   version "${input.version}"
-  sha256 arm:   "${input.arm64Sha256}",
-         intel: "${input.x64Sha256}"
+  sha256 "${input.arm64Sha256}"
 
-  url "https://github.com/TheBlankClub/t3code-alpha/releases/download/v#{version}/T3-Code-Alpha-#{version}-#{arch}.dmg",
+  url "https://github.com/TheBlankClub/t3code-alpha/releases/download/v#{version}/T3-Code-Alpha-#{version}-arm64.dmg",
       verified: "github.com/TheBlankClub/t3code-alpha/"
   name "T3 Code Alpha"
   desc "TheBlankClub's frequently updated T3 Code distribution"
   homepage "https://github.com/TheBlankClub/t3code-alpha"
 
+  depends_on arch: :arm64
   depends_on :macos
 
   app "T3 Code Alpha.app"
@@ -75,23 +72,17 @@ end
 export const renderAlphaHomebrewCaskFile = Effect.fn("renderAlphaHomebrewCaskFile")(function* (
   version: string,
   arm64PathArg: string,
-  x64PathArg: string,
   outputPathArg: string,
 ) {
   const fs = yield* FileSystem.FileSystem;
   const path = yield* Path.Path;
   const arm64Path = path.resolve(arm64PathArg);
-  const x64Path = path.resolve(x64PathArg);
   const outputPath = path.resolve(outputPathArg);
 
-  const [arm64Contents, x64Contents] = yield* Effect.all([
-    fs.readFile(arm64Path),
-    fs.readFile(x64Path),
-  ]);
+  const arm64Contents = yield* fs.readFile(arm64Path);
   const cask = renderAlphaHomebrewCask({
     version,
     arm64Sha256: sha256(arm64Contents),
-    x64Sha256: sha256(x64Contents),
   });
 
   yield* fs.writeFileString(outputPath, cask);
@@ -105,11 +96,10 @@ const command = Command.make(
       Flag.withDescription("Released Alpha version."),
     ),
     arm64Path: Flag.string("arm64-path").pipe(Flag.withDescription("Path to the macOS arm64 DMG.")),
-    x64Path: Flag.string("x64-path").pipe(Flag.withDescription("Path to the macOS x64 DMG.")),
     outputPath: Flag.string("output").pipe(Flag.withDescription("Destination Cask file.")),
   },
-  ({ version, arm64Path, x64Path, outputPath }) =>
-    renderAlphaHomebrewCaskFile(version, arm64Path, x64Path, outputPath),
+  ({ version, arm64Path, outputPath }) =>
+    renderAlphaHomebrewCaskFile(version, arm64Path, outputPath),
 ).pipe(Command.withDescription("Render the Homebrew Cask for an Alpha desktop release."));
 
 if (import.meta.main) {

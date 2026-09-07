@@ -21,18 +21,17 @@ it("pins the cask fingerprint to the checked-in release certificate", () => {
   assert.include(certificate.subject, `CN=${ALPHA_DISTRIBUTION.macReleaseSigningIdentity}`);
 });
 
-it("renders the architecture-specific Alpha cask with pinned signature verification", () => {
+it("renders the arm64-only Alpha cask with pinned signature verification", () => {
   const cask = renderAlphaHomebrewCask({
     version: "0.0.34-alpha.20260815.27",
     arm64Sha256: "a".repeat(64),
-    x64Sha256: "b".repeat(64),
   });
 
   assert.include(cask, 'version "0.0.34-alpha.20260815.27"');
-  assert.include(cask, 'arch arm: "arm64", intel: "x64"');
-  assert.include(cask, `sha256 arm:   "${"a".repeat(64)}"`);
-  assert.include(cask, `intel: "${"b".repeat(64)}"`);
-  assert.include(cask, "T3-Code-Alpha-#{version}-#{arch}.dmg");
+  assert.include(cask, "depends_on arch: :arm64");
+  assert.notInclude(cask, "intel:");
+  assert.include(cask, `sha256 "${"a".repeat(64)}"`);
+  assert.include(cask, "T3-Code-Alpha-#{version}-arm64.dmg");
   assert.include(cask, 'app "T3 Code Alpha.app"');
   assert.include(cask, "depends_on :macos");
   assert.include(cask, 'args: ["--verify", "--deep", "--strict", target]');

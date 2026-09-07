@@ -140,53 +140,54 @@ jobs:
           previous_tag="$(git tag --list 'v*-alpha.*' --sort=-version:refname | grep -Fvx "$CURRENT_TAG" | head -n 1 || true)"
           echo "previous_tag=$previous_tag" >> "$GITHUB_OUTPUT"
 
-  build_wsl_node_pty:
-    name: Build WSL node-pty (linux-x64)
+  build_cli_resource_monitors:
+    name: Build CLI resource monitor (${{ matrix.resource_key }})
     needs: [preflight]
     if: ${{ !failure() && !cancelled() && needs.preflight.result == 'success' }}
-    runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: macos-15-intel
+            rust_target: x86_64-apple-darwin
+            resource_key: darwin-x64
+            binary_name: t3-resource-monitor
+          - runner: ubuntu-24.04
+            rust_target: x86_64-unknown-linux-gnu
+            resource_key: linux-x64
+            binary_name: t3-resource-monitor
+          - runner: windows-2025
+            rust_target: x86_64-pc-windows-msvc
+            resource_key: win32-x64
+            binary_name: t3-resource-monitor.exe
     steps:
       - name: Checkout release commit
         uses: actions/checkout@v6
         with:
           ref: ${{ needs.preflight.outputs.ref }}
-          sparse-checkout: |
-            /*
-            !/.repos/
-          sparse-checkout-cone-mode: false
+          sparse-checkout: native/resource-monitor
 
-      - name: Setup Vite+
-        uses: voidzero-dev/setup-vp@v1
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
         with:
-          node-version-file: package.json
-          cache: true
-          run-install: |
-            args:
-              - --filter=t3...
+          targets: ${{ matrix.rust_target }}
 
-      - name: Build node-pty linux-x64 prebuild
-        shell: bash
-        run: |
-          set -euo pipefail
-          pty_pkg="$(node -e "console.log(require.resolve('node-pty/package.json', { paths: ['$GITHUB_WORKSPACE/apps/server'] }))")"
-          pty_dir="$(dirname "$pty_pkg")"
-          ( cd "$pty_dir" && npx --yes node-gyp rebuild )
-          mkdir -p wsl-prebuild
-          cp "$pty_dir/build/Release/pty.node" wsl-prebuild/pty.node
-          file wsl-prebuild/pty.node
+      - name: Build resource monitor
+        run: cargo build --locked --release --manifest-path native/resource-monitor/Cargo.toml --target ${{ matrix.rust_target }}
 
-      - name: Upload node-pty linux-x64 prebuild
+      - name: Upload resource monitor
         uses: actions/upload-artifact@v7
         with:
-          name: alpha-wsl-node-pty-x64
-          path: wsl-prebuild/pty.node
+          name: alpha-resource-monitor-${{ matrix.resource_key }}
+          path: native/resource-monitor/target/${{ matrix.rust_target }}/release/${{ matrix.binary_name }}
           if-no-files-found: error
-          retention-days: 1
+          retention-days: 2
 
   build:
     name: Build ${{ matrix.label }}
-    needs: [preflight, build_wsl_node_pty]
+    needs: [preflight]
     if: ${{ !cancelled() && needs.preflight.result == 'success' }}
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 45
@@ -201,27 +202,6 @@ jobs:
             arch: arm64
             rust_target: aarch64-apple-darwin
             resource_key: darwin-arm64
-          - label: macOS x64
-            runner: macos-15-intel
-            platform: mac
-            target: dmg
-            arch: x64
-            rust_target: x86_64-apple-darwin
-            resource_key: darwin-x64
-          - label: Linux x64
-            runner: ubuntu-24.04
-            platform: linux
-            target: AppImage
-            arch: x64
-            rust_target: x86_64-unknown-linux-gnu
-            resource_key: linux-x64
-          - label: Windows x64
-            runner: windows-2025
-            platform: win
-            target: nsis
-            arch: x64
-            rust_target: x86_64-pc-windows-msvc
-            resource_key: win32-x64
     steps:
       - name: Checkout release commit
         uses: actions/checkout@v6
@@ -337,22 +317,6 @@ jobs:
       - name: Align package versions to Alpha version
         run: node scripts/update-release-package-versions.ts "${{ needs.preflight.outputs.version }}"
 
-      - name: Download WSL node-pty prebuild
-        if: matrix.platform == 'win'
-        uses: actions/download-artifact@v7
-        with:
-          name: alpha-wsl-node-pty-x64
-          path: wsl-prebuild
-
-      - name: Install ImageMagick
-        if: matrix.platform == 'linux'
-        shell: bash
-        run: |
-          if ! command -v magick >/dev/null 2>&1 && ! command -v convert >/dev/null 2>&1; then
-            sudo apt-get update
-            sudo apt-get install -y imagemagick
-          fi
-
       - name: Build desktop artifact
         shell: bash
         run: |
@@ -365,9 +329,6 @@ jobs:
             --verbose
           )
 
-          if [[ "${{ matrix.platform }}" == "win" ]]; then
-            args+=(--wsl-prebuild "$GITHUB_WORKSPACE/wsl-prebuild/pty.node")
-          fi
           if [[ "${{ matrix.platform }}" == "mac" ]]; then
             args+=(--mac-signing-identity "$ALPHA_MAC_SIGNING_IDENTITY")
           fi
@@ -420,24 +381,13 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p release-publish
-          shopt -s nullglob
-          for pattern in \
-            "release/*.dmg" \
-            "release/*.AppImage" \
-            "release/*.exe"; do
-            for file in $pattern; do
-              cp "$file" release-publish/
-            done
-          done
+          cp release/*.dmg release-publish/
 
       - name: Collect resource monitor
         shell: bash
         run: |
           set -euo pipefail
           binary_name="t3-resource-monitor"
-          if [[ "${{ matrix.platform }}" == "win" ]]; then
-            binary_name="${binary_name}.exe"
-          fi
           source_path="native/resource-monitor/target/${{ matrix.rust_target }}/release/${binary_name}"
           target_dir="resource-monitor-publish/${{ matrix.resource_key }}"
           mkdir -p "$target_dir"
@@ -469,8 +419,8 @@ jobs:
 
   publish_cli:
     name: Publish t3code-alpha to npm
-    needs: [preflight, build]
-    if: ${{ !failure() && !cancelled() && needs.preflight.result == 'success' && needs.build.result == 'success' }}
+    needs: [preflight, build, build_cli_resource_monitors]
+    if: ${{ !failure() && !cancelled() && needs.preflight.result == 'success' && needs.build.result == 'success' && needs.build_cli_resource_monitors.result == 'success' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     permissions:
@@ -520,12 +470,16 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          for artifact_dir in "$RUNNER_TEMP"/resource-monitors/alpha-resource-monitor-*; do
-            resource_key="${artifact_dir##*/alpha-resource-monitor-}"
+          for resource_key in darwin-arm64 darwin-x64 linux-x64 win32-x64; do
+            artifact_dir="$RUNNER_TEMP/resource-monitors/alpha-resource-monitor-${resource_key}"
+            binary_name="t3-resource-monitor"
+            if [[ "$resource_key" == "win32-x64" ]]; then
+              binary_name="${binary_name}.exe"
+            fi
             target_dir="apps/server/dist/resource-monitor/${resource_key}"
             mkdir -p "$target_dir"
-            cp "$artifact_dir"/t3-resource-monitor* "$target_dir/"
-            chmod +x "$target_dir"/t3-resource-monitor 2>/dev/null || true
+            cp "$artifact_dir/$binary_name" "$target_dir/$binary_name"
+            chmod +x "$target_dir/$binary_name"
           done
 
       - name: Publish Alpha CLI package
@@ -578,8 +532,6 @@ jobs:
           make_latest: false
           files: |
             release-assets/*.dmg
-            release-assets/*.AppImage
-            release-assets/*.exe
           fail_on_unmatched_files: true
           token: ${{ github.token }}
 
@@ -595,8 +547,6 @@ jobs:
           make_latest: false
           files: |
             release-assets/*.dmg
-            release-assets/*.AppImage
-            release-assets/*.exe
           fail_on_unmatched_files: true
           token: ${{ github.token }}
 
@@ -605,7 +555,7 @@ jobs:
     needs:
       - release_gate
       - preflight
-      - build_wsl_node_pty
+      - build_cli_resource_monitors
       - build
       - publish_cli
       - release
