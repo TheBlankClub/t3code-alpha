@@ -3,7 +3,7 @@ id: restore-reverted-message-to-composer
 status: active
 risk: amber
 introduced_by: a47276a40
-last_reconciled_with: dc39615aec702ea6d402168f80b4d1613f4f2e0f
+last_reconciled_with: 8b2838e0e8a73d3fa6476940445c372e47b99db4
 upstream_issue: pingdotgg/t3code#5685
 upstream_pr: pingdotgg/t3code#6044
 surfaces:
@@ -123,3 +123,5 @@ Let users edit and resend a reverted prompt instead of recreating its text and i
   paste-to-focus, composer selection holding, and menu-state changes.
 - 2026-09-04, upstream `c3b8825bf476cbce5e061c0f99570cf1f6723b89`: `unaffected`; incoming
   settings and tool-rendering changes do not alter reverted-message restoration or draft stashing.
+- 2026-09-07, upstream `8b2838e0e8a73d3fa6476940445c372e47b99db4`: `auto-merged`; Git produced a conflict-free
+  reconciliation candidate. Required PR CI remained the merge gate.

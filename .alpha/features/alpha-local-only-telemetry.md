@@ -3,7 +3,7 @@ id: alpha-local-only-telemetry
 status: active
 risk: red
 introduced_by: alpha-local-only-telemetry
-last_reconciled_with: dc39615aec702ea6d402168f80b4d1613f4f2e0f
+last_reconciled_with: 8b2838e0e8a73d3fa6476940445c372e47b99db4
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -106,3 +106,5 @@ traces, or metrics to third-party telemetry services.
 - 2026-09-04, upstream `c3b8825bf476cbce5e061c0f99570cf1f6723b89`: `unaffected`;
   incoming usage settings, provider prompts, task-state, and tool-rendering changes do not enable
   PostHog, OTLP, Axiom, or other T3 telemetry egress.
+- 2026-09-07, upstream `8b2838e0e8a73d3fa6476940445c372e47b99db4`: `auto-merged`; Git produced a conflict-free
+  reconciliation candidate. Required PR CI remained the merge gate.
