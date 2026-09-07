@@ -26,7 +26,8 @@ Developer account or a separate package-hosting service.
 - `TheBlankClub/homebrew-tap` is the canonical tap and `t3code-alpha` is the cask token.
 - The cask points only to macOS DMGs attached to a completed Alpha GitHub prerelease.
 - The cask version equals the released desktop and `t3code-alpha` npm package version.
-- arm64 and x64 SHA-256 values are calculated from the artifacts produced by the same workflow run.
+- The cask requires Apple Silicon and calculates its SHA-256 from the released arm64 DMG.
+  The tap accepts arm64-only releases without waiting for an x64 DMG.
 - The tap-owned updater audits the cask before committing it with the tap's repository-scoped
   `GITHUB_TOKEN`.
 - Release CI signs every macOS bundle with the same fork-owned self-signed identity.
@@ -40,7 +41,7 @@ Developer account or a separate package-hosting service.
 
 # Current delta
 
-- `scripts/render-alpha-homebrew-cask.ts` generates the architecture-aware cask.
+- `scripts/render-alpha-homebrew-cask.ts` generates the arm64-only cask.
 - `assets/alpha/signing/t3code-alpha-release-signing.cer` is the public certificate pinned by the
   release workflow and cask; its private key exists only in repository Actions secrets.
 - `.github/workflows/release-alpha.yml` publishes the complete GitHub prerelease that acts as the

@@ -13,6 +13,9 @@ npx t3code-alpha@latest
 
 ## macOS desktop app
 
+The desktop app requires an Apple Silicon Mac. On Intel Macs, Windows, and Linux, use the
+command-line server and open its web client.
+
 Alpha is not signed with an Apple Developer ID. It uses TheBlankClub's persistent self-signed
 release identity instead. If you trust TheBlankClub's release artifacts, install its Homebrew
 cask. The cask verifies that pinned identity and removes quarantine after every install or upgrade:
@@ -28,7 +31,7 @@ brew update
 brew upgrade --cask t3code-alpha
 ```
 
-You can instead download the DMG for your Mac from the
+You can instead download the arm64 DMG from the
 [Alpha releases](https://github.com/TheBlankClub/t3code-alpha/releases), quit the app, and replace
 `T3 Code Alpha.app` in Applications. Both methods preserve your Alpha settings and projects.
 

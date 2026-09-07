@@ -1,4 +1,6 @@
 // @effect-diagnostics nodeBuiltinImport:off - Workflow contract tests read repository fixtures directly.
+import * as NodeChildProcess from "node:child_process";
+import * as NodeOS from "node:os";
 import * as NodeFS from "node:fs";
 import * as NodePath from "node:path";
 import { assert, describe, it } from "@effect/vitest";
@@ -74,6 +76,98 @@ describe("Alpha workflow contracts", () => {
     assert.include(serialized, 'repositories":"t3code-alpha');
     assert.notInclude(serialized, "homebrew-tap");
     assert.include(serialized, "Alpha release is blocked");
+  });
+
+  it("publishes only the arm64 DMG while retaining all four CLI resource monitors", () => {
+    const workflow = readWorkflow("release-alpha.yml") as {
+      readonly jobs: Record<
+        "build" | "build_cli_resource_monitors" | "publish_cli" | "report_status" | "release",
+        {
+          readonly needs: ReadonlyArray<string>;
+          readonly if: string;
+          readonly strategy?: {
+            readonly matrix: {
+              readonly include: ReadonlyArray<{
+                readonly platform?: string;
+                readonly arch?: string;
+                readonly resource_key: string;
+              }>;
+            };
+          };
+          readonly steps: ReadonlyArray<{
+            readonly name?: string;
+            readonly uses?: string;
+            readonly run?: string;
+            readonly with?: { readonly files?: string; readonly fail_on_unmatched_files?: boolean };
+          }>;
+        }
+      >;
+    };
+    const { jobs } = workflow;
+    assert.deepStrictEqual(
+      jobs.build.strategy?.matrix.include.map(({ platform, arch }) => ({ platform, arch })),
+      [{ platform: "mac", arch: "arm64" }],
+    );
+    const resourceKeys = [
+      ...(jobs.build.strategy?.matrix.include ?? []),
+      ...(jobs.build_cli_resource_monitors.strategy?.matrix.include ?? []),
+    ].map(({ resource_key }) => resource_key);
+    assert.sameMembers(resourceKeys, ["darwin-arm64", "darwin-x64", "linux-x64", "win32-x64"]);
+    assert.notProperty(jobs, "build_wsl_node_pty");
+    assert.includeMembers([...jobs.publish_cli.needs], ["build", "build_cli_resource_monitors"]);
+    assert.include(jobs.publish_cli.if, "needs.build_cli_resource_monitors.result == 'success'");
+    assert.includeMembers([...jobs.report_status.needs], ["build", "build_cli_resource_monitors"]);
+    const uploads = jobs.release.steps.filter((step) =>
+      step.uses?.startsWith("softprops/action-gh-release@"),
+    );
+    assert.lengthOf(uploads, 2);
+    for (const upload of uploads) {
+      assert.equal(upload.with?.files?.trim(), "release-assets/*.dmg");
+      assert.isTrue(upload.with?.["fail_on_unmatched_files"]);
+    }
+
+    const bundleScript = jobs.publish_cli.steps.find(
+      (step) => step.name === "Bundle resource monitors into CLI package",
+    )?.run;
+    assert.isDefined(bundleScript);
+    const fixture = NodeFS.mkdtempSync(NodePath.join(NodeOS.tmpdir(), "alpha-resource-monitors-"));
+    try {
+      for (const resourceKey of resourceKeys) {
+        const artifactDir = NodePath.join(
+          fixture,
+          "resource-monitors",
+          `alpha-resource-monitor-${resourceKey}`,
+        );
+        NodeFS.mkdirSync(artifactDir, { recursive: true });
+        const binaryName =
+          resourceKey === "win32-x64" ? "t3-resource-monitor.exe" : "t3-resource-monitor";
+        NodeFS.writeFileSync(NodePath.join(artifactDir, binaryName), resourceKey);
+      }
+      const bundle = () =>
+        NodeChildProcess.execFileSync("bash", ["-c", bundleScript], {
+          cwd: fixture,
+          env: { ...process.env, RUNNER_TEMP: fixture },
+          stdio: "pipe",
+        });
+      bundle();
+      for (const resourceKey of resourceKeys) {
+        const binaryName =
+          resourceKey === "win32-x64" ? "t3-resource-monitor.exe" : "t3-resource-monitor";
+        assert.equal(
+          NodeFS.readFileSync(
+            NodePath.join(fixture, "apps/server/dist/resource-monitor", resourceKey, binaryName),
+            "utf8",
+          ),
+          resourceKey,
+        );
+      }
+      NodeFS.rmSync(NodePath.join(fixture, "resource-monitors/alpha-resource-monitor-linux-x64"), {
+        recursive: true,
+      });
+      assert.throws(bundle);
+    } finally {
+      NodeFS.rmSync(fixture, { recursive: true, force: true });
+    }
   });
 
   it("signs macOS releases with the persistent Alpha identity", () => {

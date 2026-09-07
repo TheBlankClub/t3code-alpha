@@ -36,8 +36,10 @@ upstream's official release, hosted-web, AUR, or npm publication paths.
   the gate already proves CI succeeded for that exact SHA. On the scheduled and manual paths the
   gate gives no such proof, so those runs publish without verifying the source commit.
 - Versions use `X.Y.Z-alpha.YYYYMMDD.RUN`; GitHub releases are prereleases and never become latest.
-- macOS arm64/x64, Linux x64, and Windows x64 artifacts use upstream's desktop builder and Alpha
-  artifact identities.
+- Only the macOS arm64 DMG uses upstream's desktop builder and Alpha artifact identity.
+- The CLI retains resource-monitor binaries for macOS arm64/x64, Linux x64, and Windows x64.
+  The arm64 desktop build supplies its binary; separate Rust-only jobs supply the other three.
+  npm publication requires all four binaries.
 - Desktop artifacts are intentionally not signed with platform developer credentials. macOS builds
   use the fork's persistent self-signed identity, while GitHub releases contain manual installers
   only, not updater manifests, blockmaps, or macOS ZIP update payloads.
@@ -76,8 +78,8 @@ upstream's official release, hosted-web, AUR, or npm publication paths.
   branch-protection, and first-release gates.
 - `scripts/resolve-alpha-release.ts` reuses upstream's next-patch version calculation and adds the
   Alpha prerelease metadata contract.
-- `scripts/render-alpha-homebrew-cask.ts` binds the cask version and architecture checksums to the
-  exact macOS artifacts produced by the release.
+- `scripts/render-alpha-homebrew-cask.ts` binds the cask version and arm64 checksum to the
+  exact macOS DMG produced by the release.
 
 # Retirement conditions
 
