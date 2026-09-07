@@ -3,7 +3,7 @@ id: alpha-local-only-telemetry
 status: active
 risk: red
 introduced_by: alpha-local-only-telemetry
-last_reconciled_with: 71297974c666b0db50a3e3b1a861742f2cdd4d7d
+last_reconciled_with: dc39615aec702ea6d402168f80b4d1613f4f2e0f
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -44,6 +44,9 @@ traces, or metrics to third-party telemetry services.
   accurate public privacy disclosure.
 
 # Reconciliation notes
+
+- 2026-09-07, upstream `dc39615aec702ea6d402168f80b4d1613f4f2e0f`: `unaffected`. The five incoming mobile
+  fixes and LegendList patch do not change this feature. The Alpha release changes remain intact.
 
 - 2026-09-07, upstream `f57d3832c0219b4f6fbe2e86f824fedd232492c0`: `unaffected`. Adopted local resource-monitor process diagnostics. Outbound analytics, OTLP, and relay tracing remain disabled.
 

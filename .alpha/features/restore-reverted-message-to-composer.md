@@ -3,7 +3,7 @@ id: restore-reverted-message-to-composer
 status: active
 risk: amber
 introduced_by: a47276a40
-last_reconciled_with: 71297974c666b0db50a3e3b1a861742f2cdd4d7d
+last_reconciled_with: dc39615aec702ea6d402168f80b4d1613f4f2e0f
 upstream_issue: pingdotgg/t3code#5685
 upstream_pr: pingdotgg/t3code#6044
 surfaces:
@@ -40,6 +40,9 @@ Let users edit and resend a reverted prompt instead of recreating its text and i
   implementation and focused coverage satisfy every invariant above.
 
 # Reconciliation notes
+
+- 2026-09-07, upstream `dc39615aec702ea6d402168f80b4d1613f4f2e0f`: `unaffected`. The five incoming mobile
+  fixes and LegendList patch do not change this feature. The Alpha release changes remain intact.
 
 - 2026-09-07, upstream `f57d3832c0219b4f6fbe2e86f824fedd232492c0`: `upstream-redesign`. Adopted timeline-owned checkpoint selection. The stable revert callback carries the selected message ID so Alpha can restore its prompt and images, stash drafts, and retain checkpoint bounds in loaded history.
 

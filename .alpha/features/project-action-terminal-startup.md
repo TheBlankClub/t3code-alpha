@@ -3,7 +3,7 @@ id: project-action-terminal-startup
 status: active
 risk: amber
 introduced_by: 438019e36
-last_reconciled_with: 71297974c666b0db50a3e3b1a861742f2cdd4d7d
+last_reconciled_with: dc39615aec702ea6d402168f80b4d1613f4f2e0f
 upstream_issue: pingdotgg/t3code#6337
 upstream_pr: pingdotgg/t3code#6338
 surfaces:
@@ -42,6 +42,9 @@ is still initializing.
   contract, server, client fallback, and focused tests satisfy every invariant above.
 
 # Reconciliation notes
+
+- 2026-09-07, upstream `dc39615aec702ea6d402168f80b4d1613f4f2e0f`: `unaffected`. The five incoming mobile
+  fixes and LegendList patch do not change this feature. The Alpha release changes remain intact.
 
 - 2026-09-07, upstream `f57d3832c0219b4f6fbe2e86f824fedd232492c0`: `unaffected`. Adopted terminal process monitoring while retaining initial-command handling, restart acknowledgement, and older-server fallback.
 

@@ -3,7 +3,7 @@ id: alpha-release-workflow
 status: active
 risk: red
 introduced_by: alpha-release-workflow
-last_reconciled_with: 71297974c666b0db50a3e3b1a861742f2cdd4d7d
+last_reconciled_with: dc39615aec702ea6d402168f80b4d1613f4f2e0f
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -88,6 +88,9 @@ upstream's official release, hosted-web, AUR, or npm publication paths.
   release destination without touching official distribution channels.
 
 # Reconciliation notes
+
+- 2026-09-07, upstream `dc39615aec702ea6d402168f80b4d1613f4f2e0f`: `unaffected`. The five incoming mobile
+  fixes and LegendList patch do not change this feature. The Alpha release changes remain intact.
 
 - 2026-09-07, upstream `f57d3832c0219b4f6fbe2e86f824fedd232492c0`: `mechanical-conflict`. Adopted upstream release commit resolution and marketing deployment behind the official repository gate. Alpha publication remains separate.
 

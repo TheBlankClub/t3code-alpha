@@ -3,7 +3,7 @@ id: alpha-server-package
 status: active
 risk: red
 introduced_by: alpha-server-package
-last_reconciled_with: 71297974c666b0db50a3e3b1a861742f2cdd4d7d
+last_reconciled_with: dc39615aec702ea6d402168f80b4d1613f4f2e0f
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -66,6 +66,9 @@ official T3 Code without publishing to or executing the upstream `t3` package.
   commands, and background-service registration.
 
 # Reconciliation notes
+
+- 2026-09-07, upstream `dc39615aec702ea6d402168f80b4d1613f4f2e0f`: `unaffected`. The five incoming mobile
+  fixes and LegendList patch do not change this feature. The Alpha release changes remain intact.
 
 - 2026-09-07, upstream `f57d3832c0219b4f6fbe2e86f824fedd232492c0`: `mechanical-conflict`. Adopted version 0.0.39, streaming transcript dependencies, and SSH startup changes. Retained the Alpha package, binary, state, and service identities.
 
