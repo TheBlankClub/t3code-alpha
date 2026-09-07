@@ -3,7 +3,7 @@ id: antigravity-path-canonicalization
 status: active
 risk: amber
 introduced_by: antigravity-path-canonicalization
-last_reconciled_with: e5d086c262daab13a8adbb253e281c07ab235533
+last_reconciled_with: 71297974c666b0db50a3e3b1a861742f2cdd4d7d
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -40,6 +40,8 @@ session workspace.
   parents while preserving the same workspace escape checks.
 
 # Reconciliation notes
+
+- 2026-09-07, upstream `f57d3832c0219b4f6fbe2e86f824fedd232492c0`: `unaffected`. Adopted upstream compaction support while retaining nearest-existing-parent canonicalization and workspace escape checks.
 
 - 2026-09-06, upstream `e5d086c262daab13a8adbb253e281c07ab235533`: `unaffected`. Adopted upstream authentication and skills changes while retaining canonical executable paths and missing-descendant workspace escape checks.
 
