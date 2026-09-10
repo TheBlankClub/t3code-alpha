@@ -10,7 +10,6 @@ export const ALPHA_DISTRIBUTION = {
   macReleaseSigningCertificateSha1: "A3FE7063335600A78DDB3634CF76D5E1EF6D9645",
   linuxExecutableName: "t3code-alpha",
   linuxDesktopEntryName: "t3code-alpha.desktop",
-  linuxUrlHandlerDesktopEntryName: "t3code-alpha-url-handler.desktop",
   linuxWmClass: "t3code-alpha",
   artifactName: "T3-Code-Alpha-${version}-${arch}.${ext}",
   serverPackageName: "t3code-alpha",

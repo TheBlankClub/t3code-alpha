@@ -14,6 +14,7 @@ import { ALPHA_DISTRIBUTION } from "@t3tools/shared/alphaDistribution";
 
 import * as DesktopAppSettings from "../settings/DesktopAppSettings.ts";
 import * as DesktopConfig from "./DesktopConfig.ts";
+import { resolveLinuxDesktopEntryName } from "./DesktopEarlyElectronStartup.ts";
 import { resolveDesktopBaseDir, resolveDesktopStateDir } from "./DesktopStatePaths.ts";
 import { isNightlyDesktopVersion } from "../updates/updateChannels.ts";
 
@@ -74,7 +75,6 @@ export class DesktopEnvironment extends Context.Service<
     readonly displayName: string;
     readonly appUserModelId: string;
     readonly linuxDesktopEntryName: string;
-    readonly linuxUrlHandlerDesktopEntryName: string;
     readonly linuxWmClass: string;
     readonly linuxApplicationsDir: string;
     readonly appImagePath: Option.Option<string>;
@@ -100,7 +100,7 @@ function resolveDesktopAppStageLabel(input: {
   return isNightlyDesktopVersion(input.appVersion) ? "Nightly" : "Alpha";
 }
 
-function resolveDesktopAppBranding(input: {
+export function resolveDesktopAppBranding(input: {
   readonly isDevelopment: boolean;
   readonly appVersion: string;
 }): DesktopAppBranding {
@@ -231,12 +231,7 @@ const make = Effect.fn("desktop.environment.make")(function* (
     appUserModelId: Option.getOrElse(config.appUserModelIdOverride, () =>
       isDevelopment ? "com.t3tools.t3code.dev" : ALPHA_DISTRIBUTION.desktopAppId,
     ),
-    linuxDesktopEntryName: isDevelopment
-      ? "t3code-dev.desktop"
-      : ALPHA_DISTRIBUTION.linuxDesktopEntryName,
-    linuxUrlHandlerDesktopEntryName: isDevelopment
-      ? "t3code-dev-url-handler.desktop"
-      : ALPHA_DISTRIBUTION.linuxUrlHandlerDesktopEntryName,
+    linuxDesktopEntryName: resolveLinuxDesktopEntryName(isDevelopment),
     linuxWmClass: isDevelopment ? "t3code-dev" : ALPHA_DISTRIBUTION.linuxWmClass,
     linuxApplicationsDir,
     appImagePath: config.appImagePath,

@@ -25,7 +25,6 @@ describe("ElectronProtocol", () => {
 
   it("uses an isolated Alpha renderer origin outside development", () => {
     assert.equal(ElectronProtocol.getDesktopScheme(false), "t3code-alpha");
-    assert.equal(ElectronProtocol.getDesktopOrigin(false), "t3code-alpha://app");
     assert.equal(ElectronProtocol.getDesktopUrl(false), "t3code-alpha://app/");
     assert.equal(ElectronProtocol.getDesktopScheme(true), "t3code-dev");
   });

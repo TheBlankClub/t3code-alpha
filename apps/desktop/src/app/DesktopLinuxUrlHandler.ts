@@ -22,7 +22,7 @@ import { makeComponentLogger } from "./DesktopObservability.ts";
 // default" checkbox would record in mimeapps.list.
 const { logInfo, logWarning } = makeComponentLogger("desktop-linux-url-handler");
 
-export class DesktopLinuxUrlHandlerRegistrationError extends Schema.TaggedErrorClass<DesktopLinuxUrlHandlerRegistrationError>()(
+export class DesktopLinuxUrlHandlerRegistrationError extends Schema.TaggedError<DesktopLinuxUrlHandlerRegistrationError>()(
   "DesktopLinuxUrlHandlerRegistrationError",
   {
     step: Schema.Literals(["write-desktop-entry", "set-default-handler"]),
@@ -90,6 +90,7 @@ export class DesktopLinuxUrlHandler extends Context.Service<
   }
 >()("@t3tools/desktop/app/DesktopLinuxUrlHandler") {}
 
+/** @public Service construction is part of the canonical Effect module API. */
 export const make = Effect.gen(function* () {
   const environment = yield* DesktopEnvironment.DesktopEnvironment;
   const fileSystem = yield* FileSystem.FileSystem;
@@ -98,22 +99,26 @@ export const make = Effect.gen(function* () {
   const scheme = ElectronProtocol.getDesktopScheme(environment.isDevelopment);
   const desktopEntryPath = environment.path.join(
     environment.linuxApplicationsDir,
-    environment.linuxUrlHandlerDesktopEntryName,
+    environment.linuxDesktopEntryName,
   );
 
   const writeDesktopEntry = Effect.gen(function* () {
     // Inside the mounted AppImage, process.execPath points at a transient
     // /tmp/.mount_* path — the handler must launch the AppImage itself.
     const execTarget = Option.getOrElse(environment.appImagePath, () => process.execPath);
+    const content = renderUrlHandlerDesktopEntry({
+      displayName: environment.displayName,
+      execTarget,
+      scheme,
+    });
+    // Pre-ready setup normally wrote this already. Avoid truncating a valid
+    // entry while the portal may be reading it during startup.
+    const existing = yield* fileSystem
+      .readFileString(desktopEntryPath)
+      .pipe(Effect.orElseSucceed(() => null));
+    if (existing === content) return;
     yield* fileSystem.makeDirectory(environment.linuxApplicationsDir, { recursive: true });
-    yield* fileSystem.writeFileString(
-      desktopEntryPath,
-      renderUrlHandlerDesktopEntry({
-        displayName: environment.displayName,
-        execTarget,
-        scheme,
-      }),
-    );
+    yield* fileSystem.writeFileString(desktopEntryPath, content);
   }).pipe(
     Effect.mapError(
       (cause) =>
@@ -130,7 +135,7 @@ export const make = Effect.gen(function* () {
     Effect.gen(function* () {
       const command = ChildProcess.make(
         "xdg-mime",
-        ["default", environment.linuxUrlHandlerDesktopEntryName, `x-scheme-handler/${scheme}`],
+        ["default", environment.linuxDesktopEntryName, `x-scheme-handler/${scheme}`],
         {
           stdin: "ignore",
           stdout: "ignore",
@@ -160,10 +165,11 @@ export const make = Effect.gen(function* () {
   );
 
   const register = Effect.gen(function* () {
-    if (environment.platform !== "linux" || !environment.isPackaged) {
+    if (environment.platform !== "linux") {
       return;
     }
     yield* writeDesktopEntry;
+    if (!environment.isPackaged) return;
     yield* setDefaultHandler;
     yield* logInfo("registered URL scheme handler", { scheme });
   }).pipe(

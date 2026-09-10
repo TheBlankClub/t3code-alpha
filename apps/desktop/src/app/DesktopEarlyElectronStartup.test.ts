@@ -95,7 +95,9 @@ describe("DesktopEarlyElectronStartup", () => {
     });
 
     assert.deepEqual(options, {
+      isDevelopment: true,
       linuxWmClass: "t3code-dev",
+      linuxDesktopEntryName: "com.t3tools.T3Code.Development.desktop",
       passwordStore: "gnome-libsecret",
     });
   });
@@ -109,6 +111,7 @@ describe("DesktopEarlyElectronStartup", () => {
     });
 
     assert.equal(options.linuxWmClass, "t3code-alpha");
+    assert.equal(options.linuxDesktopEntryName, "t3code-alpha.desktop");
   });
 
   it("keeps implicit development state under ~/.t3/dev when T3CODE_HOME is unset", () => {

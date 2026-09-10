@@ -27,7 +27,7 @@ const RunNumberSchema = Schema.FiniteFromString.check(
 );
 const ShaSchema = Schema.String.check(Schema.isPattern(/^[0-9a-f]{7,40}$/i));
 
-export class AlphaReleaseGitHubOutputConfigError extends Schema.TaggedErrorClass<AlphaReleaseGitHubOutputConfigError>()(
+export class AlphaReleaseGitHubOutputConfigError extends Schema.TaggedError<AlphaReleaseGitHubOutputConfigError>()(
   "AlphaReleaseGitHubOutputConfigError",
   { cause: Schema.Defect() },
 ) {
@@ -36,7 +36,7 @@ export class AlphaReleaseGitHubOutputConfigError extends Schema.TaggedErrorClass
   }
 }
 
-export class AlphaReleaseGitHubOutputAppendError extends Schema.TaggedErrorClass<AlphaReleaseGitHubOutputAppendError>()(
+export class AlphaReleaseGitHubOutputAppendError extends Schema.TaggedError<AlphaReleaseGitHubOutputAppendError>()(
   "AlphaReleaseGitHubOutputAppendError",
   {
     outputPath: Schema.String,

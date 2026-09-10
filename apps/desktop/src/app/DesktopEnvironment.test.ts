@@ -74,9 +74,8 @@ describe("DesktopEnvironment", () => {
       assert.equal(environment.backendEntryPath, "/repo/apps/server/dist/bin.mjs");
       assert.equal(environment.backendCwd, "/repo");
       assert.equal(environment.appUserModelId, "com.t3tools.t3code.dev");
-      assert.equal(environment.linuxDesktopEntryName, "t3code-dev.desktop");
-      assert.equal(environment.linuxUrlHandlerDesktopEntryName, "t3code-dev-url-handler.desktop");
       assert.equal(environment.linuxWmClass, "t3code-dev");
+      assert.equal(environment.linuxDesktopEntryName, "com.t3tools.T3Code.Development.desktop");
       assert.deepEqual(
         Option.map(environment.devServerUrl, (url) => url.href),
         Option.some("http://localhost:5173/"),
@@ -124,6 +123,19 @@ describe("DesktopEnvironment", () => {
     }),
   );
 
+  it.effect("uses the Alpha desktop entry as the packaged Linux portal identity", () =>
+    Effect.gen(function* () {
+      const environment = yield* makeEnvironment({
+        platform: "linux",
+        isPackaged: true,
+        appPath: "/tmp/.mount_t3code/resources/app.asar",
+        resourcesPath: "/tmp/.mount_t3code/resources",
+      });
+
+      assert.equal(environment.linuxDesktopEntryName, "t3code-alpha.desktop");
+    }),
+  );
+
   it.effect("keeps implicit development state separate from Alpha production state", () =>
     Effect.gen(function* () {
       const development = yield* makeEnvironment(
@@ -140,7 +152,6 @@ describe("DesktopEnvironment", () => {
       assert.equal(production.userDataDirName, "t3code-alpha");
       assert.equal(production.legacyUserDataDirName, "t3code-alpha");
       assert.equal(production.linuxDesktopEntryName, "t3code-alpha.desktop");
-      assert.equal(production.linuxUrlHandlerDesktopEntryName, "t3code-alpha-url-handler.desktop");
       assert.equal(production.linuxWmClass, "t3code-alpha");
     }),
   );
