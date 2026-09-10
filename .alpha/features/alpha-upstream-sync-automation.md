@@ -3,7 +3,7 @@ id: alpha-upstream-sync-automation
 status: active
 risk: red
 introduced_by: alpha-upstream-sync-automation
-last_reconciled_with: 8b2838e0e8a73d3fa6476940445c372e47b99db4
+last_reconciled_with: d29c56a5c404cb0f58d3b2ac41762fa0d0ac28d4
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -58,6 +58,10 @@ Alpha-only feature is unaffected.
   semantic feature reconciliation, visible conflict escalation, and configurable runner pools.
 
 # Reconciliation notes
+
+- 2026-09-10, upstream `d29c56a5c404cb0f58d3b2ac41762fa0d0ac28d4`: `mechanical-overlap`.
+  Adopted upstream's CI and release workflow changes while retaining Alpha's hosted runners,
+  repository gates, merge-ancestry automation, semantic-overlap labels, and two-pass CI gate.
 
 - 2026-09-07, upstream `dc39615aec702ea6d402168f80b4d1613f4f2e0f`: `unaffected`. The five incoming mobile
   fixes and LegendList patch do not change this feature. The Alpha release changes remain intact.

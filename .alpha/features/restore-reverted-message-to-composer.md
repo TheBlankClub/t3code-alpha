@@ -3,7 +3,7 @@ id: restore-reverted-message-to-composer
 status: active
 risk: amber
 introduced_by: a47276a40
-last_reconciled_with: 8b2838e0e8a73d3fa6476940445c372e47b99db4
+last_reconciled_with: d29c56a5c404cb0f58d3b2ac41762fa0d0ac28d4
 upstream_issue: pingdotgg/t3code#5685
 upstream_pr: pingdotgg/t3code#6044
 surfaces:
@@ -40,6 +40,11 @@ Let users edit and resend a reverted prompt instead of recreating its text and i
   implementation and focused coverage satisfy every invariant above.
 
 # Reconciliation notes
+
+- 2026-09-10, upstream `d29c56a5c404cb0f58d3b2ac41762fa0d0ac28d4`: `upstream-redesign`.
+  Adopted upstream's pull-request linking, capture attachments, composer loading, touch controls,
+  and timeline changes. Retained draft stashing, reverted prompt and image restoration, soft
+  attachment failures, and checkpoint-bounded history.
 
 - 2026-09-07, upstream `dc39615aec702ea6d402168f80b4d1613f4f2e0f`: `unaffected`. The five incoming mobile
   fixes and LegendList patch do not change this feature. The Alpha release changes remain intact.

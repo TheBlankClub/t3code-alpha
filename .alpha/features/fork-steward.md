@@ -3,7 +3,7 @@ id: fork-steward
 status: active
 risk: green
 introduced_by: alpha-foundation
-last_reconciled_with: 8b2838e0e8a73d3fa6476940445c372e47b99db4
+last_reconciled_with: d29c56a5c404cb0f58d3b2ac41762fa0d0ac28d4
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -39,6 +39,10 @@ retiring fork code when upstream provides an equivalent or better implementation
   semantic feature retirement, Alpha release isolation, and the same safety gates.
 
 # Reconciliation notes
+
+- 2026-09-10, upstream `d29c56a5c404cb0f58d3b2ac41762fa0d0ac28d4`: `mechanical-overlap`.
+  Preserved the fork-only skill, feature ledger, and reconciliation journal while adopting the
+  upstream source tree and its current maintenance conventions.
 
 - 2026-09-07, upstream `dc39615aec702ea6d402168f80b4d1613f4f2e0f`: `unaffected`. The five incoming mobile
   fixes and LegendList patch do not change this feature. The Alpha release changes remain intact.

@@ -3,7 +3,7 @@ id: alpha-distribution-identity
 status: active
 risk: red
 introduced_by: alpha-distribution-identity
-last_reconciled_with: 8b2838e0e8a73d3fa6476940445c372e47b99db4
+last_reconciled_with: d29c56a5c404cb0f58d3b2ac41762fa0d0ac28d4
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -12,6 +12,7 @@ surfaces:
   - packaging
 tests:
   - vp test run apps/desktop/src/app/DesktopEnvironment.test.ts apps/desktop/src/app/DesktopEarlyElectronStartup.test.ts apps/desktop/src/app/DesktopEarlyUserData.test.ts apps/desktop/src/app/DesktopAppIdentity.test.ts apps/desktop/src/app/DesktopClerk.test.ts apps/desktop/src/app/DesktopLinuxUrlHandler.test.ts apps/desktop/src/electron/ElectronProtocol.test.ts apps/desktop/scripts/electron-launcher.test.mjs
+  - vp test run apps/desktop/src/app/DesktopPreReadyPlatform.test.ts apps/desktop/src/snapShot/GnomeCaptureSetup.test.ts apps/desktop/src/snapShot/HyprlandSnapShot.test.ts apps/desktop/src/snapShot/KdeSnapShot.test.ts
   - vp test run apps/server/scripts/migrate-nightly-data-to-alpha.test.ts
   - vp test run scripts/build-desktop-artifact.test.ts -t "product names|Safe Storage|platform-specific packaging|passkey signing|Alpha renderer protocol"
   - vp test run apps/server/src/server.test.ts -t "allows credentialed preflights"
@@ -47,6 +48,8 @@ identity.
 - The desktop main process synchronously selects the Alpha Electron profile before constructing the
   asynchronous runtime layer graph.
 - Electron, Clerk, Linux URL handling, and desktop packaging consume the centralized identity.
+- Upstream's Linux portal entry uses Alpha's desktop ID, and installed capture helpers and backups
+  use the Alpha package namespace.
 - The staged desktop manifest derives its package name from the release channel, keeping upstream
   Stable and Nightly behavior unchanged while isolating Alpha's macOS Keychain service.
 - Upstream's source-asset desktop launcher model resolves its non-development icon from Alpha's
@@ -62,6 +65,11 @@ identity.
   can express every invariant through that upstream model without bespoke runtime code.
 
 # Reconciliation notes
+
+- 2026-09-10, upstream `d29c56a5c404cb0f58d3b2ac41762fa0d0ac28d4`: `upstream-redesign`.
+  Adopted upstream's pre-ready Linux portal entry, cross-platform capture helpers, refreshed macOS
+  launcher, and package baseline. Retained Alpha's app, profile, protocol, package, service,
+  artifact, Linux portal, and capture-helper identities.
 
 - 2026-09-07, upstream `dc39615aec702ea6d402168f80b4d1613f4f2e0f`: `unaffected`. The five incoming mobile
   fixes and LegendList patch do not change this feature. The Alpha release changes remain intact.
