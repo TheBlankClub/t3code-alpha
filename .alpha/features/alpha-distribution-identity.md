@@ -3,7 +3,7 @@ id: alpha-distribution-identity
 status: active
 risk: red
 introduced_by: alpha-distribution-identity
-last_reconciled_with: d29c56a5c404cb0f58d3b2ac41762fa0d0ac28d4
+last_reconciled_with: c52b8d96e4b34201f19b5e5bb12c6b2a77bfaa9a
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -65,6 +65,10 @@ identity.
   can express every invariant through that upstream model without bespoke runtime code.
 
 # Reconciliation notes
+
+- 2026-09-11, upstream `c52b8d96e4b34201f19b5e5bb12c6b2a77bfaa9a`: `unaffected`. Incoming devices,
+  command palette, right panel, mobile, and marketing work does not touch desktop identity,
+  packaging, or state paths.
 
 - 2026-09-10, upstream `d29c56a5c404cb0f58d3b2ac41762fa0d0ac28d4`: `upstream-redesign`.
   Adopted upstream's pre-ready Linux portal entry, cross-platform capture helpers, refreshed macOS

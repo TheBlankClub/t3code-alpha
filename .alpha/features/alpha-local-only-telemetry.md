@@ -3,7 +3,7 @@ id: alpha-local-only-telemetry
 status: active
 risk: red
 introduced_by: alpha-local-only-telemetry
-last_reconciled_with: d29c56a5c404cb0f58d3b2ac41762fa0d0ac28d4
+last_reconciled_with: c52b8d96e4b34201f19b5e5bb12c6b2a77bfaa9a
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -44,6 +44,10 @@ traces, or metrics to third-party telemetry services.
   accurate public privacy disclosure.
 
 # Reconciliation notes
+
+- 2026-09-11, upstream `c52b8d96e4b34201f19b5e5bb12c6b2a77bfaa9a`: `unaffected`. No incoming
+  telemetry, analytics, or observability change. The new device settings default to disabled and
+  stay server-local.
 
 - 2026-09-10, upstream `d29c56a5c404cb0f58d3b2ac41762fa0d0ac28d4`: `mechanical-overlap`.
   Adopted upstream's Effect upgrade, export changes, and relay work while retaining the disabled

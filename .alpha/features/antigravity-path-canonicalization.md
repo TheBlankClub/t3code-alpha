@@ -3,7 +3,7 @@ id: antigravity-path-canonicalization
 status: active
 risk: amber
 introduced_by: antigravity-path-canonicalization
-last_reconciled_with: d29c56a5c404cb0f58d3b2ac41762fa0d0ac28d4
+last_reconciled_with: c52b8d96e4b34201f19b5e5bb12c6b2a77bfaa9a
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -40,6 +40,10 @@ session workspace.
   parents while preserving the same workspace escape checks.
 
 # Reconciliation notes
+
+- 2026-09-11, upstream `c52b8d96e4b34201f19b5e5bb12c6b2a77bfaa9a`: `mechanical-overlap`. Upstream
+  passes the agent device environment through the Antigravity session options. Nearest-existing-
+  parent canonicalization and workspace escape checks are retained.
 
 - 2026-09-10, upstream `d29c56a5c404cb0f58d3b2ac41762fa0d0ac28d4`: `mechanical-overlap`.
   Adopted upstream's Effect and provider export changes while retaining nearest-existing-parent

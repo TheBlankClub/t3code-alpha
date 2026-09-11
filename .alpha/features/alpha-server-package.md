@@ -3,7 +3,7 @@ id: alpha-server-package
 status: active
 risk: red
 introduced_by: alpha-server-package
-last_reconciled_with: d29c56a5c404cb0f58d3b2ac41762fa0d0ac28d4
+last_reconciled_with: c52b8d96e4b34201f19b5e5bb12c6b2a77bfaa9a
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -66,6 +66,11 @@ official T3 Code without publishing to or executing the upstream `t3` package.
   commands, and background-service registration.
 
 # Reconciliation notes
+
+- 2026-09-11, upstream `c52b8d96e4b34201f19b5e5bb12c6b2a77bfaa9a`: `mechanical-overlap`. Upstream
+  adds the workspace SSH package as a server devDependency for SSH device hosts. The Alpha package
+  name, publish config, and remote package spec resolution are retained; SshDeviceHost uses only
+  the generic SSH command helpers.
 
 - 2026-09-10, upstream `d29c56a5c404cb0f58d3b2ac41762fa0d0ac28d4`: `mechanical-conflict`.
   Adopted upstream's `0.0.40` server, CLI, SSH, service, and Effect changes. Retained the

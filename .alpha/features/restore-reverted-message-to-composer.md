@@ -3,7 +3,7 @@ id: restore-reverted-message-to-composer
 status: active
 risk: amber
 introduced_by: a47276a40
-last_reconciled_with: d29c56a5c404cb0f58d3b2ac41762fa0d0ac28d4
+last_reconciled_with: c52b8d96e4b34201f19b5e5bb12c6b2a77bfaa9a
 upstream_issue: pingdotgg/t3code#5685
 upstream_pr: pingdotgg/t3code#6044
 surfaces:
@@ -40,6 +40,10 @@ Let users edit and resend a reverted prompt instead of recreating its text and i
   implementation and focused coverage satisfy every invariant above.
 
 # Reconciliation notes
+
+- 2026-09-11, upstream `c52b8d96e4b34201f19b5e5bb12c6b2a77bfaa9a`: `mechanical-overlap`. Upstream
+  wires the device surface into ChatView and adds a device icon plus a selection-aware label click
+  to MessagesTimeline. The revert restore flow and its tests are unchanged.
 
 - 2026-09-10, upstream `d29c56a5c404cb0f58d3b2ac41762fa0d0ac28d4`: `upstream-redesign`.
   Adopted upstream's pull-request linking, capture attachments, composer loading, touch controls,

@@ -3,7 +3,7 @@ id: alpha-upstream-sync-automation
 status: active
 risk: red
 introduced_by: alpha-upstream-sync-automation
-last_reconciled_with: d29c56a5c404cb0f58d3b2ac41762fa0d0ac28d4
+last_reconciled_with: c52b8d96e4b34201f19b5e5bb12c6b2a77bfaa9a
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -58,6 +58,10 @@ Alpha-only feature is unaffected.
   semantic feature reconciliation, visible conflict escalation, and configurable runner pools.
 
 # Reconciliation notes
+
+- 2026-09-11, upstream `c52b8d96e4b34201f19b5e5bb12c6b2a77bfaa9a`: `unaffected`. Upstream adds a
+  react-native-reanimated patch to the workspace manifest; sync and fingerprint workflows are
+  unchanged.
 
 - 2026-09-10, upstream `d29c56a5c404cb0f58d3b2ac41762fa0d0ac28d4`: `mechanical-overlap`.
   Adopted upstream's CI and release workflow changes while retaining Alpha's hosted runners,

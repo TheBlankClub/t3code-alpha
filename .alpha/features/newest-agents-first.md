@@ -3,7 +3,7 @@ id: newest-agents-first
 status: active
 risk: green
 introduced_by: newest-agents-first
-last_reconciled_with: d29c56a5c404cb0f58d3b2ac41762fa0d0ac28d4
+last_reconciled_with: c52b8d96e4b34201f19b5e5bb12c6b2a77bfaa9a
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -35,6 +35,9 @@ users scroll past older agents.
   across activity updates.
 
 # Reconciliation notes
+
+- 2026-09-11, upstream `c52b8d96e4b34201f19b5e5bb12c6b2a77bfaa9a`: `unaffected`. Incoming right
+  panel and command palette work does not alter direct-agent ordering.
 
 - 2026-09-10, upstream `d29c56a5c404cb0f58d3b2ac41762fa0d0ac28d4`: `unaffected`.
   Incoming pull-request, capture, provider, and mobile work does not alter direct-agent ordering or
