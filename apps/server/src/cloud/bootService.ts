@@ -32,12 +32,12 @@ import {
   type ServiceState,
 } from "./serviceProtocol.ts";
 
-export const BOOT_SERVICE_UNIT_FILE = ALPHA_DISTRIBUTION.serverSystemdUnitName;
+const BOOT_SERVICE_UNIT_FILE = ALPHA_DISTRIBUTION.serverSystemdUnitName;
 // `.service` suffix keeps the label distinct from the desktop app's bundle id
 // (`com.theblankclub.t3code.alpha`), so launchd and TCC records never collide.
-export const BOOT_SERVICE_LAUNCHD_LABEL = `${ALPHA_DISTRIBUTION.desktopAppId}.service`;
-export const BOOT_SERVICE_PLIST_FILE = `${BOOT_SERVICE_LAUNCHD_LABEL}.plist`;
-export const BOOT_SERVICE_UNIT_ENV = "T3_BOOT_SERVICE_UNIT";
+const BOOT_SERVICE_LAUNCHD_LABEL = `${ALPHA_DISTRIBUTION.desktopAppId}.service`;
+const BOOT_SERVICE_PLIST_FILE = `${BOOT_SERVICE_LAUNCHD_LABEL}.plist`;
+const BOOT_SERVICE_UNIT_ENV = "T3_BOOT_SERVICE_UNIT";
 
 /** systemd expands `%` specifiers, including in unquoted append-log paths. */
 function escapeSystemdSpecifiers(value: string): string {
