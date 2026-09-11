@@ -1667,6 +1667,9 @@ export default function ChatView(props: ChatViewProps) {
   );
   const [isWorkspaceFileDragActive, setIsWorkspaceFileDragActive] = useState(false);
   const [showScrollToBottom, setShowScrollToBottom] = useState(false);
+  // "New messages" when the thread reopened at a remembered position and rows
+  // landed after the user left; otherwise the plain way back down.
+  const [scrollToEndHasNewContent, setScrollToEndHasNewContent] = useState(false);
   const [expandedImage, setExpandedImage] = useState<ExpandedImagePreview | null>(null);
   useEffect(() => {
     const item = expandedImage?.images[expandedImage.index];
@@ -4902,6 +4905,12 @@ export default function ChatView(props: ChatViewProps) {
   );
   const timelineScrollIntentRef = useRef<"toward-end" | "away-from-end" | null>(null);
   const timelineScrollModeRef = useRef<TimelineScrollMode>("following-end");
+  // Set by the timeline's mount effect when it reopened at a remembered
+  // position; consumed by the thread-change effect below, which runs after it.
+  const restoredTimelineScrollRef = useRef<{ hasNewContent: boolean } | null>(null);
+  const onTimelineScrollRestored = useCallback((restore: { hasNewContent: boolean }) => {
+    restoredTimelineScrollRef.current = restore;
+  }, []);
   // State mirror of the follow mode refs. LegendList's maintainScrollAtEnd
   // re-pins on its own (independent of the refs), so the timeline needs a
   // render-visible flag to switch it off once the user scrolls away.
@@ -5004,6 +5013,7 @@ export default function ChatView(props: ChatViewProps) {
     activeTimelineAnchorIndexRef.current = null;
     showScrollDebouncer.current.cancel();
     setShowScrollToBottom(false);
+    setScrollToEndHasNewContent(false);
     setTimelineAnchor(releaseChatTimelineAnchor);
     requestAnimationFrame(() => {
       void legendListRef.current?.scrollToEnd?.({ animated });
@@ -5257,6 +5267,7 @@ export default function ChatView(props: ChatViewProps) {
       setTimelineAnchor(releaseChatTimelineAnchor);
       showScrollDebouncer.current.cancel();
       setShowScrollToBottom(false);
+      setScrollToEndHasNewContent(false);
     } else {
       timelineScrollModeRef.current = "free-scrolling";
       liveFollowUserScrollGenerationRef.current = null;
@@ -5318,8 +5329,19 @@ export default function ChatView(props: ChatViewProps) {
 
   useEffect(() => {
     setPullRequestDialogState(null);
-    isAtEndRef.current = true;
     timelineScrollIntentRef.current = null;
+    showScrollDebouncer.current.cancel();
+    const restored = restoredTimelineScrollRef.current;
+    restoredTimelineScrollRef.current = null;
+    if (restored) {
+      // Reopened where the user left off: stay there, and offer the way down.
+      isAtEndRef.current = false;
+      cancelTimelineLiveFollowForUserNavigation();
+      setShowScrollToBottom(true);
+      setScrollToEndHasNewContent(restored.hasNewContent);
+      return;
+    }
+    isAtEndRef.current = true;
     timelineScrollModeRef.current = "following-end";
     liveFollowUserScrollGenerationRef.current = anchorUserScrollGenerationRef.current;
     setTimelineLiveFollowEnabled(true);
@@ -5327,10 +5349,10 @@ export default function ChatView(props: ChatViewProps) {
     positionedTimelineAnchorRef.current = null;
     settledTimelineAnchorRef.current = null;
     activeTimelineAnchorIndexRef.current = null;
-    showScrollDebouncer.current.cancel();
     setShowScrollToBottom(false);
+    setScrollToEndHasNewContent(false);
     // activeThreadRef resets transitively with the active thread.
-  }, [activeThread?.id]);
+  }, [activeThread?.id, cancelTimelineLiveFollowForUserNavigation]);
 
   const revertObservedThreadId = activeThread?.id ?? null;
   const revertObservedActivities = activeThread?.activities ?? null;
@@ -8752,6 +8774,7 @@ export default function ChatView(props: ChatViewProps) {
                 onContentOverflowChange={setTimelineOverflows}
                 onToolOutputCollapsedAtEnd={onToolOutputCollapsedAtEnd}
                 onManualNavigation={cancelTimelineLiveFollowForUserNavigation}
+                onScrollRestored={onTimelineScrollRestored}
                 hideEmptyPlaceholder={isDraftHeroState || threadDetailLoading}
                 topFadeEnabled={!hasTimelineTopBanner}
                 loadEarlier={loadEarlierTurns}
@@ -8764,7 +8787,7 @@ export default function ChatView(props: ChatViewProps) {
                   style={{ bottom: scrollToEndClearance + 4 }}
                 >
                   <Button
-                    aria-label="Scroll to end"
+                    aria-label={scrollToEndHasNewContent ? "New messages" : "Scroll to end"}
                     onPointerDown={(event) => event.preventDefault()}
                     onClick={() => {
                       composerRef.current?.restoreAfterTimelineReachedEnd();
@@ -8775,7 +8798,7 @@ export default function ChatView(props: ChatViewProps) {
                     variant="glass"
                   >
                     <ChevronDownIcon className="size-3.5" />
-                    Scroll to end
+                    {scrollToEndHasNewContent ? "New messages" : "Scroll to end"}
                   </Button>
                 </div>
               )}

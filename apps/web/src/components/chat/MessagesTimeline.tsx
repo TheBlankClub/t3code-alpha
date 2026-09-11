@@ -38,6 +38,7 @@ import {
   use,
   useCallback,
   useEffect,
+  useEffectEvent,
   useId,
   useLayoutEffect,
   useMemo,
@@ -124,6 +125,12 @@ import {
   CHAT_TIMELINE_ANCHOR_OFFSET,
   timelineContentOverflowsViewport,
 } from "./timelineScrollAnchoring";
+import {
+  forgetTimelineScroll,
+  recallTimelineScroll,
+  rememberTimelineScroll,
+  resolveTimelineScrollRestore,
+} from "./timelineScrollMemory";
 import { MessageCopyButton } from "./MessageCopyButton";
 import { PierreEntryIcon } from "./PierreEntryIcon";
 import { AssistantSelectionToolbar } from "./AssistantSelectionToolbar";
@@ -353,6 +360,12 @@ interface MessagesTimelineProps {
   onContentOverflowChange?: (overflows: boolean) => void;
   onToolOutputCollapsedAtEnd?: () => void;
   onManualNavigation: () => void;
+  /**
+   * Fired once on mount when the timeline reopened at a remembered position
+   * instead of the live edge. The parent switches out of live-follow and
+   * shows the way back down.
+   */
+  onScrollRestored?: (restore: { hasNewContent: boolean }) => void;
   hideEmptyPlaceholder?: boolean;
   topFadeEnabled?: boolean;
   /** Non-null when older turns exist beyond the loaded window. */
@@ -401,6 +414,7 @@ export const MessagesTimeline = memo(function MessagesTimeline({
   onContentOverflowChange,
   onToolOutputCollapsedAtEnd,
   onManualNavigation,
+  onScrollRestored,
   hideEmptyPlaceholder = false,
   topFadeEnabled = false,
   loadEarlier = null,
@@ -576,6 +590,23 @@ export const MessagesTimeline = memo(function MessagesTimeline({
   ]);
   const rows = useStableRows(rawRows);
   const minimapItems = useMemo(() => deriveTimelineMinimapItems(rows), [rows]);
+  // A citation jump owns initial positioning; otherwise reopen where the user
+  // left this thread, if that row still exists.
+  const [scrollRestore] = useState(() =>
+    citationRequest === null
+      ? resolveTimelineScrollRestore(rows, recallTimelineScroll(routeThreadKey))
+      : undefined,
+  );
+  const [restoringPosition, setRestoringPosition] = useState(scrollRestore !== undefined);
+  const reportScrollRestored = useEffectEvent(() => {
+    if (scrollRestore) {
+      onScrollRestored?.({ hasNewContent: scrollRestore.hasNewContent });
+    }
+  });
+  // Runs before the parent's thread-change effect, which reads the report.
+  useEffect(() => {
+    reportScrollRestored();
+  }, []);
   const [timelineViewportElement, setTimelineViewportElement] = useState<HTMLDivElement | null>(
     null,
   );
@@ -661,6 +692,19 @@ export const MessagesTimeline = memo(function MessagesTimeline({
     const isAtEnd = resolveTimelineIsAtEnd(state);
     if (isAtEnd !== undefined && !citationPositioning) {
       onIsAtEndChange(isAtEnd);
+      if (isAtEnd) {
+        forgetTimelineScroll(routeThreadKey);
+      } else if (state) {
+        const anchor = resolveWorkGroupScrollAnchor(state);
+        const lastRowId = state.data[state.data.length - 1]?.id;
+        if (anchor && lastRowId !== undefined) {
+          rememberTimelineScroll(routeThreadKey, {
+            rowId: anchor.rowId,
+            offset: anchor.offsetWithinRow,
+            lastRowId,
+          });
+        }
+      }
     }
     reportContentOverflow();
     if (!state || minimapItems.length === 0) {
@@ -704,7 +748,26 @@ export const MessagesTimeline = memo(function MessagesTimeline({
     minimapStripMap,
     onIsAtEndChange,
     reportContentOverflow,
+    routeThreadKey,
   ]);
+
+  const handleListLoad = useCallback(() => {
+    onCitationListLoad();
+    const list = listRef.current;
+    const element = list?.getScrollableNode();
+    if (scrollRestore && list && element) {
+      // Bootstrap can report the restored target before the DOM has applied it.
+      // Reconcile once at load, before releasing the measured anchor row.
+      const offset = Math.max(
+        0,
+        Math.min(list.getState().scroll, element.scrollHeight - element.clientHeight),
+      );
+      if (Math.abs(element.scrollTop - offset) > 1) {
+        void list.scrollToOffset({ offset, animated: false });
+      }
+    }
+    setRestoringPosition(false);
+  }, [listRef, onCitationListLoad, scrollRestore]);
 
   useEffect(() => {
     const frame = requestAnimationFrame(handleScroll);
@@ -844,11 +907,16 @@ export const MessagesTimeline = memo(function MessagesTimeline({
             getItemType={getItemType}
             renderItem={renderItem}
             estimatedItemSize={90}
-            initialScrollAtEnd={citationRequest === null}
+            initialScrollAtEnd={citationRequest === null && scrollRestore === undefined}
+            {...(scrollRestore ? { initialScrollIndex: scrollRestore.initialScrollIndex } : {})}
             // Legend needs a data refresh to mount new pins without a scroll event.
             {...(readyCitationRequest ? { dataVersion: readyCitationRequest.key } : {})}
-            {...(citationAlwaysRender ? { alwaysRender: citationAlwaysRender } : {})}
-            onLoad={onCitationListLoad}
+            {...(citationAlwaysRender
+              ? { alwaysRender: citationAlwaysRender }
+              : restoringPosition && scrollRestore
+                ? { alwaysRender: { indices: [scrollRestore.initialScrollIndex.index] } }
+                : {})}
+            onLoad={handleListLoad}
             {...(anchoredEndSpace ? { anchoredEndSpace } : {})}
             contentInsetEndAdjustment={anchoredEndSpace ? contentInsetEndAdjustment : 0}
             maintainScrollAtEnd={
