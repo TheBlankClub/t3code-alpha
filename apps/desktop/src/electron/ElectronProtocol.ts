@@ -10,8 +10,8 @@ import { ALPHA_DISTRIBUTION } from "@t3tools/shared/alphaDistribution";
 import * as Electron from "electron";
 
 export const DESKTOP_HOST = "app";
-export const DESKTOP_PRODUCTION_SCHEME = ALPHA_DISTRIBUTION.desktopProtocolScheme;
-export const DESKTOP_DEVELOPMENT_SCHEME = "t3code-dev";
+const DESKTOP_PRODUCTION_SCHEME = ALPHA_DISTRIBUTION.desktopProtocolScheme;
+const DESKTOP_DEVELOPMENT_SCHEME = "t3code-dev";
 
 export function getDesktopScheme(isDevelopment: boolean): string {
   return isDevelopment ? DESKTOP_DEVELOPMENT_SCHEME : DESKTOP_PRODUCTION_SCHEME;

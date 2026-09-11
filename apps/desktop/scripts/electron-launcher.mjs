@@ -16,8 +16,8 @@ const repoRoot = NodePath.resolve(desktopDir, "..", "..");
 const devBundleIdSuffix = NodePath.basename(repoRoot)
   .toLowerCase()
   .replaceAll(/[^a-z0-9]+/g, "");
-export const APP_DISPLAY_NAME = isDevelopment ? "T3 Code (Dev)" : ALPHA_DISTRIBUTION.productName;
-export const APP_BUNDLE_ID = isDevelopment
+const APP_DISPLAY_NAME = isDevelopment ? "T3 Code (Dev)" : ALPHA_DISTRIBUTION.productName;
+const APP_BUNDLE_ID = isDevelopment
   ? `com.t3tools.t3code.dev.${devBundleIdSuffix || "local"}`
   : ALPHA_DISTRIBUTION.desktopAppId;
 const APP_PROTOCOL_SCHEMES = isDevelopment
