@@ -12,6 +12,7 @@ import { beforeAll, describe, expect, it, vi } from "vite-plus/test";
 import type { LegendListRef, MaintainScrollAtEndOptions } from "@legendapp/list/react";
 import { shouldUseRestingComposerLayout } from "../composerFooterLayout";
 import { useComposerFocusState } from "./useComposerFocusState";
+import { forgetTimelineScroll, recallTimelineScroll } from "./timelineScrollMemory";
 
 vi.mock("@legendapp/list/react", async () => {
   const legendListTestId = "legend-list";
@@ -354,6 +355,88 @@ describe("MessagesTimeline", () => {
         expect(markup).toContain("Provide a screenshot");
         expect(markup).toContain("shot.png");
         for (const answer of Object.values(answers)) expect(markup).toContain(answer);
+      } finally {
+        await act(() => renderer?.unmount());
+      }
+    },
+  );
+
+  it.each([
+    { liveFollowEnabled: true, remembered: undefined },
+    {
+      liveFollowEnabled: false,
+      remembered: { rowId: "row-a", offset: 24, lastRowId: "row-b" },
+    },
+  ])(
+    "remembers the reading position only once live-follow is off: $liveFollowEnabled",
+    async ({ liveFollowEnabled, remembered }) => {
+      const frames = new Map<number, FrameRequestCallback>();
+      let nextFrame = 0;
+      vi.stubGlobal("requestAnimationFrame", (callback: FrameRequestCallback) => {
+        frames.set(++nextFrame, callback);
+        return nextFrame;
+      });
+      vi.stubGlobal("cancelAnimationFrame", (frame: number) => frames.delete(frame));
+      vi.stubGlobal("IS_REACT_ACT_ENVIRONMENT", true);
+      const flushFrame = () =>
+        act(() => {
+          const callbacks = [...frames.values()];
+          frames.clear();
+          callbacks.forEach((callback) => callback(0));
+        });
+      const props = buildProps();
+      forgetTimelineScroll(props.routeThreadKey);
+      let timelineIsAtEnd = false;
+      props.listRef.current = {
+        getState: () => ({
+          isAtEnd: timelineIsAtEnd,
+          scroll: 24,
+          data: [{ id: "row-a" }, { id: "row-b" }],
+          positionAtIndex: (index: number) => index * 100,
+        }),
+        getScrollableNode: () => null,
+      } as unknown as LegendListRef;
+      let renderer: ReactTestRenderer | undefined;
+      try {
+        await act(() => {
+          renderer = create(
+            <MessagesTimeline
+              {...props}
+              liveFollowEnabled={liveFollowEnabled}
+              timelineEntries={[
+                {
+                  id: "running-tool",
+                  kind: "work",
+                  createdAt: MESSAGE_CREATED_AT,
+                  entry: {
+                    id: "running-tool",
+                    createdAt: MESSAGE_CREATED_AT,
+                    label: "Run command",
+                    tone: "tool",
+                    toolLifecycleStatus: "completed",
+                    detail: "Command output",
+                  },
+                },
+              ]}
+            />,
+          );
+        });
+        await flushFrame();
+        expect(recallTimelineScroll(props.routeThreadKey)).toEqual(remembered);
+
+        // Reaching the live edge always clears the memory, whichever mode set it.
+        timelineIsAtEnd = true;
+        await act(() =>
+          renderer!.update(
+            <MessagesTimeline
+              {...props}
+              liveFollowEnabled={liveFollowEnabled}
+              timelineEntries={[]}
+            />,
+          ),
+        );
+        await flushFrame();
+        expect(recallTimelineScroll(props.routeThreadKey)).toBeUndefined();
       } finally {
         await act(() => renderer?.unmount());
       }

@@ -694,7 +694,10 @@ export const MessagesTimeline = memo(function MessagesTimeline({
       onIsAtEndChange(isAtEnd);
       if (isAtEnd) {
         forgetTimelineScroll(routeThreadKey);
-      } else if (state) {
+      } else if (state && !liveFollowEnabled) {
+        // Only a position the user chose is worth restoring. While live-follow
+        // is on, streaming growth reports transient not-at-end frames that
+        // would otherwise reopen a thread left at the end in its history.
         const anchor = resolveWorkGroupScrollAnchor(state);
         const lastRowId = state.data[state.data.length - 1]?.id;
         if (anchor && lastRowId !== undefined) {
@@ -744,6 +747,7 @@ export const MessagesTimeline = memo(function MessagesTimeline({
   }, [
     citationPositioning,
     listRef,
+    liveFollowEnabled,
     minimapItems,
     minimapStripMap,
     onIsAtEndChange,
