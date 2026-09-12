@@ -3,7 +3,7 @@ id: project-action-terminal-startup
 status: active
 risk: amber
 introduced_by: 438019e36
-last_reconciled_with: efccda9ac9230db22b36990cffabdad218fa41b0
+last_reconciled_with: e816064945144957b6eb9b268912a98b0555644b
 upstream_issue: pingdotgg/t3code#6337
 upstream_pr: pingdotgg/t3code#6338
 surfaces:
@@ -42,6 +42,9 @@ is still initializing.
   contract, server, client fallback, and focused tests satisfy every invariant above.
 
 # Reconciliation notes
+
+- 2026-09-12, upstream `e816064945144957b6eb9b268912a98b0555644b`: `unaffected`. Preview keyboard
+  handling does not change project-action terminal startup.
 
 - 2026-09-12, upstream `efccda9ac9230db22b36990cffabdad218fa41b0`: `mechanical-overlap`.
   Adopted scoped project-action settings and terminal manager changes while retaining the fresh-shell

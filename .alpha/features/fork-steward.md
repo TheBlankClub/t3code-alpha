@@ -3,7 +3,7 @@ id: fork-steward
 status: active
 risk: green
 introduced_by: alpha-foundation
-last_reconciled_with: efccda9ac9230db22b36990cffabdad218fa41b0
+last_reconciled_with: e816064945144957b6eb9b268912a98b0555644b
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -39,6 +39,9 @@ retiring fork code when upstream provides an equivalent or better implementation
   semantic feature retirement, Alpha release isolation, and the same safety gates.
 
 # Reconciliation notes
+
+- 2026-09-12, upstream `e816064945144957b6eb9b268912a98b0555644b`: `unaffected`. The handoff fetch
+  found three commits and the classifier found no Alpha overlap or protected paths.
 
 - 2026-09-12, upstream `efccda9ac9230db22b36990cffabdad218fa41b0`: `mechanical-overlap`.
   Classified 52 incoming commits, reconciled protected paths, and added the missing record for the

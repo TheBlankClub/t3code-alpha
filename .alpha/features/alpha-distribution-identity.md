@@ -3,7 +3,7 @@ id: alpha-distribution-identity
 status: active
 risk: red
 introduced_by: alpha-distribution-identity
-last_reconciled_with: efccda9ac9230db22b36990cffabdad218fa41b0
+last_reconciled_with: e816064945144957b6eb9b268912a98b0555644b
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -65,6 +65,9 @@ identity.
   can express every invariant through that upstream model without bespoke runtime code.
 
 # Reconciliation notes
+
+- 2026-09-12, upstream `e816064945144957b6eb9b268912a98b0555644b`: `unaffected`. Preview keyboard
+  routing and web scroll fixes do not change Alpha identity or state paths.
 
 - 2026-09-12, upstream `efccda9ac9230db22b36990cffabdad218fa41b0`: `mechanical-conflict`.
   Adopted shared macOS permission onboarding and retained Alpha's synchronous profile selection,

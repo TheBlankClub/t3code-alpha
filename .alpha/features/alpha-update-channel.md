@@ -3,7 +3,7 @@ id: alpha-update-channel
 status: active
 risk: red
 introduced_by: alpha-update-channel
-last_reconciled_with: efccda9ac9230db22b36990cffabdad218fa41b0
+last_reconciled_with: e816064945144957b6eb9b268912a98b0555644b
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -69,6 +69,9 @@ automatic updater.
   cross-platform source and export support.
 
 # Reconciliation notes
+
+- 2026-09-12, upstream `e816064945144957b6eb9b268912a98b0555644b`: `unaffected`. No incoming
+  change touches the Alpha desktop or CLI update channels.
 
 - 2026-09-12, upstream `efccda9ac9230db22b36990cffabdad218fa41b0`: `mechanical-overlap`.
   Adopted upstream runtime and dependency updates while retaining the Alpha desktop update channel,

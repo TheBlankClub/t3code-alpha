@@ -3,7 +3,7 @@ id: alpha-local-only-telemetry
 status: active
 risk: red
 introduced_by: alpha-local-only-telemetry
-last_reconciled_with: efccda9ac9230db22b36990cffabdad218fa41b0
+last_reconciled_with: e816064945144957b6eb9b268912a98b0555644b
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -44,6 +44,9 @@ traces, or metrics to third-party telemetry services.
   accurate public privacy disclosure.
 
 # Reconciliation notes
+
+- 2026-09-12, upstream `e816064945144957b6eb9b268912a98b0555644b`: `unaffected`. No incoming
+  change touches telemetry or the Alpha no-egress guard.
 
 - 2026-09-12, upstream `efccda9ac9230db22b36990cffabdad218fa41b0`: `mechanical-overlap`.
   Adopted scoped settings and provider runtime changes while retaining the central no-egress
