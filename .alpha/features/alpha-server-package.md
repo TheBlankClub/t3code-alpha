@@ -3,7 +3,7 @@ id: alpha-server-package
 status: active
 risk: red
 introduced_by: alpha-server-package
-last_reconciled_with: c52b8d96e4b34201f19b5e5bb12c6b2a77bfaa9a
+last_reconciled_with: efccda9ac9230db22b36990cffabdad218fa41b0
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -66,6 +66,10 @@ official T3 Code without publishing to or executing the upstream `t3` package.
   commands, and background-service registration.
 
 # Reconciliation notes
+
+- 2026-09-12, upstream `efccda9ac9230db22b36990cffabdad218fa41b0`: `mechanical-conflict`.
+  Adopted the pinned Effect package fix and new server runtime while retaining `t3-alpha`, the
+  fork repository metadata, Alpha build channel, and remote package selection.
 
 - 2026-09-11, upstream `c52b8d96e4b34201f19b5e5bb12c6b2a77bfaa9a`: `mechanical-overlap`. Upstream
   adds the workspace SSH package as a server devDependency for SSH device hosts. The Alpha package

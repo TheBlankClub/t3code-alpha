@@ -12,7 +12,11 @@ import { beforeAll, describe, expect, it, vi } from "vite-plus/test";
 import type { LegendListRef, MaintainScrollAtEndOptions } from "@legendapp/list/react";
 import { shouldUseRestingComposerLayout } from "../composerFooterLayout";
 import { useComposerFocusState } from "./useComposerFocusState";
-import { forgetTimelineScroll, recallTimelineScroll } from "./timelineScrollMemory";
+import {
+  forgetTimelineScroll,
+  recallTimelineScroll,
+  rememberTimelineScroll,
+} from "./timelineScrollMemory";
 
 vi.mock("@legendapp/list/react", async () => {
   const legendListTestId = "legend-list";
@@ -349,12 +353,24 @@ describe("MessagesTimeline", () => {
         });
         const toggle = renderer!.root.findByProps({ "aria-expanded": false });
         await act(() => toggle.props.onClick());
+        const questionToggle = renderer!.root.find(
+          (node) =>
+            node.props["aria-label"]?.startsWith("Question answer submitted:") &&
+            node.props["aria-expanded"] === false,
+        );
+        expect(questionToggle.props["aria-label"]).toContain(
+          Object.values(answers)[0] ?? "spec.txt",
+        );
+        expect(JSON.stringify(renderer!.toJSON())).not.toContain("Provide a spec");
+        await act(() => questionToggle.props.onClick());
         const markup = JSON.stringify(renderer!.toJSON());
         expect(markup.match(/Provide a spec/g)).toHaveLength(1);
-        expect(markup.match(/spec\.txt/g)).toHaveLength(1);
+        expect(markup).toContain("spec.txt");
         expect(markup).toContain("Provide a screenshot");
         expect(markup).toContain("shot.png");
         for (const answer of Object.values(answers)) expect(markup).toContain(answer);
+        await act(() => questionToggle.props.onClick());
+        expect(JSON.stringify(renderer!.toJSON())).not.toContain("Provide a spec");
       } finally {
         await act(() => renderer?.unmount());
       }
@@ -442,6 +458,67 @@ describe("MessagesTimeline", () => {
       }
     },
   );
+
+  it("restores a remembered position when the mounted list changes threads", async () => {
+    vi.stubGlobal("IS_REACT_ACT_ENVIRONMENT", true);
+    vi.stubGlobal("requestAnimationFrame", (callback: FrameRequestCallback) => {
+      callback(0);
+      return 0;
+    });
+    vi.stubGlobal("cancelAnimationFrame", () => {});
+    const props = buildProps();
+    const nextThreadKey = "environment-local:thread-2";
+    rememberTimelineScroll(nextThreadKey, {
+      rowId: "entry-1",
+      offset: 24,
+      lastRowId: "older-last-row",
+    });
+    const scrollToIndex = vi.fn().mockResolvedValue(undefined);
+    const onScrollRestored = vi.fn();
+    const entry = {
+      id: "entry-1",
+      kind: "work" as const,
+      createdAt: MESSAGE_CREATED_AT,
+      entry: {
+        id: "entry-1",
+        createdAt: MESSAGE_CREATED_AT,
+        label: "Remember this row",
+        tone: "info" as const,
+        sourceActivityKind: "context-compaction" as const,
+      },
+    };
+    let renderer: ReactTestRenderer | undefined;
+    try {
+      await act(() => {
+        renderer = create(<MessagesTimeline {...props} timelineEntries={[entry]} />);
+      });
+      props.listRef.current = {
+        scrollToIndex,
+        getScrollableNode: () => null,
+      } as unknown as LegendListRef;
+      await act(() => {
+        renderer!.update(
+          <MessagesTimeline
+            {...props}
+            routeThreadKey={nextThreadKey}
+            displayThreadKey={nextThreadKey}
+            timelineEntries={[entry]}
+            onScrollRestored={onScrollRestored}
+          />,
+        );
+      });
+      expect(onScrollRestored).toHaveBeenCalledWith({ hasNewContent: true });
+      expect(scrollToIndex).toHaveBeenCalledWith({
+        index: 0,
+        viewOffset: -24,
+        animated: false,
+        viewPosition: 0,
+      });
+    } finally {
+      forgetTimelineScroll(nextThreadKey);
+      await act(() => renderer?.unmount());
+    }
+  });
 
   it.each([
     { toolLifecycleStatus: "inProgress", isAtEnd: true },

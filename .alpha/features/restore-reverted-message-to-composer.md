@@ -3,7 +3,7 @@ id: restore-reverted-message-to-composer
 status: active
 risk: amber
 introduced_by: a47276a40
-last_reconciled_with: c52b8d96e4b34201f19b5e5bb12c6b2a77bfaa9a
+last_reconciled_with: efccda9ac9230db22b36990cffabdad218fa41b0
 upstream_issue: pingdotgg/t3code#5685
 upstream_pr: pingdotgg/t3code#6044
 surfaces:
@@ -31,15 +31,22 @@ Let users edit and resend a reverted prompt instead of recreating its text and i
 
 # Current delta
 
-- Composer restoration originates from `pingdotgg/t3code#6044`. The client reducer retains
-  checkpoint bounds for loaded history alongside upstream imported-message and timestamp handling.
+- Upstream owns the rewind dialog, file-preservation choice, provider-history rollback, prompt and
+  attachment recovery, and completion wait. Alpha stashes an existing draft before replacement,
+  treats missing or excess attachments as soft failures, excludes sent-only context, and retains
+  checkpoint bounds for loaded history.
 
 # Retirement conditions
 
-- Retire after the upstream pull request merges and an Alpha reconciliation proves the upstream
-  implementation and focused coverage satisfy every invariant above.
+- Retire when upstream also stashes the existing draft, excludes sent-only context, and lets rewind
+  complete when individual attachments fail or exceed the composer limit.
 
 # Reconciliation notes
+
+- 2026-09-12, upstream `efccda9ac9230db22b36990cffabdad218fa41b0`: `partially-upstreamed`.
+  Adopted upstream's provider-history rewind, two filesystem choices, completion wait, and generic
+  attachment recovery. Retained draft stashing, sent-only context filtering, soft attachment
+  failures and limits, and checkpoint-bounded paginated history.
 
 - 2026-09-11, upstream `c52b8d96e4b34201f19b5e5bb12c6b2a77bfaa9a`: `mechanical-overlap`. Upstream
   wires the device surface into ChatView and adds a device icon plus a selection-aware label click
