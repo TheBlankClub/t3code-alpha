@@ -3,11 +3,14 @@ import {
   type AssetCreateUrlInput,
   type AssetCreateUrlResult,
   type ChatFileAttachment,
+  ImageContextRecord,
+  PreviewAnnotationContextRecord,
   type EnvironmentId,
   isProviderDriverKind,
   ProjectId,
   type MessageId,
   type ModelSelection,
+  type PreviewAnnotationPayload,
   type ProviderInteractionMode,
   ProviderDriverKind,
   type ProviderInstanceId,
@@ -42,16 +45,13 @@ import { type ComposerImageAttachment, type DraftThreadState } from "../composer
 import * as Schema from "effect/Schema";
 import { appAtomRegistry } from "../rpc/atomRegistry";
 import { environmentThreadDetails } from "../state/threads";
-import {
-  deriveDisplayedUserMessageState,
-  filterTerminalContextsWithText,
-  stripInlineTerminalContextPlaceholders,
-  type TerminalContextDraft,
-} from "../lib/terminalContext";
-import { extractTrailingPreviewAnnotation } from "../lib/previewAnnotation";
-import { parseReviewCommentMessageSegments } from "../reviewCommentContext";
+import { filterTerminalContextsWithText, type TerminalContextDraft } from "../lib/terminalContext";
+import { resolveUserMessageContext } from "../lib/composerContextRecords";
+import { stripInlineContextReferences } from "~/lib/composerContextReferences";
+import { recallableComposerPrompt } from "./chat/composerPromptHistory";
 import type { DraftThreadEnvMode } from "../composerDraftStore";
-import type { ComposerSubmissionIntent } from "../composer-logic";
+import { collapseExpandedComposerCursor, type ComposerSubmissionIntent } from "../composer-logic";
+import type { ReviewCommentContext } from "../reviewCommentContext";
 import type { TimelineEntry } from "../session-logic";
 import type { PreviewMiniPlayerSource } from "../previewMiniPlayerStore";
 import type { DesktopPreviewOverlay } from "../previewStateStore";
@@ -70,29 +70,49 @@ const REVERTED_MESSAGE_ATTACHMENT_TIMEOUT_MS = 10_000;
 
 export const LastInvokedScriptByProjectSchema = Schema.Record(ProjectId, Schema.String);
 
-export function deriveRevertedMessageContent(prompt: string): {
+const isPreviewAnnotationContextRecord = Schema.is(PreviewAnnotationContextRecord);
+const isImageContextRecord = Schema.is(ImageContextRecord);
+
+export function deriveRevertedMessageContent(
+  prompt: string,
+  context?: ChatMessage["context"],
+): {
   prompt: string;
   previewAnnotationImageNames: ReadonlySet<string>;
+  previewAnnotationImageIds: ReadonlySet<string>;
 } {
-  const withoutReviewComments = parseReviewCommentMessageSegments(prompt)
-    .filter((segment) => segment.kind === "text")
-    .map((segment) => segment.text)
-    .join("");
-
-  let withoutPreviewAnnotations = withoutReviewComments;
+  const resolved = resolveUserMessageContext({ text: prompt, context });
   const previewAnnotationImageNames = new Set<string>();
-  while (true) {
-    const extracted = extractTrailingPreviewAnnotation(withoutPreviewAnnotations);
-    if (!extracted.annotation) break;
-    if (extracted.annotation.hasScreenshot) {
-      previewAnnotationImageNames.add(`preview-annotation-${extracted.annotation.id}.png`);
+  const previewAnnotationImageIds = new Set<string>();
+  for (const record of resolved.records) {
+    if (!isPreviewAnnotationContextRecord(record) || !record.screenshotContextId) continue;
+    const screenshot = resolved.recordsById.get(record.screenshotContextId);
+    if (screenshot && isImageContextRecord(screenshot)) {
+      previewAnnotationImageIds.add(screenshot.attachmentId);
     }
-    withoutPreviewAnnotations = extracted.promptText;
   }
-
+  // Legacy messages identify annotation crops by filename instead of attachment records.
+  if (!context) {
+    for (const match of prompt.matchAll(
+      /<preview_annotation>\n([\s\S]*?)\n<\/preview_annotation>/g,
+    )) {
+      const body = match[1] ?? "";
+      const id = /^Id: (.+)$/m.exec(body)?.[1]?.trim();
+      if (
+        id &&
+        body.includes("The attached screenshot is the annotated preview crop.") &&
+        resolved.records.some(
+          (record) => isPreviewAnnotationContextRecord(record) && record.annotationId === id,
+        )
+      ) {
+        previewAnnotationImageNames.add(`preview-annotation-${id}.png`);
+      }
+    }
+  }
   return {
-    prompt: deriveDisplayedUserMessageState(withoutPreviewAnnotations).visibleText,
+    prompt: recallableComposerPrompt(resolved.text),
     previewAnnotationImageNames,
+    previewAnnotationImageIds,
   };
 }
 
@@ -935,7 +955,7 @@ export function deriveComposerSendState(options: {
   expiredTerminalContextCount: number;
   hasSendableContent: boolean;
 } {
-  const trimmedPrompt = stripInlineTerminalContextPlaceholders(options.prompt).trim();
+  const trimmedPrompt = stripInlineContextReferences(options.prompt).trim();
   const sendableTerminalContexts = filterTerminalContextsWithText(options.terminalContexts);
   const expiredTerminalContextCount =
     options.terminalContexts.length - sendableTerminalContexts.length;
@@ -1402,6 +1422,8 @@ export function shouldRefocusComposerOnWindowFocus(
     activeElement.tagName === "INPUT" ||
     activeElement.tagName === "TEXTAREA" ||
     activeElement.tagName === "SELECT" ||
+    activeElement.tagName === "IFRAME" ||
+    activeElement.tagName === "WEBVIEW" ||
     activeElement.isContentEditable === true ||
     activeElement.getAttribute("role") === "textbox"
   ) {
@@ -1412,4 +1434,39 @@ export function shouldRefocusComposerOnWindowFocus(
       '[role="dialog"], [role="alertdialog"], [data-slot$="-popup"], [data-terminal-owner]',
     ) === null
   );
+}
+
+export interface PlanFollowUpComposerSnapshot {
+  readonly prompt: string;
+  readonly terminalContexts: ReadonlyArray<TerminalContextDraft>;
+  readonly reviewComments: ReadonlyArray<ReviewCommentContext>;
+  readonly previewAnnotations: ReadonlyArray<PreviewAnnotationPayload>;
+}
+
+/**
+ * Puts back everything a plan follow-up send cleared when the send fails. The
+ * caller clears the composer before awaiting the send, so every field it held
+ * has to be written back here: a dropped field silently discards user context.
+ */
+export function restorePlanFollowUpComposer(input: {
+  readonly snapshot: PlanFollowUpComposerSnapshot;
+  readonly writePrompt: (prompt: string) => void;
+  readonly writeTerminalContexts: (contexts: ReadonlyArray<TerminalContextDraft>) => void;
+  readonly writeReviewComments: (comments: ReadonlyArray<ReviewCommentContext>) => void;
+  readonly writePreviewAnnotations: (annotations: ReadonlyArray<PreviewAnnotationPayload>) => void;
+  readonly resetCursor: (options: {
+    cursor: number;
+    prompt: string;
+    detectTrigger: boolean;
+  }) => void;
+}): void {
+  input.writePrompt(input.snapshot.prompt);
+  input.writeTerminalContexts(input.snapshot.terminalContexts);
+  input.writeReviewComments(input.snapshot.reviewComments);
+  input.writePreviewAnnotations(input.snapshot.previewAnnotations);
+  input.resetCursor({
+    cursor: collapseExpandedComposerCursor(input.snapshot.prompt, input.snapshot.prompt.length),
+    prompt: input.snapshot.prompt,
+    detectTrigger: true,
+  });
 }

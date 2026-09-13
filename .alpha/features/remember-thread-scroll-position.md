@@ -3,7 +3,7 @@ id: remember-thread-scroll-position
 status: active
 risk: green
 introduced_by: 31e67d13ce42c0989a4698f9140c3bea4aba9731
-last_reconciled_with: e816064945144957b6eb9b268912a98b0555644b
+last_reconciled_with: 20363c32c9bfdbf49c2716ef11d1f18483fcc01b
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -37,6 +37,9 @@ Return users to the place where they stopped reading when they switch away from 
   live-follow, new-content, and missing-row behavior.
 
 # Reconciliation notes
+
+- 2026-09-13, upstream `20363c32c9bfdbf49c2716ef11d1f18483fcc01b`: `mechanical-conflict`.
+  Retained reading-position restoration and live-follow guards alongside upstream work rows and accessibility headings.
 
 - 2026-09-12, upstream `e816064945144957b6eb9b268912a98b0555644b`: `unaffected`. Upstream now keeps
   sidebar scroll stable while pinning threads; timeline reading-position memory stays separate.

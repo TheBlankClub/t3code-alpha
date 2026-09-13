@@ -3,7 +3,7 @@ id: alpha-server-package
 status: active
 risk: red
 introduced_by: alpha-server-package
-last_reconciled_with: e816064945144957b6eb9b268912a98b0555644b
+last_reconciled_with: 20363c32c9bfdbf49c2716ef11d1f18483fcc01b
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -66,6 +66,9 @@ official T3 Code without publishing to or executing the upstream `t3` package.
   commands, and background-service registration.
 
 # Reconciliation notes
+
+- 2026-09-13, upstream `20363c32c9bfdbf49c2716ef11d1f18483fcc01b`: `persistence-sensitive`.
+  Adopted upstream message-context contracts and projections while retaining Alpha package and server identities.
 
 - 2026-09-12, upstream `e816064945144957b6eb9b268912a98b0555644b`: `unaffected`. No incoming
   change touches the Alpha server package, binary, or remote package selection.

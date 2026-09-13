@@ -3,7 +3,7 @@ id: project-action-terminal-startup
 status: active
 risk: amber
 introduced_by: 438019e36
-last_reconciled_with: e816064945144957b6eb9b268912a98b0555644b
+last_reconciled_with: 20363c32c9bfdbf49c2716ef11d1f18483fcc01b
 upstream_issue: pingdotgg/t3code#6337
 upstream_pr: pingdotgg/t3code#6338
 surfaces:
@@ -42,6 +42,9 @@ is still initializing.
   contract, server, client fallback, and focused tests satisfy every invariant above.
 
 # Reconciliation notes
+
+- 2026-09-13, upstream `20363c32c9bfdbf49c2716ef11d1f18483fcc01b`: `mechanical-conflict`.
+  Adopted composer context references while retaining initial-command acknowledgement and older-server fallback.
 
 - 2026-09-12, upstream `e816064945144957b6eb9b268912a98b0555644b`: `unaffected`. Preview keyboard
   handling does not change project-action terminal startup.
