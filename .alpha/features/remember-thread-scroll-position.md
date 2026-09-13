@@ -3,7 +3,7 @@ id: remember-thread-scroll-position
 status: active
 risk: green
 introduced_by: 31e67d13ce42c0989a4698f9140c3bea4aba9731
-last_reconciled_with: 20363c32c9bfdbf49c2716ef11d1f18483fcc01b
+last_reconciled_with: dd6ba84dc96f83000388e14b90f6533d5f63315d
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -47,3 +47,5 @@ Return users to the place where they stopped reading when they switch away from 
 - 2026-09-12, upstream `efccda9ac9230db22b36990cffabdad218fa41b0`: `upstream-redesign`.
   Reworked the feature around upstream's held timeline paint and stable LegendList instance so the
   new performance path stays mounted while each displayed thread restores its own reading position.
+- 2026-09-13, upstream `dd6ba84dc96f83000388e14b90f6533d5f63315d`: `auto-merged`; Git produced a conflict-free
+  reconciliation candidate. Required PR CI remained the merge gate.
