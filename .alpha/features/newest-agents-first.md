@@ -3,7 +3,7 @@ id: newest-agents-first
 status: active
 risk: green
 introduced_by: newest-agents-first
-last_reconciled_with: dd6ba84dc96f83000388e14b90f6533d5f63315d
+last_reconciled_with: df7ccc8fd01f5d2a1d8ec21bef8f9c59398fe913
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -128,4 +128,6 @@ users scroll past older agents.
 - 2026-09-07, upstream `8b2838e0e8a73d3fa6476940445c372e47b99db4`: `auto-merged`; Git produced a conflict-free
   reconciliation candidate. Required PR CI remained the merge gate.
 - 2026-09-13, upstream `dd6ba84dc96f83000388e14b90f6533d5f63315d`: `auto-merged`; Git produced a conflict-free
+  reconciliation candidate. Required PR CI remained the merge gate.
+- 2026-09-13, upstream `df7ccc8fd01f5d2a1d8ec21bef8f9c59398fe913`: `auto-merged`; Git produced a conflict-free
   reconciliation candidate. Required PR CI remained the merge gate.
