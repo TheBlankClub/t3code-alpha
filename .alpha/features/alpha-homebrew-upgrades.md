@@ -3,7 +3,7 @@ id: alpha-homebrew-upgrades
 status: active
 risk: red
 introduced_by: alpha-homebrew-upgrades
-last_reconciled_with: 3b75e607eb909522a8f5562fb40e44efc72bb66c
+last_reconciled_with: 1bbca0e78202c8ece73351fccd29f3c99070b82e
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -55,6 +55,9 @@ Developer account or a separate package-hosting service.
   same package identity and repository boundaries.
 
 # Reconciliation notes
+
+- 2026-09-14, upstream `1bbca0e78202c8ece73351fccd29f3c99070b82e`: `unaffected`.
+  The streaming-mode contract and settings changes preserve this feature.
 
 - 2026-09-14, upstream `3b75e607eb909522a8f5562fb40e44efc72bb66c`: `unaffected`.
   Incoming changes do not alter this feature or its retirement conditions.

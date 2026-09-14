@@ -3,7 +3,7 @@ id: alpha-server-package
 status: active
 risk: red
 introduced_by: alpha-server-package
-last_reconciled_with: 3b75e607eb909522a8f5562fb40e44efc72bb66c
+last_reconciled_with: 1bbca0e78202c8ece73351fccd29f3c99070b82e
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -66,6 +66,9 @@ official T3 Code without publishing to or executing the upstream `t3` package.
   commands, and background-service registration.
 
 # Reconciliation notes
+
+- 2026-09-14, upstream `1bbca0e78202c8ece73351fccd29f3c99070b82e`: `unaffected`.
+  Adopted the paragraph default and upstream reset of legacy streaming preferences. Alpha package and installed state paths are unchanged.
 
 - 2026-09-14, upstream `3b75e607eb909522a8f5562fb40e44efc72bb66c`: `persistence-sensitive`.
   Adopted reusable development sessions and RPC environment checks. Alpha package, binary, and installed state paths remain unchanged.

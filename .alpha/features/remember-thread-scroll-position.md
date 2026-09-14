@@ -3,7 +3,7 @@ id: remember-thread-scroll-position
 status: active
 risk: green
 introduced_by: 31e67d13ce42c0989a4698f9140c3bea4aba9731
-last_reconciled_with: 3b75e607eb909522a8f5562fb40e44efc72bb66c
+last_reconciled_with: 1bbca0e78202c8ece73351fccd29f3c99070b82e
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -37,6 +37,9 @@ Return users to the place where they stopped reading when they switch away from 
   live-follow, new-content, and missing-row behavior.
 
 # Reconciliation notes
+
+- 2026-09-14, upstream `1bbca0e78202c8ece73351fccd29f3c99070b82e`: `unaffected`.
+  Streaming-mode selection preserves remembered reading positions and the live-follow guard.
 
 - 2026-09-14, upstream `3b75e607eb909522a8f5562fb40e44efc72bb66c`: `mechanical-conflict`.
   Adopted smooth streaming scroll and thread-switch settling. Remembered reading positions still disable live-follow.

@@ -3,7 +3,7 @@ id: alpha-upstream-sync-automation
 status: active
 risk: red
 introduced_by: alpha-upstream-sync-automation
-last_reconciled_with: 3b75e607eb909522a8f5562fb40e44efc72bb66c
+last_reconciled_with: 1bbca0e78202c8ece73351fccd29f3c99070b82e
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -58,6 +58,9 @@ Alpha-only feature is unaffected.
   semantic feature reconciliation, visible conflict escalation, and configurable runner pools.
 
 # Reconciliation notes
+
+- 2026-09-14, upstream `1bbca0e78202c8ece73351fccd29f3c99070b82e`: `unaffected`.
+  The streaming-mode contract and settings changes preserve this feature.
 
 - 2026-09-14, upstream `3b75e607eb909522a8f5562fb40e44efc72bb66c`: `unaffected`.
   Incoming changes do not alter this feature or its retirement conditions.

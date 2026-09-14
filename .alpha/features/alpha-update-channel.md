@@ -3,7 +3,7 @@ id: alpha-update-channel
 status: active
 risk: red
 introduced_by: alpha-update-channel
-last_reconciled_with: 3b75e607eb909522a8f5562fb40e44efc72bb66c
+last_reconciled_with: 1bbca0e78202c8ece73351fccd29f3c99070b82e
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -69,6 +69,9 @@ automatic updater.
   cross-platform source and export support.
 
 # Reconciliation notes
+
+- 2026-09-14, upstream `1bbca0e78202c8ece73351fccd29f3c99070b82e`: `unaffected`.
+  Adopted response-streaming settings while retaining the fixed Alpha update track.
 
 - 2026-09-14, upstream `3b75e607eb909522a8f5562fb40e44efc72bb66c`: `unaffected`.
   Streaming fades preserve Alpha branding. Updater channels and release feeds are unchanged.
