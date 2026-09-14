@@ -3,7 +3,7 @@ id: alpha-local-only-telemetry
 status: active
 risk: red
 introduced_by: alpha-local-only-telemetry
-last_reconciled_with: df7ccc8fd01f5d2a1d8ec21bef8f9c59398fe913
+last_reconciled_with: 3b75e607eb909522a8f5562fb40e44efc72bb66c
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -44,6 +44,9 @@ traces, or metrics to third-party telemetry services.
   accurate public privacy disclosure.
 
 # Reconciliation notes
+
+- 2026-09-14, upstream `3b75e607eb909522a8f5562fb40e44efc72bb66c`: `mechanical-conflict`.
+  Adopted development auth configuration and retained the disabled outbound telemetry policy.
 
 - 2026-09-13, upstream `20363c32c9bfdbf49c2716ef11d1f18483fcc01b`: `mechanical-conflict`.
   Retained the outbound telemetry guard alongside upstream HTTP context handling.

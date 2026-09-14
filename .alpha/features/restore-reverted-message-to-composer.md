@@ -3,7 +3,7 @@ id: restore-reverted-message-to-composer
 status: active
 risk: amber
 introduced_by: a47276a40
-last_reconciled_with: df7ccc8fd01f5d2a1d8ec21bef8f9c59398fe913
+last_reconciled_with: 3b75e607eb909522a8f5562fb40e44efc72bb66c
 upstream_issue: pingdotgg/t3code#5685
 upstream_pr: pingdotgg/t3code#6044
 surfaces:
@@ -42,6 +42,9 @@ Let users edit and resend a reverted prompt instead of recreating its text and i
   complete when individual attachments fail or exceed the composer limit.
 
 # Reconciliation notes
+
+- 2026-09-14, upstream `3b75e607eb909522a8f5562fb40e44efc72bb66c`: `unaffected`.
+  Incoming chat connection and streaming changes preserve draft stashing, attachment recovery, and checkpoint bounds.
 
 - 2026-09-13, upstream `20363c32c9bfdbf49c2716ef11d1f18483fcc01b`: `upstream-redesign`.
   Adopted shared prompt recall and context records. Rewind still stashes drafts, excludes annotation crops by attachment identity, tolerates attachment failures, and bounds loaded history by checkpoints.

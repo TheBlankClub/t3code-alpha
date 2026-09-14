@@ -3,7 +3,7 @@ id: project-action-terminal-startup
 status: active
 risk: amber
 introduced_by: 438019e36
-last_reconciled_with: df7ccc8fd01f5d2a1d8ec21bef8f9c59398fe913
+last_reconciled_with: 3b75e607eb909522a8f5562fb40e44efc72bb66c
 upstream_issue: pingdotgg/t3code#6337
 upstream_pr: pingdotgg/t3code#6338
 surfaces:
@@ -42,6 +42,9 @@ is still initializing.
   contract, server, client fallback, and focused tests satisfy every invariant above.
 
 # Reconciliation notes
+
+- 2026-09-14, upstream `3b75e607eb909522a8f5562fb40e44efc72bb66c`: `unaffected`.
+  Incoming ChatView changes preserve initial commands and the older-server fallback.
 
 - 2026-09-13, upstream `20363c32c9bfdbf49c2716ef11d1f18483fcc01b`: `mechanical-conflict`.
   Adopted composer context references while retaining initial-command acknowledgement and older-server fallback.
