@@ -1,6 +1,4 @@
 // @effect-diagnostics nodeBuiltinImport:off - Workflow contract tests read repository fixtures directly.
-import * as NodeChildProcess from "node:child_process";
-import * as NodeOS from "node:os";
 import * as NodeFS from "node:fs";
 import * as NodePath from "node:path";
 import { assert, describe, it } from "@effect/vitest";
@@ -78,10 +76,19 @@ describe("Alpha workflow contracts", () => {
     assert.include(serialized, "Alpha release is blocked");
   });
 
-  it("publishes only the arm64 DMG while retaining all four CLI resource monitors", () => {
+  it("keeps upstream desktop publishing workflows out of the Alpha repository", () => {
+    assert.include(
+      rawWorkflow("release-desktop.yml"),
+      "if: github.repository == 'pingdotgg/t3code'",
+    );
+    const previewPublisher = rawWorkflow("desktop-macos-preview-publish.yml");
+    assert.include(previewPublisher, "github.repository == 'pingdotgg/t3code'");
+  });
+
+  it("publishes the arm64 DMG and every supported Alpha CLI archive", () => {
     const workflow = readWorkflow("release-alpha.yml") as {
       readonly jobs: Record<
-        "build" | "build_cli_resource_monitors" | "publish_cli" | "report_status" | "release",
+        "build" | "build_cli_archives" | "publish_cli" | "report_status" | "release",
         {
           readonly needs: ReadonlyArray<string>;
           readonly if: string;
@@ -108,65 +115,45 @@ describe("Alpha workflow contracts", () => {
       jobs.build.strategy?.matrix.include.map(({ platform, arch }) => ({ platform, arch })),
       [{ platform: "mac", arch: "arm64" }],
     );
-    const resourceKeys = [
+    const archiveKeys = [
       ...(jobs.build.strategy?.matrix.include ?? []),
-      ...(jobs.build_cli_resource_monitors.strategy?.matrix.include ?? []),
+      ...(jobs.build_cli_archives.strategy?.matrix.include ?? []),
     ].map(({ resource_key }) => resource_key);
-    assert.sameMembers(resourceKeys, ["darwin-arm64", "darwin-x64", "linux-x64", "win32-x64"]);
+    assert.sameMembers(archiveKeys, [
+      "darwin-arm64",
+      "linux-arm64",
+      "linux-x64",
+      "win32-arm64",
+      "win32-x64",
+    ]);
     assert.notProperty(jobs, "build_wsl_node_pty");
-    assert.includeMembers([...jobs.publish_cli.needs], ["build", "build_cli_resource_monitors"]);
-    assert.include(jobs.publish_cli.if, "needs.build_cli_resource_monitors.result == 'success'");
-    assert.includeMembers([...jobs.report_status.needs], ["build", "build_cli_resource_monitors"]);
+    assert.includeMembers([...jobs.publish_cli.needs], ["build", "build_cli_archives"]);
+    assert.include(jobs.publish_cli.if, "needs.build_cli_archives.result == 'success'");
+    assert.includeMembers([...jobs.report_status.needs], ["build", "build_cli_archives"]);
+    const raw = rawWorkflow("release-alpha.yml");
+    assert.include(raw, "--prebuilt-dir npm-prebuilt");
+    assert.include(raw, "--archives-dir release-cli");
+    assert.notInclude(raw, "--dry-run");
+    assert.notInclude(raw, "build-exe --target");
+    assert.include(raw, "--filter=@t3tools/web...");
+    assert.include(raw, "libsecret-1-dev pkg-config");
+    const linuxLibraries = raw.indexOf("Install Linux CLI build libraries");
+    assert.isBelow(linuxLibraries, raw.indexOf("Setup Vite+", linuxLibraries));
+    assert.include(raw, "t3-alpha-*.tar.gz");
+    assert.include(raw, "t3-alpha-*.zip");
+    assert.include(raw, "release-assets/SHA256SUMS");
+    assert.notInclude(raw, "release-assets/*.blockmap");
+    assert.notInclude(raw, "release-assets/*.yml");
     const uploads = jobs.release.steps.filter((step) =>
       step.uses?.startsWith("softprops/action-gh-release@"),
     );
     assert.lengthOf(uploads, 2);
     for (const upload of uploads) {
-      assert.equal(upload.with?.files?.trim(), "release-assets/*.dmg");
+      assert.include(upload.with?.files, "release-assets/*.dmg");
+      assert.include(upload.with?.files, "release-assets/t3-alpha-*.tar.gz");
+      assert.include(upload.with?.files, "release-assets/t3-alpha-*.zip");
+      assert.include(upload.with?.files, "release-assets/SHA256SUMS");
       assert.isTrue(upload.with?.["fail_on_unmatched_files"]);
-    }
-
-    const bundleScript = jobs.publish_cli.steps.find(
-      (step) => step.name === "Bundle resource monitors into CLI package",
-    )?.run;
-    assert.isDefined(bundleScript);
-    const fixture = NodeFS.mkdtempSync(NodePath.join(NodeOS.tmpdir(), "alpha-resource-monitors-"));
-    try {
-      for (const resourceKey of resourceKeys) {
-        const artifactDir = NodePath.join(
-          fixture,
-          "resource-monitors",
-          `alpha-resource-monitor-${resourceKey}`,
-        );
-        NodeFS.mkdirSync(artifactDir, { recursive: true });
-        const binaryName =
-          resourceKey === "win32-x64" ? "t3-resource-monitor.exe" : "t3-resource-monitor";
-        NodeFS.writeFileSync(NodePath.join(artifactDir, binaryName), resourceKey);
-      }
-      const bundle = () =>
-        NodeChildProcess.execFileSync("bash", ["-c", bundleScript], {
-          cwd: fixture,
-          env: { ...process.env, RUNNER_TEMP: fixture },
-          stdio: "pipe",
-        });
-      bundle();
-      for (const resourceKey of resourceKeys) {
-        const binaryName =
-          resourceKey === "win32-x64" ? "t3-resource-monitor.exe" : "t3-resource-monitor";
-        assert.equal(
-          NodeFS.readFileSync(
-            NodePath.join(fixture, "apps/server/dist/resource-monitor", resourceKey, binaryName),
-            "utf8",
-          ),
-          resourceKey,
-        );
-      }
-      NodeFS.rmSync(NodePath.join(fixture, "resource-monitors/alpha-resource-monitor-linux-x64"), {
-        recursive: true,
-      });
-      assert.throws(bundle);
-    } finally {
-      NodeFS.rmSync(fixture, { recursive: true, force: true });
     }
   });
 

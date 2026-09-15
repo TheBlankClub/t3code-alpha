@@ -1,6 +1,10 @@
 import { PRIMARY_LOCAL_ENVIRONMENT_ID } from "@t3tools/contracts";
 import { ALPHA_DISTRIBUTION } from "@t3tools/shared/alphaDistribution";
-import { makeLocalFileTracer, makeTraceSink } from "@t3tools/shared/observability";
+import {
+  makeLocalFileTracer,
+  makeTraceSink,
+  otlpSerializationLayer,
+} from "@t3tools/shared/observability";
 import { parsePersistedServerObservabilitySettings } from "@t3tools/shared/serverSettings";
 import * as Context from "effect/Context";
 import * as DateTime from "effect/DateTime";
@@ -18,7 +22,7 @@ import * as Scope from "effect/Scope";
 import * as Semaphore from "effect/Semaphore";
 import * as SynchronizedRef from "effect/SynchronizedRef";
 import * as Tracer from "effect/Tracer";
-import { OtlpExporter, OtlpSerialization, OtlpTracer } from "effect/unstable/observability";
+import { OtlpExporter, OtlpTracer } from "effect/unstable/observability";
 
 import * as DesktopEnvironment from "./DesktopEnvironment.ts";
 
@@ -589,6 +593,7 @@ const tracerLayer = Layer.unwrap(
       : yield* OtlpTracer.make({
           url: otlpTracesUrl.value,
           exportInterval: `${environment.otlpExportIntervalMs} millis`,
+          headers: Option.getOrUndefined(environment.otlpHeaders),
           resource: {
             serviceName: "desktop",
             attributes: {
@@ -596,7 +601,7 @@ const tracerLayer = Layer.unwrap(
               "service.mode": environment.isDevelopment ? "development" : "packaged",
             },
           },
-        });
+        }).pipe(Effect.provide(otlpSerializationLayer(environment.otlpProtocol)));
     const tracer = yield* makeLocalFileTracer({
       filePath: tracePath,
       maxBytes: DESKTOP_LOG_FILE_MAX_BYTES,
@@ -608,7 +613,7 @@ const tracerLayer = Layer.unwrap(
 
     return Layer.succeed(Tracer.Tracer, tracer);
   }),
-).pipe(Layer.provide(OtlpExporter.layerFlusher), Layer.provideMerge(OtlpSerialization.layerJson));
+).pipe(Layer.provide(OtlpExporter.layerFlusher));
 
 export const layer = Layer.mergeAll(
   backendOutputLogFactoryLayer,

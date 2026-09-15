@@ -15,6 +15,10 @@ export const ALPHA_DISTRIBUTION = {
   serverPackageName: "t3code-alpha",
   serverBinaryName: "t3-alpha",
   serverNpmDistTag: "latest",
+  serverNpmPlatformPackagePrefix: "t3code-alpha",
+  serverReleaseRepository: "TheBlankClub/t3code-alpha",
+  serverReleaseArtifactPrefix: "t3-alpha",
   serverHomeDirName: ".t3-alpha",
   serverSystemdUnitName: "t3code-alpha.service",
+  serverLaunchdServiceLabel: "com.theblankclub.t3code.alpha.service",
 } as const;

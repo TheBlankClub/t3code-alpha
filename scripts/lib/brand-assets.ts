@@ -53,8 +53,8 @@ export function resolveWebAssetBrandForChannel(channel: WebAssetChannel): WebAss
 }
 
 export function resolveWebAssetBrandForPackageVersion(version: string): WebAssetBrand {
-  if (version.includes("-alpha.")) return "alpha";
-  return version.includes("-nightly.") ? "nightly" : "production";
+  if (/^[^-+]+-alpha\./.test(version)) return "alpha";
+  return /^[^-+]+-(?:nightly|preview)\./.test(version) ? "nightly" : "production";
 }
 
 export interface IconOverride {

@@ -83,6 +83,7 @@ describe("brand-assets", () => {
     expect(resolveWebAssetBrandForPackageVersion("0.0.34-alpha.20260815.1")).toBe("alpha");
     expect(resolveWebAssetBrandForPackageVersion("0.0.29")).toBe("production");
     expect(resolveWebAssetBrandForPackageVersion("0.0.29-nightly.20260723.882")).toBe("nightly");
+    expect(resolveWebAssetBrandForPackageVersion("0.0.29-preview.20260723.882")).toBe("nightly");
   });
 
   it("keeps Alpha, development, nightly, and production icon families separate", () => {

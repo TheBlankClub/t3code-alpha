@@ -1,8 +1,8 @@
 ---
 title: UI Consistency
-model: gpt-5-6-terra
+model: gpt-5-6-sol
 effort: medium
-input: full_diff
+input: incremental
 tools:
   - browse_code
   - modify_pr
@@ -11,9 +11,6 @@ include:
   - "apps/web/src/**/*.css"
 exclude:
   - "apps/web/src/**/*.test.tsx"
-labels:
-  - vouch:trusted
-  - macroscope-review
 requires:
   - Check
 maxBudgetPerRun: 2

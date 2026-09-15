@@ -140,51 +140,6 @@ jobs:
           previous_tag="$(git tag --list 'v*-alpha.*' --sort=-version:refname | grep -Fvx "$CURRENT_TAG" | head -n 1 || true)"
           echo "previous_tag=$previous_tag" >> "$GITHUB_OUTPUT"
 
-  build_cli_resource_monitors:
-    name: Build CLI resource monitor (${{ matrix.resource_key }})
-    needs: [preflight]
-    if: ${{ !failure() && !cancelled() && needs.preflight.result == 'success' }}
-    runs-on: ${{ matrix.runner }}
-    timeout-minutes: 15
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - runner: macos-15-intel
-            rust_target: x86_64-apple-darwin
-            resource_key: darwin-x64
-            binary_name: t3-resource-monitor
-          - runner: ubuntu-24.04
-            rust_target: x86_64-unknown-linux-gnu
-            resource_key: linux-x64
-            binary_name: t3-resource-monitor
-          - runner: windows-2025
-            rust_target: x86_64-pc-windows-msvc
-            resource_key: win32-x64
-            binary_name: t3-resource-monitor.exe
-    steps:
-      - name: Checkout release commit
-        uses: actions/checkout@v6
-        with:
-          ref: ${{ needs.preflight.outputs.ref }}
-          sparse-checkout: native/resource-monitor
-
-      - name: Setup Rust
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          targets: ${{ matrix.rust_target }}
-
-      - name: Build resource monitor
-        run: cargo build --locked --release --manifest-path native/resource-monitor/Cargo.toml --target ${{ matrix.rust_target }}
-
-      - name: Upload resource monitor
-        uses: actions/upload-artifact@v7
-        with:
-          name: alpha-resource-monitor-${{ matrix.resource_key }}
-          path: native/resource-monitor/target/${{ matrix.rust_target }}/release/${{ matrix.binary_name }}
-          if-no-files-found: error
-          retention-days: 2
-
   build:
     name: Build ${{ matrix.label }}
     needs: [preflight]
@@ -409,6 +364,36 @@ jobs:
           if-no-files-found: error
           retention-days: 2
 
+      - name: Build CLI single-executable
+        shell: bash
+        env:
+          VP_NODE_VERSION: "26.8.2"
+        run: node apps/server/scripts/cli.ts build-exe --verbose
+
+      - name: Build CLI archive
+        shell: bash
+        env:
+          T3CODE_CLI_MAC_SIGN_IDENTITY: ${{ env.ALPHA_MAC_SIGNING_IDENTITY }}
+        run: |
+          node scripts/build-cli-archive.ts \
+            --platform "${{ matrix.platform }}" \
+            --arch "${{ matrix.arch }}" \
+            --version "${{ needs.preflight.outputs.version }}" \
+            --resource-monitor-dir resource-monitor-publish \
+            --output-dir release-cli
+
+      - name: Smoke-test CLI archive
+        shell: bash
+        run: node scripts/smoke-cli-archive.ts --archive release-cli/* --expect-version "${{ needs.preflight.outputs.version }}"
+
+      - name: Upload CLI archive
+        uses: actions/upload-artifact@v7
+        with:
+          name: alpha-cli-darwin-arm64
+          path: release-cli/*
+          if-no-files-found: error
+          retention-days: 2
+
       # macOS signing state is deliberately not cleaned up. Hosted runners are
       # ephemeral, so the ephemeral Keychain, its search-list entry, and the
       # System Keychain trust setting all die with the VM. Cleanup only ever
@@ -417,10 +402,125 @@ jobs:
       # job timeout. Self-hosted runners would need a different approach, since
       # a trusted root certificate would persist there.
 
+  build_cli_archives:
+    name: Build Alpha CLI (${{ matrix.platform }}-${{ matrix.arch }})
+    needs: [preflight]
+    if: ${{ !cancelled() && needs.preflight.result == 'success' }}
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-24.04
+            platform: linux
+            arch: x64
+            rust_target: x86_64-unknown-linux-gnu
+            resource_key: linux-x64
+          - runner: ubuntu-24.04-arm
+            platform: linux
+            arch: arm64
+            rust_target: aarch64-unknown-linux-gnu
+            resource_key: linux-arm64
+          - runner: windows-2025
+            platform: win
+            arch: x64
+            rust_target: x86_64-pc-windows-msvc
+            resource_key: win32-x64
+          - runner: windows-11-arm
+            platform: win
+            arch: arm64
+            rust_target: aarch64-pc-windows-msvc
+            resource_key: win32-arm64
+    steps:
+      - name: Checkout release commit
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ needs.preflight.outputs.ref }}
+          sparse-checkout: |
+            /*
+            !/.repos/
+          sparse-checkout-cone-mode: false
+
+      - uses: ./.github/actions/setup-apt-mirrors
+        if: matrix.platform == 'linux'
+
+      - name: Install Linux CLI build libraries
+        if: matrix.platform == 'linux'
+        shell: bash
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libsecret-1-dev pkg-config
+
+      - name: Setup Vite+
+        uses: voidzero-dev/setup-vp@v1
+        with:
+          node-version-file: package.json
+          cache: true
+          run-install: |
+            args:
+              - --filter=t3...
+              - --filter=@t3tools/web...
+              - --filter=@t3tools/scripts...
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.rust_target }}
+
+      - name: Align package versions to Alpha version
+        run: node scripts/update-release-package-versions.ts "${{ needs.preflight.outputs.version }}"
+
+      - name: Build web client
+        run: vp run --filter t3 build
+
+      - name: Build resource monitor
+        run: cargo build --locked --release --manifest-path native/resource-monitor/Cargo.toml --target ${{ matrix.rust_target }}
+
+      - name: Build CLI single-executable
+        shell: bash
+        env:
+          VP_NODE_VERSION: "26.8.2"
+        run: node apps/server/scripts/cli.ts build-exe --verbose
+
+      - name: Stage resource monitor for CLI archive
+        shell: bash
+        run: |
+          set -euo pipefail
+          binary_name="t3-resource-monitor"
+          if [[ "${{ matrix.platform }}" == "win" ]]; then
+            binary_name="${binary_name}.exe"
+          fi
+          target_dir="$RUNNER_TEMP/cli-resource-monitor/${{ matrix.resource_key }}"
+          mkdir -p "$target_dir"
+          cp "native/resource-monitor/target/${{ matrix.rust_target }}/release/${binary_name}" "$target_dir/$binary_name"
+
+      - name: Build CLI archive
+        shell: bash
+        run: |
+          node scripts/build-cli-archive.ts \
+            --platform "${{ matrix.platform }}" \
+            --arch "${{ matrix.arch }}" \
+            --version "${{ needs.preflight.outputs.version }}" \
+            --resource-monitor-dir "$RUNNER_TEMP/cli-resource-monitor" \
+            --output-dir release-cli
+
+      - name: Smoke-test CLI archive
+        shell: bash
+        run: node scripts/smoke-cli-archive.ts --archive release-cli/* --expect-version "${{ needs.preflight.outputs.version }}"
+
+      - name: Upload CLI archive
+        uses: actions/upload-artifact@v7
+        with:
+          name: alpha-cli-${{ matrix.resource_key }}
+          path: release-cli/*
+          if-no-files-found: error
+          retention-days: 2
+
   publish_cli:
     name: Publish t3code-alpha to npm
-    needs: [preflight, build, build_cli_resource_monitors]
-    if: ${{ !failure() && !cancelled() && needs.preflight.result == 'success' && needs.build.result == 'success' && needs.build_cli_resource_monitors.result == 'success' }}
+    needs: [preflight, build, build_cli_archives]
+    if: ${{ !failure() && !cancelled() && needs.preflight.result == 'success' && needs.build.result == 'success' && needs.build_cli_archives.result == 'success' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     permissions:
@@ -454,41 +554,23 @@ jobs:
           registry-url: https://registry.npmjs.org
           package-manager-cache: false
 
-      - name: Align package versions to Alpha version
-        run: node scripts/update-release-package-versions.ts "${{ needs.preflight.outputs.version }}"
-
-      - name: Build CLI package
-        run: vp run --filter t3 build
-
-      - name: Download resource monitors
+      - name: Download CLI archives
         uses: actions/download-artifact@v8
         with:
-          pattern: alpha-resource-monitor-*
-          path: ${{ runner.temp }}/resource-monitors
+          pattern: alpha-cli-*
+          merge-multiple: true
+          path: release-cli
 
-      - name: Bundle resource monitors into CLI package
-        shell: bash
-        run: |
-          set -euo pipefail
-          for resource_key in darwin-arm64 darwin-x64 linux-x64 win32-x64; do
-            artifact_dir="$RUNNER_TEMP/resource-monitors/alpha-resource-monitor-${resource_key}"
-            binary_name="t3-resource-monitor"
-            if [[ "$resource_key" == "win32-x64" ]]; then
-              binary_name="${binary_name}.exe"
-            fi
-            target_dir="apps/server/dist/resource-monitor/${resource_key}"
-            mkdir -p "$target_dir"
-            cp "$artifact_dir/$binary_name" "$target_dir/$binary_name"
-            chmod +x "$target_dir/$binary_name"
-          done
+      - name: Build npm packages from CLI archives
+        run: node scripts/build-npm-platform-packages.ts --archives-dir release-cli --version "${{ needs.preflight.outputs.version }}" --output-dir npm-prebuilt
 
       - name: Publish Alpha CLI package
-        run: node apps/server/scripts/cli.ts publish --tag latest --app-version "${{ needs.preflight.outputs.version }}" --provenance --verbose
+        run: node apps/server/scripts/cli.ts publish --prebuilt-dir npm-prebuilt --tag latest --provenance --verbose
 
   release:
     name: Publish GitHub prerelease
-    needs: [preflight, build, publish_cli]
-    if: ${{ !failure() && !cancelled() && needs.preflight.result == 'success' && needs.build.result == 'success' && needs.publish_cli.result == 'success' }}
+    needs: [preflight, build, build_cli_archives, publish_cli]
+    if: ${{ !failure() && !cancelled() && needs.preflight.result == 'success' && needs.build.result == 'success' && needs.build_cli_archives.result == 'success' && needs.publish_cli.result == 'success' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     permissions:
@@ -519,6 +601,27 @@ jobs:
           merge-multiple: true
           path: release-assets
 
+      - name: Download CLI archives
+        uses: actions/download-artifact@v8
+        with:
+          pattern: alpha-cli-*
+          merge-multiple: true
+          path: release-assets
+
+      - name: Write CLI archive checksums
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd release-assets
+          shopt -s nullglob
+          archives=(t3-alpha-*.tar.gz t3-alpha-*.zip)
+          if [[ ${#archives[@]} -ne 5 ]]; then
+            echo "Expected five Alpha CLI archives, found ${#archives[@]}." >&2
+            exit 1
+          fi
+          sha256sum "${archives[@]}" > SHA256SUMS
+          cat SHA256SUMS
+
       - name: Publish Alpha prerelease
         if: needs.preflight.outputs.previous_tag != ''
         uses: softprops/action-gh-release@v3
@@ -532,6 +635,9 @@ jobs:
           make_latest: false
           files: |
             release-assets/*.dmg
+            release-assets/t3-alpha-*.tar.gz
+            release-assets/t3-alpha-*.zip
+            release-assets/SHA256SUMS
           fail_on_unmatched_files: true
           token: ${{ github.token }}
 
@@ -547,6 +653,9 @@ jobs:
           make_latest: false
           files: |
             release-assets/*.dmg
+            release-assets/t3-alpha-*.tar.gz
+            release-assets/t3-alpha-*.zip
+            release-assets/SHA256SUMS
           fail_on_unmatched_files: true
           token: ${{ github.token }}
 
@@ -555,8 +664,8 @@ jobs:
     needs:
       - release_gate
       - preflight
-      - build_cli_resource_monitors
       - build
+      - build_cli_archives
       - publish_cli
       - release
     if: >-

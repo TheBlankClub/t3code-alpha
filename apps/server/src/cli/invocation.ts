@@ -38,8 +38,8 @@ function detectCliRunner(entryPath: string): CliRunner | null {
 }
 
 /**
- * The Alpha package spec to suggest. Package-runner cache paths do not retain
- * the literal spec reliably, so all non-exact suggestions follow the Alpha tag.
+ * Package-runner cache paths do not retain the literal spec reliably, so all
+ * suggestions use the Alpha dist tag.
  */
 function suggestedPackageSpec(_version: string): string {
   return `${ALPHA_DISTRIBUTION.serverPackageName}@${ALPHA_DISTRIBUTION.serverNpmDistTag}`;
