@@ -50,10 +50,12 @@ interface ManagedChild {
 // built-ins only.
 const runtimePaths = (baseDir: string, version: string) => {
   const versionDir = NodePath.join(baseDir, "runtime", "versions", version);
-  // oxlint-disable-next-line t3code/no-global-process-runtime -- Standalone launcher has no Effect runtime.
   const serverBinaryName =
-    typeof __T3CODE_SERVER_BINARY_NAME__ === "undefined" ? "t3" : __T3CODE_SERVER_BINARY_NAME__;
+    typeof __T3CODE_SERVER_BINARY_NAME__ === "undefined"
+      ? "t3-alpha"
+      : __T3CODE_SERVER_BINARY_NAME__;
   const executableName =
+    // oxlint-disable-next-line t3code/no-global-process-runtime -- Standalone launcher has no Effect runtime.
     process.platform === "win32" ? `${serverBinaryName}.exe` : serverBinaryName;
   return {
     versionDir,
@@ -421,7 +423,7 @@ export class Launcher {
   async #startChild(version: string, role: ChildRole, update?: ServiceUpdateRecord): Promise<void> {
     if (this.#stopping) return;
     if (!(await runtimeExists(this.#baseDir, version))) {
-      throw new Error(`Selected t3@${version} runtime is missing or incomplete.`);
+      throw new Error(`Selected t3code-alpha@${version} runtime is missing or incomplete.`);
     }
     if (this.#stopping) return;
     const paths = runtimePaths(this.#baseDir, version);

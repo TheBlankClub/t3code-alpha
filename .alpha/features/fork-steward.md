@@ -3,7 +3,7 @@ id: fork-steward
 status: active
 risk: green
 introduced_by: alpha-foundation
-last_reconciled_with: 1bbca0e78202c8ece73351fccd29f3c99070b82e
+last_reconciled_with: a62e7d670c67bf221a5699b5a988367781fead74
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -39,6 +39,8 @@ retiring fork code when upstream provides an equivalent or better implementation
   semantic feature retirement, Alpha release isolation, and the same safety gates.
 
 # Reconciliation notes
+
+- 2026-09-15, upstream `a62e7d670c67bf221a5699b5a988367781fead74`: `unaffected`. Retained merge ancestry and reviewed conflicts, protected surfaces, and active feature records.
 
 - 2026-09-14, upstream `1bbca0e78202c8ece73351fccd29f3c99070b82e`: `unaffected`.
   The streaming-mode contract and settings changes preserve this feature.

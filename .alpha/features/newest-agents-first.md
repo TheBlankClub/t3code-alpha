@@ -3,7 +3,7 @@ id: newest-agents-first
 status: active
 risk: green
 introduced_by: newest-agents-first
-last_reconciled_with: 1bbca0e78202c8ece73351fccd29f3c99070b82e
+last_reconciled_with: a62e7d670c67bf221a5699b5a988367781fead74
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -35,6 +35,8 @@ users scroll past older agents.
   across activity updates.
 
 # Reconciliation notes
+
+- 2026-09-15, upstream `a62e7d670c67bf221a5699b5a988367781fead74`: `unaffected`. Upstream changes preserve first-seen ordering in the shared agent panel.
 
 - 2026-09-14, upstream `1bbca0e78202c8ece73351fccd29f3c99070b82e`: `unaffected`.
   The streaming-mode contract and settings changes preserve this feature.

@@ -3,7 +3,7 @@ id: antigravity-path-canonicalization
 status: active
 risk: amber
 introduced_by: antigravity-path-canonicalization
-last_reconciled_with: 1bbca0e78202c8ece73351fccd29f3c99070b82e
+last_reconciled_with: a62e7d670c67bf221a5699b5a988367781fead74
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -40,6 +40,8 @@ session workspace.
   parents while preserving the same workspace escape checks.
 
 # Reconciliation notes
+
+- 2026-09-15, upstream `a62e7d670c67bf221a5699b5a988367781fead74`: `unaffected`. No incoming changes alter Antigravity path canonicalization or workspace containment.
 
 - 2026-09-14, upstream `1bbca0e78202c8ece73351fccd29f3c99070b82e`: `unaffected`.
   The streaming-mode contract and settings changes preserve this feature.

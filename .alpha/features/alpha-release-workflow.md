@@ -3,7 +3,7 @@ id: alpha-release-workflow
 status: active
 risk: red
 introduced_by: alpha-release-workflow
-last_reconciled_with: 1bbca0e78202c8ece73351fccd29f3c99070b82e
+last_reconciled_with: a62e7d670c67bf221a5699b5a988367781fead74
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -32,25 +32,24 @@ upstream's official release, hosted-web, AUR, or npm publication paths.
   branch head and does not already have an Alpha release tag.
 - A daily scheduled run retries an unreleased Alpha head after transient publication failures.
 - Manual and scheduled runs also skip an already tagged source SHA, preventing duplicate releases.
-- The release workflow runs no checks, typecheck, or tests of its own. On the `workflow_run` path
-  the gate already proves CI succeeded for that exact SHA. On the scheduled and manual paths the
-  gate gives no such proof, so those runs publish without verifying the source commit.
+- The `workflow_run` gate requires successful CI for the exact SHA. Scheduled and manual runs
+  do not establish that CI result. All release paths smoke-test the built CLI archives.
 - Versions use `X.Y.Z-alpha.YYYYMMDD.RUN`; GitHub releases are prereleases and never become latest.
 - Only the macOS arm64 DMG uses upstream's desktop builder and Alpha artifact identity.
-- The CLI retains resource-monitor binaries for macOS arm64/x64, Linux x64, and Windows x64.
-  The arm64 desktop build supplies its binary; separate Rust-only jobs supply the other three.
-  npm publication requires all four binaries.
+- CLI archives contain resource monitors for macOS arm64, Linux arm64/x64, and Windows arm64/x64.
+  npm platform packages contain the matching executable and runtime dependencies. macOS x64
+  remains unsupported by upstream's single-executable runtime.
 - Desktop artifacts are intentionally not signed with platform developer credentials. macOS builds
-  use the fork's persistent self-signed identity, while GitHub releases contain manual installers
-  only, not updater manifests, blockmaps, or macOS ZIP update payloads.
+  use the fork's persistent self-signed identity, while GitHub releases contain manual desktop installers,
+  CLI archives, and checksums. They exclude updater manifests, blockmaps, and macOS ZIP update payloads.
 - Release CI mounts each produced macOS DMG and requires its embedded app to pass strict deep
   signature verification with the Alpha bundle identifier and pinned release certificate.
 - Apple signing/notarization, Azure Trusted Signing, Clerk, and T3 Connect configuration are not
   release dependencies. Cloud linking is not part of this fork distribution.
-- npm publication uses provenance, the canonical `latest` tag, and the temporary `t3code-alpha`
-  manifest. GitHub releases retain Alpha versioning and prerelease status.
-- npm publishes use GitHub OIDC trusted publishing and no long-lived npm token. The package was
-  reserved interactively before enabling the automated release workflow.
+- npm publication uses provenance and the canonical `latest` tag for the `t3code-alpha` launcher
+  and each Alpha platform package. GitHub releases retain Alpha versioning and prerelease status.
+- npm publishes use GitHub OIDC trusted publishing and no long-lived npm token. Every platform
+  package and the launcher require a trusted publisher for `release-alpha.yml`.
 - After a successful GitHub prerelease, the tap-owned updater independently validates and publishes
   the matching macOS cask without a cross-repository credential.
 - The workflow does not deploy the official hosted web app, publish official AUR packages, mutate
@@ -88,6 +87,8 @@ upstream's official release, hosted-web, AUR, or npm publication paths.
   release destination without touching official distribution channels.
 
 # Reconciliation notes
+
+- 2026-09-15, upstream `a62e7d670c67bf221a5699b5a988367781fead74`: `upstream-redesign`. Builds five Alpha CLI archives and npm platform packages with native runners. Preserved the arm64 DMG, fork signing, and release gates. New npm platform packages require trusted-publisher setup before release.
 
 - 2026-09-14, upstream `1bbca0e78202c8ece73351fccd29f3c99070b82e`: `unaffected`.
   The streaming-mode contract and settings changes preserve this feature.

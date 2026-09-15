@@ -10,8 +10,9 @@ npm package, creates a GitHub prerelease, and updates the `t3code-alpha` cask in
 `TheBlankClub/homebrew-tap`. The tap owns the final step: it checks the public prerelease feed every
 30 minutes and publishes after the macOS arm64 DMG is available.
 
-The CLI package retains resource-monitor binaries for macOS arm64/x64, Linux x64, and Windows x64.
-The desktop build supplies the arm64 binary; separate Rust jobs build the other three.
+CLI archives include the executable, web client, native dependencies, and resource monitor for
+macOS arm64, Linux arm64/x64, and Windows arm64/x64. Each archive has a matching npm platform
+package. macOS x64 is unsupported by the upstream single-executable runtime.
 
 This release model does not require Apple, Azure, Clerk, or T3 Connect configuration. It deliberately
 does not publish Electron updater manifests: automatic desktop updates are disabled because Alpha
@@ -19,7 +20,15 @@ is not Developer ID-signed or notarized.
 
 ## 1. npm trusted publishing
 
-The package must have this one trusted publisher:
+The launcher `t3code-alpha` and these platform packages each need the trusted publisher below:
+
+- `t3code-alpha-darwin-arm64`
+- `t3code-alpha-linux-arm64`
+- `t3code-alpha-linux-x64`
+- `t3code-alpha-win32-arm64`
+- `t3code-alpha-win32-x64`
+
+Use these settings for each package:
 
 - Provider: GitHub Actions
 - Organization or user: `TheBlankClub`
@@ -32,8 +41,8 @@ The publish job runs on a GitHub-hosted runner, grants `id-token: write`, and do
 token. The temporary publish manifest keeps its repository URL pointed at
 `https://github.com/TheBlankClub/t3code-alpha`.
 
-The package and trusted publisher are already reserved and configured. They can be verified with
-npm 11.17 or newer:
+Before releasing the compiled CLI, reserve the new platform packages and configure their trusted
+publishers. Verify each package with npm 11.17 or newer; for the launcher:
 
 ```sh
 npm trust list t3code-alpha
@@ -157,8 +166,9 @@ A manual upgrade also works: download the arm64 DMG, quit T3 Code Alpha,
 replace `T3 Code Alpha.app` in Applications, and reopen it. macOS may require the user to right-click
 the app and choose Open. Both methods preserve application state under `~/.t3-alpha`.
 
-Alpha no longer publishes desktop installers for Intel Macs, Windows, or Linux. Use the
-command-line server and its web client on those platforms.
+Alpha publishes desktop installers for Apple Silicon only. Linux and Windows can use the
+command-line server and web client. Intel Macs need an older compatible Alpha CLI release or a
+server on a supported host.
 
 ## 6. First release proof
 
@@ -166,10 +176,11 @@ The first successful `alpha` CI run starts the initial release after the GitHub 
 manual `Alpha Release` dispatch is also available, but duplicate-tag protection prevents publishing
 the same SHA twice. On the exact released SHA:
 
-1. Confirm preflight, the desktop build, all CLI resource-monitor builds, npm publish, and GitHub
+1. Confirm preflight, the desktop build, all CLI archive builds, npm publish, and GitHub
    release jobs pass; then confirm the matching `Update T3 Code Alpha` and `Test` runs pass in `homebrew-tap`.
 2. Confirm the GitHub release is a prerelease, is not the repository's latest release, and contains
-   one arm64 DMG. It must not contain x64 installers, updater YAML, blockmaps, or macOS ZIP payloads.
+   one arm64 DMG, five CLI archives, and `SHA256SUMS`. It must not contain x64 desktop installers,
+   updater YAML, blockmaps, or macOS ZIP update payloads.
 3. Confirm `npm view t3code-alpha@<version> version description license repository bin` matches the
    release and `npm view t3code-alpha dist-tags` points `latest` at it.
 4. Install with `npx t3code-alpha@latest` and confirm the reported CLI version matches the package.
