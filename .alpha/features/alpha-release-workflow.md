@@ -3,7 +3,7 @@ id: alpha-release-workflow
 status: active
 risk: red
 introduced_by: alpha-release-workflow
-last_reconciled_with: a62e7d670c67bf221a5699b5a988367781fead74
+last_reconciled_with: 5623089aea68ca62811f51321686c259fa4c810f
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -88,7 +88,7 @@ upstream's official release, hosted-web, AUR, or npm publication paths.
 
 # Reconciliation notes
 
-- 2026-09-15, upstream `a62e7d670c67bf221a5699b5a988367781fead74`: `upstream-redesign`. Builds five Alpha CLI archives and npm platform packages with native runners. Preserved the arm64 DMG, fork signing, and release gates. New npm platform packages require trusted-publisher setup before release.
+- 2026-09-15, upstream `5623089aea68ca62811f51321686c259fa4c810f`: `upstream-redesign`. Builds five Alpha CLI archives and npm platform packages with native runners. Preserved the arm64 DMG, fork signing, and release gates. New npm platform packages require trusted-publisher setup before release.
 
 - 2026-09-14, upstream `1bbca0e78202c8ece73351fccd29f3c99070b82e`: `unaffected`.
   The streaming-mode contract and settings changes preserve this feature.

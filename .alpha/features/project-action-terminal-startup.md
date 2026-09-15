@@ -3,7 +3,7 @@ id: project-action-terminal-startup
 status: active
 risk: amber
 introduced_by: 438019e36
-last_reconciled_with: a62e7d670c67bf221a5699b5a988367781fead74
+last_reconciled_with: 5623089aea68ca62811f51321686c259fa4c810f
 upstream_issue: pingdotgg/t3code#6337
 upstream_pr: pingdotgg/t3code#6338
 surfaces:
@@ -43,7 +43,7 @@ is still initializing.
 
 # Reconciliation notes
 
-- 2026-09-15, upstream `a62e7d670c67bf221a5699b5a988367781fead74`: `unaffected`. Terminal output and async setup changes preserve initial-command acknowledgement and the older-server fallback.
+- 2026-09-15, upstream `5623089aea68ca62811f51321686c259fa4c810f`: `unaffected`. Terminal output and async setup changes preserve initial-command acknowledgement and the older-server fallback.
 
 - 2026-09-14, upstream `1bbca0e78202c8ece73351fccd29f3c99070b82e`: `unaffected`.
   The streaming-mode contract and settings changes preserve this feature.

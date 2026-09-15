@@ -3,7 +3,7 @@ id: alpha-distribution-identity
 status: active
 risk: red
 introduced_by: alpha-distribution-identity
-last_reconciled_with: a62e7d670c67bf221a5699b5a988367781fead74
+last_reconciled_with: 5623089aea68ca62811f51321686c259fa4c810f
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -66,7 +66,7 @@ identity.
 
 # Reconciliation notes
 
-- 2026-09-15, upstream `a62e7d670c67bf221a5699b5a988367781fead74`: `mechanical-conflict`. Retained Alpha desktop, renderer, and state identities while adopting optional local environments and compiled WSL runtimes. WSL caches now use the Alpha home and executable.
+- 2026-09-15, upstream `5623089aea68ca62811f51321686c259fa4c810f`: `mechanical-conflict`. Retained Alpha desktop, renderer, and state identities while adopting optional local environments and compiled WSL runtimes. WSL caches now use the Alpha home and executable.
 
 - 2026-09-14, upstream `1bbca0e78202c8ece73351fccd29f3c99070b82e`: `unaffected`.
   The streaming-mode contract and settings changes preserve this feature.

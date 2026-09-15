@@ -3,7 +3,7 @@ id: remember-thread-scroll-position
 status: active
 risk: green
 introduced_by: 31e67d13ce42c0989a4698f9140c3bea4aba9731
-last_reconciled_with: a62e7d670c67bf221a5699b5a988367781fead74
+last_reconciled_with: 5623089aea68ca62811f51321686c259fa4c810f
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -38,7 +38,7 @@ Return users to the place where they stopped reading when they switch away from 
 
 # Reconciliation notes
 
-- 2026-09-15, upstream `a62e7d670c67bf221a5699b5a988367781fead74`: `unaffected`. Upstream per-thread panel widths and timeline setup rows preserve reading-position restoration and live-follow behavior.
+- 2026-09-15, upstream `5623089aea68ca62811f51321686c259fa4c810f`: `unaffected`. Upstream per-thread panel widths and timeline setup rows preserve reading-position restoration and live-follow behavior.
 
 - 2026-09-14, upstream `1bbca0e78202c8ece73351fccd29f3c99070b82e`: `unaffected`.
   Streaming-mode selection preserves remembered reading positions and the live-follow guard.
