@@ -3,7 +3,7 @@ id: alpha-release-workflow
 status: active
 risk: red
 introduced_by: alpha-release-workflow
-last_reconciled_with: 5623089aea68ca62811f51321686c259fa4c810f
+last_reconciled_with: 8db3c250f41e8f1d0b36da6b5a5093821e72d4f3
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -87,6 +87,8 @@ upstream's official release, hosted-web, AUR, or npm publication paths.
   release destination without touching official distribution channels.
 
 # Reconciliation notes
+
+- 2026-09-18, upstream `8db3c250f41e8f1d0b36da6b5a5093821e72d4f3`: `persistence-sensitive`. Adopted upstream release checks while retaining the official-repository gate and separate Alpha release workflow. No release was performed.
 
 - 2026-09-15, upstream `5623089aea68ca62811f51321686c259fa4c810f`: `upstream-redesign`. Builds five Alpha CLI archives and npm platform packages with native runners. Preserved the arm64 DMG, fork signing, and release gates. New npm platform packages require trusted-publisher setup before release.
 

@@ -3,7 +3,7 @@ id: project-action-terminal-startup
 status: active
 risk: amber
 introduced_by: 438019e36
-last_reconciled_with: 5623089aea68ca62811f51321686c259fa4c810f
+last_reconciled_with: 8db3c250f41e8f1d0b36da6b5a5093821e72d4f3
 upstream_issue: pingdotgg/t3code#6337
 upstream_pr: pingdotgg/t3code#6338
 surfaces:
@@ -42,6 +42,8 @@ is still initializing.
   contract, server, client fallback, and focused tests satisfy every invariant above.
 
 # Reconciliation notes
+
+- 2026-09-18, upstream `8db3c250f41e8f1d0b36da6b5a5093821e72d4f3`: `mechanical-conflict`. Adopted workspace leases around terminal operations while retaining startup commands, acknowledgement, and the older-server write fallback.
 
 - 2026-09-15, upstream `5623089aea68ca62811f51321686c259fa4c810f`: `unaffected`. Terminal output and async setup changes preserve initial-command acknowledgement and the older-server fallback.
 

@@ -1,15 +1,14 @@
 ---
 id: remember-thread-scroll-position
-status: active
+status: partial
 risk: green
 introduced_by: 31e67d13ce42c0989a4698f9140c3bea4aba9731
-last_reconciled_with: 5623089aea68ca62811f51321686c259fa4c810f
+last_reconciled_with: 8db3c250f41e8f1d0b36da6b5a5093821e72d4f3
 upstream_issue: null
 upstream_pr: null
 surfaces:
   - web
 tests:
-  - apps/web/src/components/chat/timelineScrollMemory.test.ts
   - apps/web/src/components/chat/MessagesTimeline.test.tsx
 ---
 
@@ -27,9 +26,10 @@ Return users to the place where they stopped reading when they switch away from 
 
 # Current delta
 
-- A session-scoped map stores the top row, offset, and former last row for each thread.
-- The persistent upstream timeline list repositions when its displayed thread identity changes.
-- ChatView keeps live-follow disabled after a remembered position is restored.
+- Upstream's bounded session cache owns positions and disclosure state.
+- Alpha records the former last row to show New messages when a thread reopens below new content.
+- Missing saved rows return to the live edge.
+- Live-follow records the live edge even while streaming growth briefly extends beyond the viewport.
 
 # Retirement conditions
 
@@ -37,6 +37,8 @@ Return users to the place where they stopped reading when they switch away from 
   live-follow, new-content, and missing-row behavior.
 
 # Reconciliation notes
+
+- 2026-09-18, upstream `8db3c250f41e8f1d0b36da6b5a5093821e72d4f3`: `partially-upstreamed`. Upstream f17165a76 now owns the bounded position cache, disclosure state, and measured restoration. Removed the duplicate Alpha cache and restore loop. Retained the New messages indication, missing-row fallback to the live edge, and protection against false positions during live-follow.
 
 - 2026-09-15, upstream `5623089aea68ca62811f51321686c259fa4c810f`: `unaffected`. Upstream per-thread panel widths and timeline setup rows preserve reading-position restoration and live-follow behavior.
 

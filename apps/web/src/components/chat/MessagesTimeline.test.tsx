@@ -9,21 +9,19 @@ import {
 import { act, createRef, useLayoutEffect, type ReactNode, type Ref } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { create, type ReactTestRenderer } from "react-test-renderer";
-import { beforeAll, describe, expect, it, vi } from "vite-plus/test";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vite-plus/test";
 import type { LegendListRef, MaintainScrollAtEndOptions } from "@legendapp/list/react";
 import { shouldUseRestingComposerLayout } from "../composerFooterLayout";
 import { useComposerFocusState } from "./useComposerFocusState";
-import {
-  forgetTimelineScroll,
-  recallTimelineScroll,
-  rememberTimelineScroll,
-} from "./timelineScrollMemory";
+import { readTimelinePosition, rememberTimelinePosition } from "./timelineScrollAnchoring";
+
+let latestLegendListData: ReadonlyArray<{ id: string }> = [];
 
 vi.mock("@legendapp/list/react", async () => {
   const legendListTestId = "legend-list";
 
   const LegendList = (props: {
-    data: Array<{ id: string }>;
+    data: ReadonlyArray<{ id: string }>;
     keyExtractor: (item: { id: string }) => string;
     renderItem: (args: { item: { id: string } }) => ReactNode;
     ListHeaderComponent?: ReactNode;
@@ -46,6 +44,7 @@ vi.mock("@legendapp/list/react", async () => {
         };
     ref?: Ref<LegendListRef>;
   }) => {
+    latestLegendListData = props.data;
     if (props.anchoredEndSpace) {
       props.anchoredEndSpace.onReady?.({ anchorIndex: props.anchoredEndSpace.anchorIndex });
     }
@@ -151,7 +150,9 @@ function matchMedia() {
 let MessagesTimeline: typeof import("./MessagesTimeline").MessagesTimeline;
 let resolvePreviewAnnotationImage: typeof import("./MessagesTimeline").resolvePreviewAnnotationImage;
 
-beforeAll(async () => {
+const ElementStub = class ElementStub {};
+
+function stubDomGlobals() {
   const classList = {
     add: () => {},
     remove: () => {},
@@ -159,6 +160,7 @@ beforeAll(async () => {
     contains: () => false,
   };
 
+  vi.stubGlobal("Element", ElementStub);
   vi.stubGlobal("localStorage", {
     getItem: () => null,
     setItem: () => {},
@@ -166,6 +168,7 @@ beforeAll(async () => {
     clear: () => {},
   });
   vi.stubGlobal("window", {
+    Element: ElementStub,
     matchMedia,
     addEventListener: () => {},
     removeEventListener: () => {},
@@ -182,9 +185,19 @@ beforeAll(async () => {
       offsetHeight: 0,
     },
   });
+}
 
+beforeAll(async () => {
+  stubDomGlobals();
   ({ MessagesTimeline, resolvePreviewAnnotationImage } = await import("./MessagesTimeline"));
 }, 30_000);
+
+// The scroll-settling test clears every global stub; mounted timeline rows
+// still touch `window` through the tooltip's focus handling.
+beforeEach(() => {
+  latestLegendListData = [];
+  stubDomGlobals();
+});
 
 const ACTIVE_THREAD_ENVIRONMENT_ID = EnvironmentId.make("environment-local");
 const MESSAGE_CREATED_AT = "2026-03-17T19:12:28.000Z";
@@ -378,14 +391,11 @@ describe("MessagesTimeline", () => {
   );
 
   it.each([
-    { liveFollowEnabled: true, remembered: undefined },
-    {
-      liveFollowEnabled: false,
-      remembered: { rowId: "row-a", offset: 24, lastRowId: "row-b" },
-    },
+    { liveFollowEnabled: true, threadKey: "environment-a:thread-following" },
+    { liveFollowEnabled: false, threadKey: "environment-b:thread-reading" },
   ])(
-    "remembers the reading position only once live-follow is off: $liveFollowEnabled",
-    async ({ liveFollowEnabled, remembered }) => {
+    "records the timeline position with the streaming follow state: $liveFollowEnabled",
+    async ({ liveFollowEnabled, threadKey }) => {
       const frames = new Map<number, FrameRequestCallback>();
       let nextFrame = 0;
       vi.stubGlobal("requestAnimationFrame", (callback: FrameRequestCallback) => {
@@ -401,16 +411,25 @@ describe("MessagesTimeline", () => {
           callbacks.forEach((callback) => callback(0));
         });
       const props = buildProps();
-      forgetTimelineScroll(props.routeThreadKey);
+      props.routeThreadKey = threadKey;
       let timelineIsAtEnd = false;
+      const viewport = {
+        scrollTop: 24,
+        getBoundingClientRect: () => ({ top: 100 }),
+      };
+      const row = {
+        getBoundingClientRect: () => ({ top: 124 }),
+      };
       props.listRef.current = {
         getState: () => ({
           isAtEnd: timelineIsAtEnd,
           scroll: 24,
-          data: [{ id: "row-a" }, { id: "row-b" }],
+          data: latestLegendListData,
           positionAtIndex: (index: number) => index * 100,
+          indexByKey: (key: string) => latestLegendListData.findIndex((item) => item.id === key),
+          elementAtIndex: () => row,
         }),
-        getScrollableNode: () => null,
+        getScrollableNode: () => viewport,
       } as unknown as LegendListRef;
       let renderer: ReactTestRenderer | undefined;
       try {
@@ -438,42 +457,46 @@ describe("MessagesTimeline", () => {
           );
         });
         await flushFrame();
-        expect(recallTimelineScroll(props.routeThreadKey)).toEqual(remembered);
-
-        // Reaching the live edge always clears the memory, whichever mode set it.
-        timelineIsAtEnd = true;
-        await act(() =>
-          renderer!.update(
-            <MessagesTimeline
-              {...props}
-              liveFollowEnabled={liveFollowEnabled}
-              timelineEntries={[]}
-            />,
-          ),
-        );
-        await flushFrame();
-        expect(recallTimelineScroll(props.routeThreadKey)).toBeUndefined();
+        expect(latestLegendListData).not.toHaveLength(0);
+        expect(readTimelinePosition(threadKey)).toMatchObject({
+          rowId: latestLegendListData[0]!.id,
+          offsetWithinRow: -24,
+          scrollOffset: 24,
+          atEnd: liveFollowEnabled,
+          lastRowId: latestLegendListData.at(-1)!.id,
+        });
       } finally {
         await act(() => renderer?.unmount());
       }
     },
   );
 
-  it("restores a remembered position when the mounted list changes threads", async () => {
+  it("restores the saved row offset and settles after two layout frames", async () => {
     vi.stubGlobal("IS_REACT_ACT_ENVIRONMENT", true);
+    const frames = new Map<number, FrameRequestCallback>();
+    let nextFrame = 0;
     vi.stubGlobal("requestAnimationFrame", (callback: FrameRequestCallback) => {
-      callback(0);
-      return 0;
+      frames.set(++nextFrame, callback);
+      return nextFrame;
     });
-    vi.stubGlobal("cancelAnimationFrame", () => {});
+    vi.stubGlobal("cancelAnimationFrame", (frame: number) => frames.delete(frame));
+    const flushFrame = () =>
+      act(() => {
+        const callbacks = [...frames.values()];
+        frames.clear();
+        callbacks.forEach((callback) => callback(0));
+      });
     const props = buildProps();
     const nextThreadKey = "environment-local:thread-2";
-    rememberTimelineScroll(nextThreadKey, {
+    rememberTimelinePosition(nextThreadKey, {
       rowId: "entry-1",
-      offset: 24,
+      offsetWithinRow: 24,
+      scrollOffset: 200,
+      atEnd: false,
       lastRowId: "older-last-row",
     });
     const scrollToIndex = vi.fn().mockResolvedValue(undefined);
+    const scrollToOffset = vi.fn().mockResolvedValue(undefined);
     const onScrollRestored = vi.fn();
     const entry = {
       id: "entry-1",
@@ -492,7 +515,93 @@ describe("MessagesTimeline", () => {
       await act(() => {
         renderer = create(<MessagesTimeline {...props} timelineEntries={[entry]} />);
       });
+      const viewport = {
+        scrollTop: 200,
+        scrollHeight: 1000,
+        clientHeight: 400,
+        getBoundingClientRect: () => ({ top: 100 }),
+        addEventListener: () => {},
+        removeEventListener: () => {},
+        ownerDocument: {
+          addEventListener: () => {},
+          removeEventListener: () => {},
+        },
+      };
+      const row = {
+        getBoundingClientRect: () => ({ top: 76 }),
+      };
       props.listRef.current = {
+        scrollToIndex,
+        scrollToOffset,
+        getState: () => ({
+          data: latestLegendListData,
+          indexByKey: (key: string) => latestLegendListData.findIndex((item) => item.id === key),
+          elementAtIndex: () => row,
+        }),
+        getScrollableNode: () => viewport,
+      } as unknown as LegendListRef;
+      await act(() => {
+        renderer!.update(
+          <MessagesTimeline
+            {...props}
+            routeThreadKey={nextThreadKey}
+            displayThreadKey={nextThreadKey}
+            timelineEntries={[entry]}
+            onScrollRestored={onScrollRestored}
+          />,
+        );
+      });
+      await act(async () => {});
+      await flushFrame();
+      await flushFrame();
+      expect(onScrollRestored).toHaveBeenCalledWith({ atEnd: false, hasNewContent: true });
+      expect(scrollToIndex).toHaveBeenCalledWith({
+        index: 0,
+        viewOffset: -24,
+        animated: false,
+        viewPosition: 0,
+      });
+      expect(scrollToOffset).not.toHaveBeenCalled();
+    } finally {
+      await act(() => renderer?.unmount());
+    }
+  });
+
+  it("falls back to the end when the saved row is no longer loaded", async () => {
+    vi.stubGlobal("IS_REACT_ACT_ENVIRONMENT", true);
+    vi.stubGlobal("requestAnimationFrame", () => 0);
+    vi.stubGlobal("cancelAnimationFrame", () => {});
+    const props = buildProps();
+    const nextThreadKey = "environment-other:thread-missing-row";
+    rememberTimelinePosition(nextThreadKey, {
+      rowId: "removed-row",
+      offsetWithinRow: 24,
+      scrollOffset: 200,
+      atEnd: false,
+      lastRowId: "removed-row",
+    });
+    const scrollToEnd = vi.fn().mockResolvedValue(undefined);
+    const scrollToIndex = vi.fn().mockResolvedValue(undefined);
+    const onScrollRestored = vi.fn();
+    const entry = {
+      id: "entry-1",
+      kind: "work" as const,
+      createdAt: MESSAGE_CREATED_AT,
+      entry: {
+        id: "entry-1",
+        createdAt: MESSAGE_CREATED_AT,
+        label: "Loaded row",
+        tone: "info" as const,
+        sourceActivityKind: "context-compaction" as const,
+      },
+    };
+    let renderer: ReactTestRenderer | undefined;
+    try {
+      await act(() => {
+        renderer = create(<MessagesTimeline {...props} timelineEntries={[entry]} />);
+      });
+      props.listRef.current = {
+        scrollToEnd,
         scrollToIndex,
         getScrollableNode: () => null,
       } as unknown as LegendListRef;
@@ -507,15 +616,11 @@ describe("MessagesTimeline", () => {
           />,
         );
       });
-      expect(onScrollRestored).toHaveBeenCalledWith({ hasNewContent: true });
-      expect(scrollToIndex).toHaveBeenCalledWith({
-        index: 0,
-        viewOffset: -24,
-        animated: false,
-        viewPosition: 0,
-      });
+      expect(scrollToEnd).toHaveBeenCalledWith({ animated: false });
+      expect(scrollToIndex).not.toHaveBeenCalled();
+      expect(onScrollRestored).toHaveBeenCalledWith({ atEnd: true, hasNewContent: false });
+      expect(readTimelinePosition(nextThreadKey)).toMatchObject({ atEnd: true });
     } finally {
-      forgetTimelineScroll(nextThreadKey);
       await act(() => renderer?.unmount());
     }
   });
