@@ -3,7 +3,7 @@ id: alpha-distribution-identity
 status: active
 risk: red
 introduced_by: alpha-distribution-identity
-last_reconciled_with: 8db3c250f41e8f1d0b36da6b5a5093821e72d4f3
+last_reconciled_with: 03950089ffa5cecf0ce731227f58551f6437495f
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -66,7 +66,7 @@ identity.
 
 # Reconciliation notes
 
-- 2026-09-18, upstream `8db3c250f41e8f1d0b36da6b5a5093821e72d4f3`: `mechanical-conflict`. Adopted the 0.0.42 package baseline and desktop bundle changes. Alpha app, protocol, state, package, and service identities remain isolated.
+- 2026-09-18, upstream `03950089ffa5cecf0ce731227f58551f6437495f`: `mechanical-conflict`. Adopted the 0.0.42 package baseline and desktop bundle changes. Alpha app, protocol, state, package, and service identities remain isolated.
 
 - 2026-09-15, upstream `5623089aea68ca62811f51321686c259fa4c810f`: `mechanical-conflict`. Retained Alpha desktop, renderer, and state identities while adopting optional local environments and compiled WSL runtimes. WSL caches now use the Alpha home and executable.
 

@@ -3,7 +3,7 @@ id: antigravity-path-canonicalization
 status: active
 risk: amber
 introduced_by: antigravity-path-canonicalization
-last_reconciled_with: 8db3c250f41e8f1d0b36da6b5a5093821e72d4f3
+last_reconciled_with: 03950089ffa5cecf0ce731227f58551f6437495f
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -41,7 +41,7 @@ session workspace.
 
 # Reconciliation notes
 
-- 2026-09-18, upstream `8db3c250f41e8f1d0b36da6b5a5093821e72d4f3`: `mechanical-conflict`. Adopted upstream runtime discovery changes while retaining canonical-parent handling and symlink-escape checks.
+- 2026-09-18, upstream `03950089ffa5cecf0ce731227f58551f6437495f`: `mechanical-conflict`. Adopted upstream runtime discovery changes while retaining canonical-parent handling and symlink-escape checks.
 
 - 2026-09-15, upstream `5623089aea68ca62811f51321686c259fa4c810f`: `unaffected`. No incoming changes alter Antigravity path canonicalization or workspace containment.
 

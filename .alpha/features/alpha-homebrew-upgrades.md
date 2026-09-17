@@ -3,7 +3,7 @@ id: alpha-homebrew-upgrades
 status: active
 risk: red
 introduced_by: alpha-homebrew-upgrades
-last_reconciled_with: 8db3c250f41e8f1d0b36da6b5a5093821e72d4f3
+last_reconciled_with: 03950089ffa5cecf0ce731227f58551f6437495f
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -56,7 +56,7 @@ Developer account or a separate package-hosting service.
 
 # Reconciliation notes
 
-- 2026-09-18, upstream `8db3c250f41e8f1d0b36da6b5a5093821e72d4f3`: `unaffected`. The Alpha cask, pinned certificate, and arm64 release path remain unchanged.
+- 2026-09-18, upstream `03950089ffa5cecf0ce731227f58551f6437495f`: `unaffected`. The Alpha cask, pinned certificate, and arm64 release path remain unchanged.
 
 - 2026-09-15, upstream `5623089aea68ca62811f51321686c259fa4c810f`: `unaffected`. Preserved the arm64 DMG, pinned release certificate, cask version, and Alpha state directory.
 

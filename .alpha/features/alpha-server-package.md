@@ -3,7 +3,7 @@ id: alpha-server-package
 status: active
 risk: red
 introduced_by: alpha-server-package
-last_reconciled_with: 8db3c250f41e8f1d0b36da6b5a5093821e72d4f3
+last_reconciled_with: 03950089ffa5cecf0ce731227f58551f6437495f
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -67,7 +67,7 @@ official T3 Code without publishing to or executing the upstream `t3` package.
 
 # Reconciliation notes
 
-- 2026-09-18, upstream `8db3c250f41e8f1d0b36da6b5a5093821e72d4f3`: `mechanical-conflict`. Adopted installer and pinned-runtime progress reporting while retaining Alpha downloads, default home, executable, and commands. Service protocol 3 rejects older launchers before an update trial.
+- 2026-09-18, upstream `03950089ffa5cecf0ce731227f58551f6437495f`: `mechanical-conflict`. Adopted installer and pinned-runtime progress reporting while retaining Alpha downloads, default home, executable, and commands. Service protocol 3 rejects older launchers before an update trial.
 
 - 2026-09-15, upstream `5623089aea68ca62811f51321686c259fa4c810f`: `upstream-redesign`. Adopted platform CLI archives and npm launchers while retaining Alpha package, binary, home, service, and release identities. SSH and pinned updates use Alpha archives; legacy npm launchers remain supported.
 

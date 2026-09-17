@@ -3,7 +3,7 @@ id: remember-thread-scroll-position
 status: partial
 risk: green
 introduced_by: 31e67d13ce42c0989a4698f9140c3bea4aba9731
-last_reconciled_with: 8db3c250f41e8f1d0b36da6b5a5093821e72d4f3
+last_reconciled_with: 03950089ffa5cecf0ce731227f58551f6437495f
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -38,7 +38,7 @@ Return users to the place where they stopped reading when they switch away from 
 
 # Reconciliation notes
 
-- 2026-09-18, upstream `8db3c250f41e8f1d0b36da6b5a5093821e72d4f3`: `partially-upstreamed`. Upstream f17165a76 now owns the bounded position cache, disclosure state, and measured restoration. Removed the duplicate Alpha cache and restore loop. Retained the New messages indication, missing-row fallback to the live edge, and protection against false positions during live-follow.
+- 2026-09-18, upstream `03950089ffa5cecf0ce731227f58551f6437495f`: `partially-upstreamed`. Upstream f17165a76 now owns the bounded position cache, disclosure state, and measured restoration. Removed the duplicate Alpha cache and restore loop. Retained the New messages indication, missing-row fallback to the live edge, and protection against false positions during live-follow.
 
 - 2026-09-15, upstream `5623089aea68ca62811f51321686c259fa4c810f`: `unaffected`. Upstream per-thread panel widths and timeline setup rows preserve reading-position restoration and live-follow behavior.
 

@@ -3,7 +3,7 @@ id: restore-reverted-message-to-composer
 status: active
 risk: amber
 introduced_by: a47276a40
-last_reconciled_with: 8db3c250f41e8f1d0b36da6b5a5093821e72d4f3
+last_reconciled_with: 03950089ffa5cecf0ce731227f58551f6437495f
 upstream_issue: pingdotgg/t3code#5685
 upstream_pr: pingdotgg/t3code#6044
 surfaces:
@@ -43,7 +43,7 @@ Let users edit and resend a reverted prompt instead of recreating its text and i
 
 # Reconciliation notes
 
-- 2026-09-18, upstream `8db3c250f41e8f1d0b36da6b5a5093821e72d4f3`: `mechanical-conflict`. Adopted rich-text defaults, queued messages, and worktree setup changes while retaining draft stashing, context exclusion, soft attachment failures, and checkpoint bounds.
+- 2026-09-18, upstream `03950089ffa5cecf0ce731227f58551f6437495f`: `mechanical-conflict`. Adopted rich-text defaults, queued messages, and worktree setup changes while retaining draft stashing, context exclusion, soft attachment failures, and checkpoint bounds.
 
 - 2026-09-15, upstream `5623089aea68ca62811f51321686c259fa4c810f`: `unaffected`. Upstream composer and async worktree setup changes preserve draft stashing, prompt and attachment recovery, context filtering, and soft attachment failures.
 
