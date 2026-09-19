@@ -3,7 +3,7 @@ id: alpha-release-workflow
 status: active
 risk: red
 introduced_by: alpha-release-workflow
-last_reconciled_with: 03950089ffa5cecf0ce731227f58551f6437495f
+last_reconciled_with: dfbb11bdd7c3f1a5575cb55d3e3abb12be025727
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -87,6 +87,8 @@ upstream's official release, hosted-web, AUR, or npm publication paths.
   release destination without touching official distribution channels.
 
 # Reconciliation notes
+
+- 2026-09-19, upstream `dfbb11bdd7c3f1a5575cb55d3e3abb12be025727`: `mechanical-conflict`. Updated Alpha release flags and output configuration for the new Effect API. The Alpha publish command keeps its prebuilt-dir flag; official release jobs remain repository-gated.
 
 - 2026-09-18, upstream `03950089ffa5cecf0ce731227f58551f6437495f`: `persistence-sensitive`. Adopted upstream release checks while retaining the official-repository gate and separate Alpha release workflow. No release was performed.
 

@@ -3,7 +3,7 @@ id: alpha-local-only-telemetry
 status: active
 risk: red
 introduced_by: alpha-local-only-telemetry
-last_reconciled_with: 03950089ffa5cecf0ce731227f58551f6437495f
+last_reconciled_with: dfbb11bdd7c3f1a5575cb55d3e3abb12be025727
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -13,19 +13,19 @@ surfaces:
   - mobile
   - relay
 tests:
-  - vp test run apps/server/src/telemetry/AnalyticsService.test.ts apps/server/src/cli/config.test.ts apps/server/src/server.test.ts
+  - vp test run apps/server/src/telemetry/AnalyticsService.test.ts apps/server/src/serverLogger.test.ts apps/server/src/cli/config.test.ts apps/server/src/server.test.ts
   - vp test run packages/shared/src/relayTracing.test.ts infra/relay/src/observability.test.ts apps/desktop/src/app/DesktopObservability.test.ts apps/mobile/src/features/observability/tracing.test.ts
 ---
 
 # Intent
 
 Keep T3 Code Alpha private by default and prevent the distribution from sending product analytics,
-traces, or metrics to third-party telemetry services.
+traces, metrics, or logs to third-party telemetry services.
 
 # Behavioral invariants
 
 - Alpha never sends PostHog analytics.
-- Alpha ignores configured OTLP trace and metric endpoints.
+- Alpha ignores configured OTLP trace, metric, and log endpoints.
 - Alpha relay clients and the Alpha relay Worker do not export traces to Axiom.
 - Local logs, local trace files, browser trace collection, and resource diagnostics remain available.
 - Environment variables, persisted settings, build-time public configuration, and ingest tokens
@@ -44,6 +44,8 @@ traces, or metrics to third-party telemetry services.
   accurate public privacy disclosure.
 
 # Reconciliation notes
+
+- 2026-09-19, upstream `dfbb11bdd7c3f1a5575cb55d3e3abb12be025727`: `upstream-redesign`. Adopted the shared desktop logger and tracer setup. Alpha blocks the new OTLP log endpoints in server configuration and both runtime export paths, including persisted settings. Local logs and span events remain available.
 
 - 2026-09-18, upstream `03950089ffa5cecf0ce731227f58551f6437495f`: `unaffected`. The HTTP changes retain the Alpha outbound-export guard. Analytics, OTLP, and relay export remain disabled.
 

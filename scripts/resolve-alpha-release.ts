@@ -85,7 +85,7 @@ export const writeAlphaReleaseOutput = Effect.fn("writeAlphaReleaseOutput")(func
     return;
   }
 
-  const outputPath = yield* Config.nonEmptyString("GITHUB_OUTPUT").pipe(
+  const outputPath = yield* Config.NonEmptyString("GITHUB_OUTPUT").pipe(
     Effect.mapError((cause) => new AlphaReleaseGitHubOutputConfigError({ cause })),
   );
   const serialized = entries.map(([key, value]) => `${key}=${value}\n`).join("");
@@ -99,23 +99,23 @@ export const writeAlphaReleaseOutput = Effect.fn("writeAlphaReleaseOutput")(func
 const command = Command.make(
   "resolve-alpha-release",
   {
-    date: Flag.string("date").pipe(
+    date: Flag.String("date").pipe(
       Flag.withSchema(DateSchema),
       Flag.withDescription("Alpha build date in YYYYMMDD."),
     ),
-    runNumber: Flag.string("run-number").pipe(
+    runNumber: Flag.String("run-number").pipe(
       Flag.withSchema(RunNumberSchema),
       Flag.withDescription("GitHub Actions run number."),
     ),
-    sha: Flag.string("sha").pipe(
+    sha: Flag.String("sha").pipe(
       Flag.withSchema(ShaSchema),
       Flag.withDescription("Commit sha for the Alpha build."),
     ),
-    githubOutput: Flag.boolean("github-output").pipe(
+    githubOutput: Flag.Boolean("github-output").pipe(
       Flag.withDescription("Write values to GITHUB_OUTPUT instead of stdout."),
       Flag.withDefault(false),
     ),
-    root: Flag.string("root").pipe(
+    root: Flag.String("root").pipe(
       Flag.withDescription("Workspace root used to resolve apps/desktop/package.json."),
       Flag.optional,
     ),

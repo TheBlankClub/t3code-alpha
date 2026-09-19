@@ -91,12 +91,12 @@ export const renderAlphaHomebrewCaskFile = Effect.fn("renderAlphaHomebrewCaskFil
 const command = Command.make(
   "render-alpha-homebrew-cask",
   {
-    version: Flag.string("version").pipe(
+    version: Flag.String("version").pipe(
       Flag.withSchema(AlphaVersion),
       Flag.withDescription("Released Alpha version."),
     ),
-    arm64Path: Flag.string("arm64-path").pipe(Flag.withDescription("Path to the macOS arm64 DMG.")),
-    outputPath: Flag.string("output").pipe(Flag.withDescription("Destination Cask file.")),
+    arm64Path: Flag.String("arm64-path").pipe(Flag.withDescription("Path to the macOS arm64 DMG.")),
+    outputPath: Flag.String("output").pipe(Flag.withDescription("Destination Cask file.")),
   },
   ({ version, arm64Path, outputPath }) =>
     renderAlphaHomebrewCaskFile(version, arm64Path, outputPath),

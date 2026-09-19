@@ -3,7 +3,7 @@ id: restore-reverted-message-to-composer
 status: active
 risk: amber
 introduced_by: a47276a40
-last_reconciled_with: 03950089ffa5cecf0ce731227f58551f6437495f
+last_reconciled_with: dfbb11bdd7c3f1a5575cb55d3e3abb12be025727
 upstream_issue: pingdotgg/t3code#5685
 upstream_pr: pingdotgg/t3code#6044
 surfaces:
@@ -42,6 +42,8 @@ Let users edit and resend a reverted prompt instead of recreating its text and i
   complete when individual attachments fail or exceed the composer limit.
 
 # Reconciliation notes
+
+- 2026-09-19, upstream `dfbb11bdd7c3f1a5575cb55d3e3abb12be025727`: `partially-upstreamed`. Adopted shared-workspace file-rewind protection. Retained draft stashing, sent-only context exclusion, soft attachment failures, and checkpoint-bounded history.
 
 - 2026-09-18, upstream `03950089ffa5cecf0ce731227f58551f6437495f`: `mechanical-conflict`. Adopted rich-text defaults, queued messages, and worktree setup changes while retaining draft stashing, context exclusion, soft attachment failures, and checkpoint bounds.
 

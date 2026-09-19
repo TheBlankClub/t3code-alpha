@@ -3,7 +3,7 @@ id: alpha-distribution-identity
 status: active
 risk: red
 introduced_by: alpha-distribution-identity
-last_reconciled_with: 03950089ffa5cecf0ce731227f58551f6437495f
+last_reconciled_with: dfbb11bdd7c3f1a5575cb55d3e3abb12be025727
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -65,6 +65,8 @@ identity.
   can express every invariant through that upstream model without bespoke runtime code.
 
 # Reconciliation notes
+
+- 2026-09-19, upstream `dfbb11bdd7c3f1a5575cb55d3e3abb12be025727`: `mechanical-conflict`. Adopted the Effect API and desktop configuration changes. Alpha app, protocol, state, and signing identities remain unchanged.
 
 - 2026-09-18, upstream `03950089ffa5cecf0ce731227f58551f6437495f`: `mechanical-conflict`. Adopted the 0.0.42 package baseline and desktop bundle changes. Alpha app, protocol, state, package, and service identities remain isolated.
 

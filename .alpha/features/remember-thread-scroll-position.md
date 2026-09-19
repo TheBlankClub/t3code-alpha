@@ -3,7 +3,7 @@ id: remember-thread-scroll-position
 status: partial
 risk: green
 introduced_by: 31e67d13ce42c0989a4698f9140c3bea4aba9731
-last_reconciled_with: 03950089ffa5cecf0ce731227f58551f6437495f
+last_reconciled_with: dfbb11bdd7c3f1a5575cb55d3e3abb12be025727
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -37,6 +37,8 @@ Return users to the place where they stopped reading when they switch away from 
   live-follow, new-content, and missing-row behavior.
 
 # Reconciliation notes
+
+- 2026-09-19, upstream `dfbb11bdd7c3f1a5575cb55d3e3abb12be025727`: `partially-upstreamed`. Adopted the upstream scroll and thought-preview changes. Retained New messages, missing-row fallback, and live-follow safeguards.
 
 - 2026-09-18, upstream `03950089ffa5cecf0ce731227f58551f6437495f`: `partially-upstreamed`. Upstream f17165a76 now owns the bounded position cache, disclosure state, and measured restoration. Removed the duplicate Alpha cache and restore loop. Retained the New messages indication, missing-row fallback to the live edge, and protection against false positions during live-follow.
 

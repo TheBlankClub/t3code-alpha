@@ -3,7 +3,7 @@ id: alpha-update-channel
 status: active
 risk: red
 introduced_by: alpha-update-channel
-last_reconciled_with: 03950089ffa5cecf0ce731227f58551f6437495f
+last_reconciled_with: dfbb11bdd7c3f1a5575cb55d3e3abb12be025727
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -69,6 +69,8 @@ automatic updater.
   cross-platform source and export support.
 
 # Reconciliation notes
+
+- 2026-09-19, upstream `dfbb11bdd7c3f1a5575cb55d3e3abb12be025727`: `mechanical-conflict`. Adopted upstream packaging changes while retaining the fixed Alpha channel, manual update policy, and fork-owned release feed.
 
 - 2026-09-18, upstream `03950089ffa5cecf0ce731227f58551f6437495f`: `mechanical-conflict`. Adopted upstream settings and composer changes. Alpha branding, fixed update track, and disabled automatic desktop updates remain intact.
 

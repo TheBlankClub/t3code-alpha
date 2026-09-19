@@ -3,7 +3,7 @@ id: alpha-upstream-sync-automation
 status: active
 risk: red
 introduced_by: alpha-upstream-sync-automation
-last_reconciled_with: 03950089ffa5cecf0ce731227f58551f6437495f
+last_reconciled_with: dfbb11bdd7c3f1a5575cb55d3e3abb12be025727
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -58,6 +58,8 @@ Alpha-only feature is unaffected.
   semantic feature reconciliation, visible conflict escalation, and configurable runner pools.
 
 # Reconciliation notes
+
+- 2026-09-19, upstream `dfbb11bdd7c3f1a5575cb55d3e3abb12be025727`: `mechanical-conflict`. Adopted native fingerprint label reconciliation while retaining public GitHub runners and Alpha sync gates.
 
 - 2026-09-18, upstream `03950089ffa5cecf0ce731227f58551f6437495f`: `unaffected`. The Alpha sync workflows and semantic-overlap classifier remain unchanged.
 

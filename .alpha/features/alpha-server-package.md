@@ -3,7 +3,7 @@ id: alpha-server-package
 status: active
 risk: red
 introduced_by: alpha-server-package
-last_reconciled_with: 03950089ffa5cecf0ce731227f58551f6437495f
+last_reconciled_with: dfbb11bdd7c3f1a5575cb55d3e3abb12be025727
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -66,6 +66,8 @@ official T3 Code without publishing to or executing the upstream `t3` package.
   commands, and background-service registration.
 
 # Reconciliation notes
+
+- 2026-09-19, upstream `dfbb11bdd7c3f1a5575cb55d3e3abb12be025727`: `mechanical-conflict`. Adopted executable import discovery and dependency updates. Service help and recovery commands now use the Alpha identity throughout. Updated the retained migration 052 test for the current SQLite layer API; it still checks old-title preservation and repeat migration.
 
 - 2026-09-18, upstream `03950089ffa5cecf0ce731227f58551f6437495f`: `mechanical-conflict`. Adopted installer and pinned-runtime progress reporting while retaining Alpha downloads, default home, executable, and commands. Service protocol 3 rejects older launchers before an update trial.
 
