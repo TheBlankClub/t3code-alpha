@@ -18,7 +18,7 @@ const collect = (stream: NodeJS.ReadableStream) =>
 
 // oxlint-disable-next-line t3code/no-global-process-runtime -- Native subprocess fixture runs only on POSIX.
 it.skipIf(process.platform === "win32")(
-  "publishes platform tarballs before the launcher and preserves npm stdin",
+  "publishes the single package tarball and preserves npm stdin",
   async () => {
     const root = await NodeFSP.mkdtemp(NodePath.join(NodeOS.tmpdir(), "t3-alpha-publish-"));
     const packagesDir = NodePath.join(root, "packages");
@@ -26,13 +26,7 @@ it.skipIf(process.platform === "win32")(
     const callsPath = NodePath.join(root, "npm-calls.jsonl");
     await NodeFSP.mkdir(packagesDir, { recursive: true });
     await NodeFSP.mkdir(binDir, { recursive: true });
-    for (const name of [
-      "t3code-alpha-linux-x64.tgz",
-      "t3code-alpha-darwin-arm64.tgz",
-      "t3code-alpha.tgz",
-    ]) {
-      await NodeFSP.writeFile(NodePath.join(packagesDir, name), "fixture\n");
-    }
+    await NodeFSP.writeFile(NodePath.join(packagesDir, "t3code-alpha.tgz"), "fixture\n");
     const fakeNpm = NodePath.join(binDir, "npm");
     await NodeFSP.writeFile(
       fakeNpm,
@@ -69,11 +63,9 @@ fs.appendFileSync(process.env.T3_ALPHA_NPM_CALLS, JSON.stringify({ args: process
       .trim()
       .split("\n")
       .map((line) => JSON.parse(line) as { args: string[]; input: string });
-    expect(calls.map((call) => NodePath.basename(call.args.at(-1)!))).toEqual([
-      "t3code-alpha-darwin-arm64.tgz",
-      "t3code-alpha-linux-x64.tgz",
-      "t3code-alpha.tgz",
-    ]);
+    // One package serves every platform: it downloads its executable from the
+    // GitHub release, so there are no per-platform tarballs to publish first.
+    expect(calls.map((call) => NodePath.basename(call.args.at(-1)!))).toEqual(["t3code-alpha.tgz"]);
     expect(calls[0]?.args.slice(0, -1)).toEqual([
       "publish",
       "--access",
