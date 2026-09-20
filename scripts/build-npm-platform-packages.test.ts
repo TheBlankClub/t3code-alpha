@@ -59,6 +59,7 @@ const makeFakeArchives = Effect.fn("test.makeFakeArchives")(function* () {
       "client",
       "resource-monitor",
       "node_modules/node-pty",
+      "node_modules/node-pty/build/Release",
       "node_modules/@ff-labs/fff-node",
     ]) {
       yield* fs.makeDirectory(path.join(contentDir, dir), { recursive: true });
@@ -70,6 +71,10 @@ const makeFakeArchives = Effect.fn("test.makeFakeArchives")(function* () {
     yield* fs.writeFileString(
       path.join(contentDir, "node_modules/@ff-labs/fff-node/package.json"),
       '{ "name": "@ff-labs/fff-node", "version": "0.9.4" }\n',
+    );
+    yield* fs.writeFileString(
+      path.join(contentDir, "node_modules/node-pty/build/Release/pty.node"),
+      "native addon\n",
     );
     yield* fs.writeFileString(path.join(contentDir, "client/index.html"), "<html></html>\n");
     yield* fs.writeFileString(
@@ -193,7 +198,7 @@ it.layer(NodeServices.layer)("build-npm-platform-packages", (it) => {
 
       // The tarball is what gets published: it must carry node_modules (which
       // `npm publish <dir>` would strip) under npm's `package/` root, with the
-      // executable bit intact.
+      // executable bit intact. npm rejects directory and AppleDouble entries.
       const listing = yield* run(
         "tar",
         ["-tzvf", path.join(fixture.outputDir, "t3code-alpha-linux-x64.tgz")],
@@ -201,11 +206,52 @@ it.layer(NodeServices.layer)("build-npm-platform-packages", (it) => {
       );
       assert.equal(listing.exitCode, 0, listing.stderr);
       const lines = listing.stdout.split("\n");
-      assert.isTrue(lines.some((line) => line.endsWith(" package/node_modules/node-pty/")));
+      assert.isFalse(
+        lines.some((line) => line.startsWith("d")),
+        listing.stdout,
+      );
+      assert.isFalse(
+        lines.some((line) => / package\/(?:.*\/)?\._/.test(line)),
+        listing.stdout,
+      );
       assert.isTrue(lines.some((line) => line.endsWith(" package/package.json")));
+      assert.isTrue(
+        lines.some((line) => line.endsWith(" package/node_modules/node-pty/package.json")),
+        listing.stdout,
+      );
+      assert.isTrue(
+        lines.some((line) =>
+          line.endsWith(" package/node_modules/node-pty/build/Release/pty.node"),
+        ),
+        listing.stdout,
+      );
+      assert.isTrue(
+        lines.some((line) => line.endsWith(" package/node_modules/@ff-labs/fff-node/package.json")),
+        listing.stdout,
+      );
       assert.isTrue(
         lines.some((line) => /^-rwxr-xr-x .* package\/t3-alpha$/.test(line)),
         listing.stdout,
+      );
+
+      const launcherListing = yield* run(
+        "tar",
+        ["-tzvf", path.join(fixture.outputDir, "t3code-alpha.tgz")],
+        { cwd: fixture.outputDir },
+      );
+      assert.equal(launcherListing.exitCode, 0, launcherListing.stderr);
+      const launcherLines = launcherListing.stdout.split("\n");
+      assert.isFalse(
+        launcherLines.some((line) => line.startsWith("d")),
+        launcherListing.stdout,
+      );
+      assert.isFalse(
+        launcherLines.some((line) => / package\/(?:.*\/)?\._/.test(line)),
+        launcherListing.stdout,
+      );
+      assert.isTrue(
+        launcherLines.some((line) => /^-rwxr-xr-x .* package\/bin\/t3-alpha\.js$/.test(line)),
+        launcherListing.stdout,
       );
 
       // NODE_PATH stands in for node_modules: require.resolve finds the

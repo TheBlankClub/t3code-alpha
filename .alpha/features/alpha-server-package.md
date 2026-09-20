@@ -48,6 +48,8 @@ official T3 Code without publishing to or executing the upstream `t3` package.
 
 # Current delta
 
+- npm tarballs contain file entries only. The packager suppresses macOS AppleDouble metadata while retaining bundled native dependencies and executable modes, because npm rejects directory and metadata entries.
+
 - `packages/shared/src/alphaDistribution.ts` owns the package, binary, dist-tag, home-directory,
   and systemd-unit identities.
 - CLI entrypoint fallback canonicalizes both the module and executable paths so npm links work

@@ -297,6 +297,10 @@ const hostTar = Effect.map(HostProcessPlatform, (platform) =>
 /**
  * Writes `stageDir/package` as a gzipped npm tarball and then moves the tree
  * to `packageDir` so the contents stay inspectable beside the tarball.
+ *
+ * npm rejects directory entries, so pass tar each file rather than the
+ * package directory. COPYFILE_DISABLE prevents macOS bsdtar from adding
+ * AppleDouble `._*` metadata files for the package tree.
  */
 const packAndPlace = Effect.fn("packAndPlace")(function* (input: {
   readonly stageDir: string;
@@ -304,13 +308,34 @@ const packAndPlace = Effect.fn("packAndPlace")(function* (input: {
   readonly tarball: string;
 }) {
   const fs = yield* FileSystem.FileSystem;
+  const path = yield* Path.Path;
+  const packageDir = path.join(input.stageDir, "package");
+  const files: Array<string> = [];
+  for (const entry of yield* fs.readDirectory(packageDir, { recursive: true })) {
+    if ((yield* fs.stat(path.join(packageDir, entry))).type !== "Directory") {
+      files.push(entry);
+    }
+  }
+  const tarFileList = path.join(input.stageDir, ".npm-tar-files");
+  yield* fs.writeFileString(
+    tarFileList,
+    files
+      .sort()
+      .map((file) => `package/${file.replaceAll("\\", "/")}`)
+      .join("\n"),
+  );
   yield* fs.remove(input.tarball, { force: true });
   yield* runCommand(
-    ChildProcess.make(yield* hostTar, ["-czf", input.tarball, "-C", input.stageDir, "package"]),
+    ChildProcess.make(
+      yield* hostTar,
+      ["-czf", input.tarball, "--no-recursion", "-C", input.stageDir, "-T", tarFileList],
+      { env: { ...process.env, COPYFILE_DISABLE: "1" } },
+    ),
     `tar (${input.tarball})`,
   );
+  yield* fs.remove(tarFileList, { force: true });
   yield* fs.remove(input.packageDir, { recursive: true, force: true });
-  yield* fs.rename(`${input.stageDir}/package`, input.packageDir);
+  yield* fs.rename(packageDir, input.packageDir);
 });
 
 export interface NpmPackageOutput {
