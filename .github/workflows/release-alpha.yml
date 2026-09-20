@@ -422,16 +422,6 @@ jobs:
             arch: arm64
             rust_target: aarch64-unknown-linux-gnu
             resource_key: linux-arm64
-          - runner: windows-2025
-            platform: win
-            arch: x64
-            rust_target: x86_64-pc-windows-msvc
-            resource_key: win32-x64
-          - runner: windows-11-arm
-            platform: win
-            arch: arm64
-            rust_target: aarch64-pc-windows-msvc
-            resource_key: win32-arm64
     steps:
       - name: Checkout release commit
         uses: actions/checkout@v6
@@ -443,10 +433,8 @@ jobs:
           sparse-checkout-cone-mode: false
 
       - uses: ./.github/actions/setup-apt-mirrors
-        if: matrix.platform == 'linux'
 
       - name: Install Linux CLI build libraries
-        if: matrix.platform == 'linux'
         shell: bash
         run: |
           sudo apt-get update
@@ -488,9 +476,6 @@ jobs:
         run: |
           set -euo pipefail
           binary_name="t3-resource-monitor"
-          if [[ "${{ matrix.platform }}" == "win" ]]; then
-            binary_name="${binary_name}.exe"
-          fi
           target_dir="$RUNNER_TEMP/cli-resource-monitor/${{ matrix.resource_key }}"
           mkdir -p "$target_dir"
           cp "native/resource-monitor/target/${{ matrix.rust_target }}/release/${binary_name}" "$target_dir/$binary_name"
@@ -517,10 +502,13 @@ jobs:
           if-no-files-found: error
           retention-days: 2
 
+  # Runs after `release`: the published package downloads its executable from
+  # the GitHub release at install time, so that release and its SHA256SUMS
+  # must exist before the package is installable.
   publish_cli:
     name: Publish t3code-alpha to npm
-    needs: [preflight, build, build_cli_archives]
-    if: ${{ !failure() && !cancelled() && needs.preflight.result == 'success' && needs.build.result == 'success' && needs.build_cli_archives.result == 'success' }}
+    needs: [preflight, build, build_cli_archives, release]
+    if: ${{ !failure() && !cancelled() && needs.preflight.result == 'success' && needs.build.result == 'success' && needs.build_cli_archives.result == 'success' && needs.release.result == 'success' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     permissions:
@@ -554,23 +542,19 @@ jobs:
           registry-url: https://registry.npmjs.org
           package-manager-cache: false
 
-      - name: Download CLI archives
-        uses: actions/download-artifact@v8
-        with:
-          pattern: alpha-cli-*
-          merge-multiple: true
-          path: release-cli
+      - name: Build the npm package
+        run: node scripts/build-npm-cli-package.ts --version "${{ needs.preflight.outputs.version }}" --output-dir npm-prebuilt
 
-      - name: Build npm packages from CLI archives
-        run: node scripts/build-npm-platform-packages.ts --archives-dir release-cli --version "${{ needs.preflight.outputs.version }}" --output-dir npm-prebuilt
+      - name: Verify the package installs from the published release
+        run: node scripts/verify-npm-cli-package.ts --prebuilt-dir npm-prebuilt --version "${{ needs.preflight.outputs.version }}"
 
       - name: Publish Alpha CLI package
         run: node apps/server/scripts/cli.ts publish --prebuilt-dir npm-prebuilt --tag latest --provenance --verbose
 
   release:
     name: Publish GitHub prerelease
-    needs: [preflight, build, build_cli_archives, publish_cli]
-    if: ${{ !failure() && !cancelled() && needs.preflight.result == 'success' && needs.build.result == 'success' && needs.build_cli_archives.result == 'success' && needs.publish_cli.result == 'success' }}
+    needs: [preflight, build, build_cli_archives]
+    if: ${{ !failure() && !cancelled() && needs.preflight.result == 'success' && needs.build.result == 'success' && needs.build_cli_archives.result == 'success' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     permissions:
@@ -614,9 +598,9 @@ jobs:
           set -euo pipefail
           cd release-assets
           shopt -s nullglob
-          archives=(t3-alpha-*.tar.gz t3-alpha-*.zip)
-          if [[ ${#archives[@]} -ne 5 ]]; then
-            echo "Expected five Alpha CLI archives, found ${#archives[@]}." >&2
+          archives=(t3-alpha-*.tar.gz)
+          if [[ ${#archives[@]} -ne 3 ]]; then
+            echo "Expected three Alpha CLI archives, found ${#archives[@]}." >&2
             exit 1
           fi
           sha256sum "${archives[@]}" > SHA256SUMS
@@ -636,7 +620,6 @@ jobs:
           files: |
             release-assets/*.dmg
             release-assets/t3-alpha-*.tar.gz
-            release-assets/t3-alpha-*.zip
             release-assets/SHA256SUMS
           fail_on_unmatched_files: true
           token: ${{ github.token }}
@@ -654,7 +637,6 @@ jobs:
           files: |
             release-assets/*.dmg
             release-assets/t3-alpha-*.tar.gz
-            release-assets/t3-alpha-*.zip
             release-assets/SHA256SUMS
           fail_on_unmatched_files: true
           token: ${{ github.token }}

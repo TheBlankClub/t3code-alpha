@@ -167,17 +167,16 @@ const buildExeCmd = Command.make(
 // ---------------------------------------------------------------------------
 
 /**
- * Publishes the tarballs scripts/build-npm-platform-packages.ts produced:
- * every `t3code-alpha-<platform>.tgz` first, `t3code-alpha.tgz` (the launcher) last, so
- * the launcher is never installable before the executables it depends on.
- * Tarballs rather than directories because `npm publish <dir>` strips the
- * `node_modules/` the executable loads its native addons from.
+ * Publishes the `t3code-alpha.tgz` scripts/build-npm-cli-package.ts produced.
+ * One package serves every platform: it downloads its executable from the
+ * GitHub release at install time, so there are no per-platform packages to
+ * order the publish around.
  */
 const publishCmd = Command.make(
   "publish",
   {
     packagesDir: Flag.String("prebuilt-dir").pipe(
-      Flag.withDescription("Output dir of scripts/build-npm-platform-packages.ts."),
+      Flag.withDescription("Output dir of scripts/build-npm-cli-package.ts."),
     ),
     tag: Flag.String("tag").pipe(Flag.withDefault("latest")),
     access: Flag.String("access").pipe(Flag.withDefault("public")),
@@ -192,54 +191,30 @@ const publishCmd = Command.make(
       // npm runs with cwd set to the packages dir below, so tarball paths are
       // resolved once here rather than joined twice.
       const packagesDir = path.resolve(config.packagesDir);
-      const launcherTarball = path.join(packagesDir, `${ALPHA_DISTRIBUTION.serverPackageName}.tgz`);
-      const platformTarballs = (yield* fs
-        .readDirectory(packagesDir)
-        .pipe(Effect.orElseSucceed((): ReadonlyArray<string> => [])))
-        .filter(
-          (entry) =>
-            entry.startsWith(`${ALPHA_DISTRIBUTION.serverNpmPlatformPackagePrefix}-`) &&
-            entry.endsWith(".tgz"),
-        )
-        .sort()
-        .map((entry) => path.join(packagesDir, entry));
-      if (platformTarballs.length === 0) {
-        return yield* new ServerCliBuildAssetMissingError({
-          assetPath: path.join(
-            packagesDir,
-            `${ALPHA_DISTRIBUTION.serverNpmPlatformPackagePrefix}-<platform>.tgz`,
-          ),
-        });
-      }
-      if (!(yield* fs.exists(launcherTarball))) {
-        return yield* new ServerCliBuildAssetMissingError({ assetPath: launcherTarball });
+      const tarball = path.join(packagesDir, `${ALPHA_DISTRIBUTION.serverPackageName}.tgz`);
+      if (!(yield* fs.exists(tarball))) {
+        return yield* new ServerCliBuildAssetMissingError({ assetPath: tarball });
       }
 
       const args = ["publish", "--access", config.access, "--tag", config.tag];
       if (config.provenance) args.push("--provenance");
       if (config.dryRun) args.push("--dry-run");
 
-      for (const tarball of [...platformTarballs, launcherTarball]) {
-        const spawnCommand = yield* resolveSpawnCommand("npm", [...args, tarball]);
-        yield* Effect.log(`[cli] npm ${args.join(" ")} ${path.basename(tarball)}`);
-        yield* runCommand(
-          ChildProcess.make(spawnCommand.command, spawnCommand.args, {
-            cwd: packagesDir,
-            // npm can prompt for write authentication when a local token is
-            // absent or expired, so preserve the terminal for real publishes.
-            stdin: "inherit",
-            stdout: config.verbose ? "inherit" : "ignore",
-            stderr: "inherit",
-            shell: spawnCommand.shell,
-          }),
-        );
-      }
+      const spawnCommand = yield* resolveSpawnCommand("npm", [...args, tarball]);
+      yield* Effect.log(`[cli] npm ${args.join(" ")} ${path.basename(tarball)}`);
+      yield* runCommand(
+        ChildProcess.make(spawnCommand.command, spawnCommand.args, {
+          cwd: packagesDir,
+          // npm can prompt for write authentication when a local token is
+          // absent or expired, so preserve the terminal for real publishes.
+          stdin: "inherit",
+          stdout: config.verbose ? "inherit" : "ignore",
+          stderr: "inherit",
+          shell: spawnCommand.shell,
+        }),
+      );
     }),
-).pipe(
-  Command.withDescription(
-    "Publish Alpha platform tarballs and then the t3code-alpha launcher to npm.",
-  ),
-);
+).pipe(Command.withDescription("Publish the t3code-alpha package to npm."));
 
 // ---------------------------------------------------------------------------
 // root command

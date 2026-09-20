@@ -101,11 +101,7 @@ it.layer(NodeServices.layer)("build-npm-platform-packages", (it) => {
         allowMissing: false,
       }).pipe(Effect.flip);
       assert.instanceOf(error, NpmPackagesArchivesMissingError);
-      assert.deepStrictEqual((error as NpmPackagesArchivesMissingError).missing, [
-        "linux-arm64",
-        "win32-arm64",
-        "win32-x64",
-      ]);
+      assert.deepStrictEqual((error as NpmPackagesArchivesMissingError).missing, ["linux-arm64"]);
     }),
   );
 
@@ -311,7 +307,7 @@ it.layer(NodeServices.layer)("build-npm-platform-packages", (it) => {
       });
       assert.equal(unsupported.exitCode, 1);
       assert.include(unsupported.stderr, "linux-x64");
-      assert.include(unsupported.stderr, "win32-arm64");
+      assert.include(unsupported.stderr, "darwin-arm64");
       assert.include(unsupported.stderr, "https://github.com/TheBlankClub/t3code-alpha/releases");
     }),
   );

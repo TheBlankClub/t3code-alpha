@@ -12,21 +12,22 @@ import {
 } from "./cliRelease.ts";
 
 describe("cliRelease", () => {
-  it("names archives by version and platform, zip only on Windows", () => {
+  it("names archives by version and platform", () => {
     expect(cliArchiveFileName("1.2.3-preview.20260911.4", "linux-x64")).toBe(
       "t3-alpha-1.2.3-preview.20260911.4-linux-x64.tar.gz",
     );
-    expect(cliArchiveFileName("1.2.3", "win32-x64")).toBe("t3-alpha-1.2.3-win32-x64.zip");
+    expect(cliArchiveFileName("1.2.3", "darwin-arm64")).toBe("t3-alpha-1.2.3-darwin-arm64.tar.gz");
   });
 
   it("only maps platforms and architectures that have a release archive", () => {
     expect(cliArchivePlatformKey("darwin", "arm64")).toBe("darwin-arm64");
     expect(cliArchivePlatformKey("linux", "x64")).toBe("linux-x64");
-    expect(cliArchivePlatformKey("win32", "x64")).toBe("win32-x64");
+    expect(cliArchivePlatformKey("linux", "arm64")).toBe("linux-arm64");
     // Node single-executables are unsupported on x64 macOS.
     expect(cliArchivePlatformKey("darwin", "x64")).toBeUndefined();
-    expect(cliArchivePlatformKey("linux", "arm64")).toBe("linux-arm64");
-    expect(cliArchivePlatformKey("win32", "arm64")).toBe("win32-arm64");
+    // The Alpha ships Linux and macOS only; Windows has no archive.
+    expect(cliArchivePlatformKey("win32", "x64")).toBeUndefined();
+    expect(cliArchivePlatformKey("win32", "arm64")).toBeUndefined();
     expect(cliArchivePlatformKey("freebsd", "x64")).toBeUndefined();
     expect(cliArchivePlatformKey("linux", "ia32")).toBeUndefined();
   });
@@ -44,13 +45,13 @@ describe("cliRelease", () => {
     const checksums = parseChecksums(
       [
         `${"a".repeat(64)}  t3-alpha-1.2.3-linux-x64.tar.gz`,
-        `${"B".repeat(64)} *t3-alpha-1.2.3-win32-x64.zip`,
+        `${"B".repeat(64)} *t3-alpha-1.2.3-darwin-arm64.tar.gz`,
         "not a checksum line",
         "",
       ].join("\n"),
     );
     expect(checksums.get("t3-alpha-1.2.3-linux-x64.tar.gz")).toBe("a".repeat(64));
-    expect(checksums.get("t3-alpha-1.2.3-win32-x64.zip")).toBe("b".repeat(64));
+    expect(checksums.get("t3-alpha-1.2.3-darwin-arm64.tar.gz")).toBe("b".repeat(64));
     expect(checksums.size).toBe(2);
   });
 

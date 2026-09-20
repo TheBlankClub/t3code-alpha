@@ -119,20 +119,21 @@ describe("Alpha workflow contracts", () => {
       ...(jobs.build.strategy?.matrix.include ?? []),
       ...(jobs.build_cli_archives.strategy?.matrix.include ?? []),
     ].map(({ resource_key }) => resource_key);
-    assert.sameMembers(archiveKeys, [
-      "darwin-arm64",
-      "linux-arm64",
-      "linux-x64",
-      "win32-arm64",
-      "win32-x64",
-    ]);
+    assert.sameMembers(archiveKeys, ["darwin-arm64", "linux-arm64", "linux-x64"]);
     assert.notProperty(jobs, "build_wsl_node_pty");
     assert.includeMembers([...jobs.publish_cli.needs], ["build", "build_cli_archives"]);
     assert.include(jobs.publish_cli.if, "needs.build_cli_archives.result == 'success'");
+    // The package downloads its executable from the GitHub release at install
+    // time, so npm must publish only after that release exists.
+    assert.include([...jobs.publish_cli.needs], "release");
+    assert.notInclude([...jobs.release.needs], "publish_cli");
     assert.includeMembers([...jobs.report_status.needs], ["build", "build_cli_archives"]);
     const raw = rawWorkflow("release-alpha.yml");
     assert.include(raw, "--prebuilt-dir npm-prebuilt");
-    assert.include(raw, "--archives-dir release-cli");
+    // One npm package that downloads its executable from the release, so the
+    // publish needs the version only, never the built archives.
+    assert.include(raw, "build-npm-cli-package.ts --version");
+    assert.notInclude(raw, "--archives-dir");
     assert.notInclude(raw, "--dry-run");
     assert.notInclude(raw, "build-exe --target");
     assert.include(raw, "--filter=@t3tools/web...");
@@ -140,7 +141,8 @@ describe("Alpha workflow contracts", () => {
     const linuxLibraries = raw.indexOf("Install Linux CLI build libraries");
     assert.isBelow(linuxLibraries, raw.indexOf("Setup Vite+", linuxLibraries));
     assert.include(raw, "t3-alpha-*.tar.gz");
-    assert.include(raw, "t3-alpha-*.zip");
+    // Linux and macOS only: no Windows archive is built or attached.
+    assert.notInclude(raw, "t3-alpha-*.zip");
     assert.include(raw, "release-assets/SHA256SUMS");
     assert.notInclude(raw, "release-assets/*.blockmap");
     assert.notInclude(raw, "release-assets/*.yml");
@@ -151,7 +153,6 @@ describe("Alpha workflow contracts", () => {
     for (const upload of uploads) {
       assert.include(upload.with?.files, "release-assets/*.dmg");
       assert.include(upload.with?.files, "release-assets/t3-alpha-*.tar.gz");
-      assert.include(upload.with?.files, "release-assets/t3-alpha-*.zip");
       assert.include(upload.with?.files, "release-assets/SHA256SUMS");
       assert.isTrue(upload.with?.["fail_on_unmatched_files"]);
     }
