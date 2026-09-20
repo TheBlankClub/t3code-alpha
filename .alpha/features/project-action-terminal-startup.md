@@ -3,7 +3,7 @@ id: project-action-terminal-startup
 status: active
 risk: amber
 introduced_by: 438019e36
-last_reconciled_with: dfbb11bdd7c3f1a5575cb55d3e3abb12be025727
+last_reconciled_with: 7445aa733ada33e45289e5aa5055f79142556513
 upstream_issue: pingdotgg/t3code#6337
 upstream_pr: pingdotgg/t3code#6338
 surfaces:
@@ -42,6 +42,8 @@ is still initializing.
   contract, server, client fallback, and focused tests satisfy every invariant above.
 
 # Reconciliation notes
+
+- 2026-09-20, upstream `7445aa733ada33e45289e5aa5055f79142556513`: `unaffected`. The ChatView question-answer change preserves initial-command handling and the older-server fallback.
 
 - 2026-09-19, upstream `dfbb11bdd7c3f1a5575cb55d3e3abb12be025727`: `unaffected`. The chat changes retain initial-command acknowledgement and the terminal-write fallback.
 

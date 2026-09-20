@@ -3,7 +3,7 @@ id: newest-agents-first
 status: active
 risk: green
 introduced_by: newest-agents-first
-last_reconciled_with: dfbb11bdd7c3f1a5575cb55d3e3abb12be025727
+last_reconciled_with: 7445aa733ada33e45289e5aa5055f79142556513
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -35,6 +35,8 @@ users scroll past older agents.
   across activity updates.
 
 # Reconciliation notes
+
+- 2026-09-20, upstream `7445aa733ada33e45289e5aa5055f79142556513`: `unaffected`. The incoming changes do not alter agent ordering or retention.
 
 - 2026-09-19, upstream `dfbb11bdd7c3f1a5575cb55d3e3abb12be025727`: `unaffected`. The shared agent ordering model is unchanged.
 

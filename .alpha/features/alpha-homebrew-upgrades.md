@@ -3,7 +3,7 @@ id: alpha-homebrew-upgrades
 status: active
 risk: red
 introduced_by: alpha-homebrew-upgrades
-last_reconciled_with: dfbb11bdd7c3f1a5575cb55d3e3abb12be025727
+last_reconciled_with: 7445aa733ada33e45289e5aa5055f79142556513
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -55,6 +55,8 @@ Developer account or a separate package-hosting service.
   same package identity and repository boundaries.
 
 # Reconciliation notes
+
+- 2026-09-20, upstream `7445aa733ada33e45289e5aa5055f79142556513`: `unaffected`. The incoming changes do not alter cask generation, signing, or upgrade paths.
 
 - 2026-09-19, upstream `dfbb11bdd7c3f1a5575cb55d3e3abb12be025727`: `mechanical-conflict`. Updated the cask generator for the new Effect flag API. The tap, certificate, and arm64 artifact policy remain unchanged.
 

@@ -3,7 +3,7 @@ id: antigravity-path-canonicalization
 status: active
 risk: amber
 introduced_by: antigravity-path-canonicalization
-last_reconciled_with: dfbb11bdd7c3f1a5575cb55d3e3abb12be025727
+last_reconciled_with: 7445aa733ada33e45289e5aa5055f79142556513
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -40,6 +40,8 @@ session workspace.
   parents while preserving the same workspace escape checks.
 
 # Reconciliation notes
+
+- 2026-09-20, upstream `7445aa733ada33e45289e5aa5055f79142556513`: `unaffected`. ACP stderr handling preserves Antigravity executable and workspace path checks.
 
 - 2026-09-19, upstream `dfbb11bdd7c3f1a5575cb55d3e3abb12be025727`: `unaffected`. No incoming change alters Antigravity path handling.
 

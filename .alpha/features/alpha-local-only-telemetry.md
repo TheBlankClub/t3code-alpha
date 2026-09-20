@@ -3,7 +3,7 @@ id: alpha-local-only-telemetry
 status: active
 risk: red
 introduced_by: alpha-local-only-telemetry
-last_reconciled_with: dfbb11bdd7c3f1a5575cb55d3e3abb12be025727
+last_reconciled_with: 7445aa733ada33e45289e5aa5055f79142556513
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -44,6 +44,8 @@ traces, metrics, or logs to third-party telemetry services.
   accurate public privacy disclosure.
 
 # Reconciliation notes
+
+- 2026-09-20, upstream `7445aa733ada33e45289e5aa5055f79142556513`: `unaffected`. ACP startup diagnostics remain local. The changes add no telemetry exporter.
 
 - 2026-09-19, upstream `dfbb11bdd7c3f1a5575cb55d3e3abb12be025727`: `upstream-redesign`. Adopted the shared desktop logger and tracer setup. Alpha blocks the new OTLP log endpoints in server configuration and both runtime export paths, including persisted settings. Local logs and span events remain available.
 
