@@ -3,7 +3,7 @@ id: alpha-distribution-identity
 status: active
 risk: red
 introduced_by: alpha-distribution-identity
-last_reconciled_with: 0ff87f251dafb32703d5f531e7b248ad0a581ee2
+last_reconciled_with: c14f6015bfe479d313355cb234af1a5c16dbb15f
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -65,6 +65,8 @@ identity.
   can express every invariant through that upstream model without bespoke runtime code.
 
 # Reconciliation notes
+
+- 2026-09-20, upstream `c14f6015bfe479d313355cb234af1a5c16dbb15f`: `unaffected`. The header layout and action menus do not change this feature.
 
 - 2026-09-20, upstream `7445aa733ada33e45289e5aa5055f79142556513`: `unaffected`. The SnapShot accessibility fixes preserve Alpha application, protocol, and state identities.
 

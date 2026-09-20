@@ -3,7 +3,7 @@ id: restore-reverted-message-to-composer
 status: active
 risk: amber
 introduced_by: a47276a40
-last_reconciled_with: 0ff87f251dafb32703d5f531e7b248ad0a581ee2
+last_reconciled_with: c14f6015bfe479d313355cb234af1a5c16dbb15f
 upstream_issue: pingdotgg/t3code#5685
 upstream_pr: pingdotgg/t3code#6044
 surfaces:
@@ -42,6 +42,8 @@ Let users edit and resend a reverted prompt instead of recreating its text and i
   complete when individual attachments fail or exceed the composer limit.
 
 # Reconciliation notes
+
+- 2026-09-20, upstream `c14f6015bfe479d313355cb234af1a5c16dbb15f`: `unaffected`. The header changes leave draft stashing, context exclusion, attachment recovery, and checkpoint bounds unchanged.
 
 - 2026-09-20, upstream `7445aa733ada33e45289e5aa5055f79142556513`: `unaffected`. The question-answer and annotation changes preserve draft stashing, context exclusion, soft attachment failures, and checkpoint bounds. The composer overlap merged without changes to the Alpha delta.
 

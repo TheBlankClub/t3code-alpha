@@ -3,7 +3,7 @@ id: remember-thread-scroll-position
 status: partial
 risk: green
 introduced_by: 31e67d13ce42c0989a4698f9140c3bea4aba9731
-last_reconciled_with: 0ff87f251dafb32703d5f531e7b248ad0a581ee2
+last_reconciled_with: c14f6015bfe479d313355cb234af1a5c16dbb15f
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -37,6 +37,8 @@ Return users to the place where they stopped reading when they switch away from 
   live-follow, new-content, and missing-row behavior.
 
 # Reconciliation notes
+
+- 2026-09-20, upstream `c14f6015bfe479d313355cb234af1a5c16dbb15f`: `unaffected`. The header changes leave timeline scroll ownership and saved reading positions unchanged.
 
 - 2026-09-20, upstream `7445aa733ada33e45289e5aa5055f79142556513`: `unaffected`. The ChatView question-answer change preserves reading positions, New messages, missing-row fallback, and live-follow safeguards.
 
