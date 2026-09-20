@@ -23,7 +23,7 @@ import { ALPHA_DISTRIBUTION } from "./alphaDistribution.ts";
 export const NPM_CLI_RUNTIME_DIR = "runtime";
 
 /** Written after extraction succeeds; its content is the version installed. */
-export const NPM_CLI_STAMP_FILE = ".installed";
+const NPM_CLI_STAMP_FILE = ".installed";
 
 export function npmCliInstallerScript(): string {
   const binaryName = ALPHA_DISTRIBUTION.serverBinaryName;
