@@ -3,7 +3,7 @@ id: alpha-release-workflow
 status: active
 risk: red
 introduced_by: alpha-release-workflow
-last_reconciled_with: c14f6015bfe479d313355cb234af1a5c16dbb15f
+last_reconciled_with: 1de563c1491c7d82563e4553bf5bf689ce6adbb9
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -36,9 +36,10 @@ upstream's official release, hosted-web, AUR, or npm publication paths.
   do not establish that CI result. All release paths smoke-test the built CLI archives.
 - Versions use `X.Y.Z-alpha.YYYYMMDD.RUN`; GitHub releases are prereleases and never become latest.
 - Only the macOS arm64 DMG uses upstream's desktop builder and Alpha artifact identity.
-- CLI archives contain resource monitors for macOS arm64, Linux arm64/x64, and Windows arm64/x64.
-  npm platform packages contain the matching executable and runtime dependencies. macOS x64
-  remains unsupported by upstream's single-executable runtime.
+- CLI archives contain resource monitors for macOS arm64 and Linux arm64/x64. The single
+  `t3code-alpha` npm package downloads the matching archive after verifying its checksum.
+  Alpha publishes no Windows artifacts. macOS x64 remains unsupported by upstream's
+  single-executable runtime.
 - Desktop artifacts are intentionally not signed with platform developer credentials. macOS builds
   use the fork's persistent self-signed identity, while GitHub releases contain manual desktop installers,
   CLI archives, and checksums. They exclude updater manifests, blockmaps, and macOS ZIP update payloads.
@@ -46,10 +47,12 @@ upstream's official release, hosted-web, AUR, or npm publication paths.
   signature verification with the Alpha bundle identifier and pinned release certificate.
 - Apple signing/notarization, Azure Trusted Signing, Clerk, and T3 Connect configuration are not
   release dependencies. Cloud linking is not part of this fork distribution.
-- npm publication uses provenance and the canonical `latest` tag for the `t3code-alpha` launcher
-  and each Alpha platform package. GitHub releases retain Alpha versioning and prerelease status.
-- npm publishes use GitHub OIDC trusted publishing and no long-lived npm token. Every platform
-  package and the launcher require a trusted publisher for `release-alpha.yml`.
+- npm publication uses provenance and the canonical `latest` tag for one `t3code-alpha` package.
+  GitHub releases retain Alpha versioning and prerelease status.
+- The workflow publishes the GitHub release and checksums before npm. It verifies an install from
+  that release before publishing the npm package.
+- npm publishes use GitHub OIDC trusted publishing and no long-lived npm token. Only
+  `t3code-alpha` requires a trusted publisher for `release-alpha.yml`.
 - After a successful GitHub prerelease, the tap-owned updater independently validates and publishes
   the matching macOS cask without a cross-repository credential.
 - The workflow does not deploy the official hosted web app, publish official AUR packages, mutate
@@ -87,6 +90,8 @@ upstream's official release, hosted-web, AUR, or npm publication paths.
   release destination without touching official distribution channels.
 
 # Reconciliation notes
+
+- 2026-09-21, upstream `1de563c1491c7d82563e4553bf5bf689ce6adbb9`: `unaffected`. Upstream does not change release automation. Updated the record for the macOS and Linux single-package release flow already present in 8adbe8ccd.
 
 - 2026-09-20, upstream `c14f6015bfe479d313355cb234af1a5c16dbb15f`: `unaffected`. The header layout and action menus do not change this feature.
 

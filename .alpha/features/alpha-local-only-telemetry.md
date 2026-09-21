@@ -3,7 +3,7 @@ id: alpha-local-only-telemetry
 status: active
 risk: red
 introduced_by: alpha-local-only-telemetry
-last_reconciled_with: c14f6015bfe479d313355cb234af1a5c16dbb15f
+last_reconciled_with: 1de563c1491c7d82563e4553bf5bf689ce6adbb9
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -44,6 +44,8 @@ traces, metrics, or logs to third-party telemetry services.
   accurate public privacy disclosure.
 
 # Reconciliation notes
+
+- 2026-09-21, upstream `1de563c1491c7d82563e4553bf5bf689ce6adbb9`: `mechanical-conflict`. Adopted per-signal OTLP settings. Alpha still blocks remote trace, metric, and log exports while preserving local logs and spans.
 
 - 2026-09-20, upstream `c14f6015bfe479d313355cb234af1a5c16dbb15f`: `unaffected`. The header layout and action menus do not change this feature.
 

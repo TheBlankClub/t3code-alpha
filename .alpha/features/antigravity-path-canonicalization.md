@@ -3,7 +3,7 @@ id: antigravity-path-canonicalization
 status: active
 risk: amber
 introduced_by: antigravity-path-canonicalization
-last_reconciled_with: c14f6015bfe479d313355cb234af1a5c16dbb15f
+last_reconciled_with: 1de563c1491c7d82563e4553bf5bf689ce6adbb9
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -40,6 +40,8 @@ session workspace.
   parents while preserving the same workspace escape checks.
 
 # Reconciliation notes
+
+- 2026-09-21, upstream `1de563c1491c7d82563e4553bf5bf689ce6adbb9`: `unaffected`. Upstream does not change Antigravity path resolution or workspace write checks.
 
 - 2026-09-20, upstream `c14f6015bfe479d313355cb234af1a5c16dbb15f`: `unaffected`. The header layout and action menus do not change this feature.
 

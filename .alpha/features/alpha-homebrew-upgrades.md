@@ -3,7 +3,7 @@ id: alpha-homebrew-upgrades
 status: active
 risk: red
 introduced_by: alpha-homebrew-upgrades
-last_reconciled_with: c14f6015bfe479d313355cb234af1a5c16dbb15f
+last_reconciled_with: 1de563c1491c7d82563e4553bf5bf689ce6adbb9
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -55,6 +55,8 @@ Developer account or a separate package-hosting service.
   same package identity and repository boundaries.
 
 # Reconciliation notes
+
+- 2026-09-21, upstream `1de563c1491c7d82563e4553bf5bf689ce6adbb9`: `unaffected`. Upstream does not change the Alpha cask, release certificate, or macOS upgrade path.
 
 - 2026-09-20, upstream `c14f6015bfe479d313355cb234af1a5c16dbb15f`: `unaffected`. The header layout and action menus do not change this feature.
 

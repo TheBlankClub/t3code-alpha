@@ -3,7 +3,7 @@ id: alpha-server-package
 status: active
 risk: red
 introduced_by: alpha-server-package
-last_reconciled_with: c14f6015bfe479d313355cb234af1a5c16dbb15f
+last_reconciled_with: 1de563c1491c7d82563e4553bf5bf689ce6adbb9
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -12,7 +12,7 @@ surfaces:
   - web
   - packaging
 tests:
-  - vp test run apps/server/scripts/cli.test.ts
+  - vp test run apps/server/scripts/cli.test.ts apps/server/src/device/sshDeviceScript.test.ts
   - vp test run packages/ssh/src/command.test.ts packages/ssh/src/tunnel.test.ts
   - vp test run apps/server/src/cloud/pinnedRuntime.test.ts apps/server/src/cloud/selfUpdate.test.ts apps/server/src/serviceLauncher.test.ts apps/server/src/cloud/bootService.test.ts apps/server/src/cli/invocation.test.ts apps/server/src/cli/service.test.ts apps/server/src/bin.test.ts apps/server/src/cloud/http.test.ts
   - vp test run apps/server/src/os-jank.test.ts scripts/dev-runner.test.ts
@@ -20,7 +20,7 @@ tests:
   - vp test run packages/client-runtime/src/state/server.test.ts
   - vp run --filter @t3tools/shared --filter @t3tools/ssh --filter @t3tools/client-runtime --filter t3 --filter @t3tools/web typecheck
   - vp run --filter t3 build
-  - vp test run scripts/build-npm-platform-packages.test.ts scripts/install.test.ts packages/shared/src/cliRelease.test.ts
+  - vp test run packages/shared/src/npmCliInstaller.test.ts scripts/install.test.ts packages/shared/src/cliRelease.test.ts
 ---
 
 # Intent
@@ -38,8 +38,9 @@ official T3 Code without publishing to or executing the upstream `t3` package.
   still wins.
 - Desktop SSH and pinned updates download exact Alpha CLI archives from TheBlankClub releases.
   Managed remote state stays below `~/.t3-alpha`; pinned runtimes launch `t3-alpha`.
-- npm installs the `t3code-alpha` launcher and matching `t3code-alpha-<platform>-<arch>` package.
-  Legacy npm service entrypoints dispatch to that platform executable.
+- npm installs one `t3code-alpha` package for macOS arm64 and Linux arm64/x64. Its installer
+  downloads the matching GitHub release archive and verifies it against `SHA256SUMS`.
+  Legacy npm service entrypoints dispatch to the installed executable.
 - Linux installs `t3code-alpha.service`, leaving an official `t3code.service` untouched.
 - macOS installs `com.theblankclub.t3code.alpha.service.plist`, leaving the official LaunchAgent
   label and plist untouched.
@@ -55,8 +56,8 @@ official T3 Code without publishing to or executing the upstream `t3` package.
 - CLI entrypoint fallback canonicalizes both the module and executable paths so npm links work
   through symlinked parent directories such as macOS `/var`.
 - The source workspace keeps upstream's internal `t3` package name for Effect service keys.
-  Packaging emits Alpha launcher and platform manifests with license metadata. The publisher
-  uploads platform tarballs before the launcher and preserves interactive npm authentication.
+  Packaging emits one Alpha npm manifest with license metadata. The publisher uploads one
+  tarball and preserves interactive npm authentication.
 - CLI suggestions, remote SSH bootstrap, pinned self-update, and the systemd and launchd service
   managers resolve the Alpha package and service identities consistently.
 - Web and shared client-runtime update messages identify the package users actually install.
@@ -68,6 +69,8 @@ official T3 Code without publishing to or executing the upstream `t3` package.
   commands, and background-service registration.
 
 # Reconciliation notes
+
+- 2026-09-21, upstream `1de563c1491c7d82563e4553bf5bf689ce6adbb9`: `mechanical-conflict`. Moved SSH device tools and host records to `~/.t3-alpha/device` before adopting upstream tool cleanup. Existing `~/.t3/device` state remains untouched; Alpha installs its tools separately. Updated the record for the single-package installer already present in 8adbe8ccd.
 
 - 2026-09-20, upstream `c14f6015bfe479d313355cb234af1a5c16dbb15f`: `unaffected`. The header layout and action menus do not change this feature.
 

@@ -8,6 +8,8 @@ import * as Tracer from "effect/Tracer";
 import * as HttpClient from "effect/unstable/http/HttpClient";
 import * as HttpClientResponse from "effect/unstable/http/HttpClientResponse";
 
+import { DEFAULT_SIGNAL_EXPORT } from "@t3tools/shared/observability";
+
 import * as ServerConfig from "./config.ts";
 import { ServerLoggerLive } from "./serverLogger.ts";
 
@@ -51,10 +53,10 @@ const configLayer = (overrides: Partial<ServerConfig.ServerConfig["Service"]>) =
         otlpTracesUrl: undefined,
         otlpMetricsUrl: undefined,
         otlpLogsUrl: undefined,
-        otlpExportIntervalMs: 10_000,
+        otlpTracesExport: DEFAULT_SIGNAL_EXPORT,
+        otlpMetricsExport: DEFAULT_SIGNAL_EXPORT,
+        otlpLogsExport: DEFAULT_SIGNAL_EXPORT,
         otlpServiceName: "t3-server",
-        otlpHeaders: undefined,
-        otlpProtocol: "http/json",
         cwd: baseDir,
         baseDir,
         ...derivedPaths,
@@ -154,8 +156,11 @@ describe("ServerLoggerLive", () => {
     Effect.gen(function* () {
       const requests = yield* logThrough({
         otlpLogsUrl: "https://collector.example.com/v1/logs",
-        otlpProtocol: "http/protobuf",
-        otlpHeaders: { "x-scope": "logs" },
+        otlpLogsExport: {
+          ...DEFAULT_SIGNAL_EXPORT,
+          protocol: "http/protobuf",
+          headers: { "x-scope": "logs" },
+        },
       });
 
       assert.lengthOf(requests, 0);
