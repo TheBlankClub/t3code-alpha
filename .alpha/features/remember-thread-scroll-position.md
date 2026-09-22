@@ -3,7 +3,7 @@ id: remember-thread-scroll-position
 status: partial
 risk: green
 introduced_by: 31e67d13ce42c0989a4698f9140c3bea4aba9731
-last_reconciled_with: 1de563c1491c7d82563e4553bf5bf689ce6adbb9
+last_reconciled_with: d7819c18813fa03b033cc1c9472c9acc0ffc0618
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -70,4 +70,6 @@ Return users to the place where they stopped reading when they switch away from 
 - 2026-09-13, upstream `df7ccc8fd01f5d2a1d8ec21bef8f9c59398fe913`: `auto-merged`; Git produced a conflict-free
   reconciliation candidate. Required PR CI remained the merge gate.
 - 2026-09-20, upstream `0ff87f251dafb32703d5f531e7b248ad0a581ee2`: `auto-merged`; Git produced a conflict-free
+  reconciliation candidate. Required PR CI remained the merge gate.
+- 2026-09-22, upstream `d7819c18813fa03b033cc1c9472c9acc0ffc0618`: `auto-merged`; Git produced a conflict-free
   reconciliation candidate. Required PR CI remained the merge gate.
