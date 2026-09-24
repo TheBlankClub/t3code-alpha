@@ -3,7 +3,7 @@ id: alpha-server-package
 status: active
 risk: red
 introduced_by: alpha-server-package
-last_reconciled_with: b2b43bef73447c483ceae486890cb79f01c369cb
+last_reconciled_with: f26ee083fe41720207fb10616359500dcecc19d3
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -71,6 +71,8 @@ official T3 Code without publishing to or executing the upstream `t3` package.
   commands, and background-service registration.
 
 # Reconciliation notes
+
+- 2026-09-24, upstream `f26ee083fe41720207fb10616359500dcecc19d3`: `unaffected`. Authentication and settings appearance changes preserve Alpha package and update identities.
 
 - 2026-09-24, upstream `b2b43bef73447c483ceae486890cb79f01c369cb`: `unaffected`. Mobile environment updates use the shared Alpha release lookup. SSH bootstrap retains Alpha archive, binary, and state identities.
 

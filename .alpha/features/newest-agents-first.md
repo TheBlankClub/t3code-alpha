@@ -3,7 +3,7 @@ id: newest-agents-first
 status: active
 risk: green
 introduced_by: newest-agents-first
-last_reconciled_with: b2b43bef73447c483ceae486890cb79f01c369cb
+last_reconciled_with: f26ee083fe41720207fb10616359500dcecc19d3
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -35,6 +35,8 @@ users scroll past older agents.
   across activity updates.
 
 # Reconciliation notes
+
+- 2026-09-24, upstream `f26ee083fe41720207fb10616359500dcecc19d3`: `unaffected`. Agents panel changes affect appearance only. The shared newest-first ordering remains unchanged.
 
 - 2026-09-24, upstream `b2b43bef73447c483ceae486890cb79f01c369cb`: `unaffected`. The incoming changes preserve this feature and its recorded invariants.
 

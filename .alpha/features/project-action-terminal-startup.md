@@ -3,7 +3,7 @@ id: project-action-terminal-startup
 status: active
 risk: amber
 introduced_by: 438019e36
-last_reconciled_with: b2b43bef73447c483ceae486890cb79f01c369cb
+last_reconciled_with: f26ee083fe41720207fb10616359500dcecc19d3
 upstream_issue: pingdotgg/t3code#6337
 upstream_pr: pingdotgg/t3code#6338
 surfaces:
@@ -42,6 +42,8 @@ is still initializing.
   contract, server, client fallback, and focused tests satisfy every invariant above.
 
 # Reconciliation notes
+
+- 2026-09-24, upstream `f26ee083fe41720207fb10616359500dcecc19d3`: `unaffected`. Incoming web appearance and linked pull-request label changes do not alter this feature.
 
 - 2026-09-24, upstream `b2b43bef73447c483ceae486890cb79f01c369cb`: `unaffected`. The incoming changes preserve this feature and its recorded invariants.
 

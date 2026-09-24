@@ -3,7 +3,7 @@ id: alpha-release-workflow
 status: active
 risk: red
 introduced_by: alpha-release-workflow
-last_reconciled_with: b2b43bef73447c483ceae486890cb79f01c369cb
+last_reconciled_with: f26ee083fe41720207fb10616359500dcecc19d3
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -90,6 +90,8 @@ upstream's official release, hosted-web, AUR, or npm publication paths.
   release destination without touching official distribution channels.
 
 # Reconciliation notes
+
+- 2026-09-24, upstream `f26ee083fe41720207fb10616359500dcecc19d3`: `unaffected`. Incoming web appearance and linked pull-request label changes do not alter this feature.
 
 - 2026-09-24, upstream `b2b43bef73447c483ceae486890cb79f01c369cb`: `unaffected`. Upstream release test sharding remains behind official-repository gates. Alpha release destinations and signing policy remain unchanged.
 

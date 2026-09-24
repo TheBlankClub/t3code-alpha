@@ -24,15 +24,6 @@ export function resolveSidebarStageBackdropVariant(
   return null;
 }
 
-export function resolveSidebarStageFocusRingOffsetClass(
-  variant: SidebarStageBackdropVariant,
-): string {
-  if (variant === "alpha") return "focus-visible:ring-offset-(--stage-alpha-bottom)";
-  return variant === "nightly"
-    ? "focus-visible:ring-offset-(--stage-night-bottom)"
-    : "focus-visible:ring-offset-(--stage-art-bottom)";
-}
-
 export function resolveEnvironmentIdentificationPillLabel(
   stageLabel: string,
 ): EnvironmentIdentificationPillLabel | null {
@@ -91,7 +82,8 @@ function AlphaDraftingArt({ compact = false }: { compact?: boolean }) {
 
   return (
     <svg
-      className="stage-art stage-alpha h-full w-full"
+      data-stage-art="alpha"
+      className="h-full w-full"
       fill="none"
       preserveAspectRatio="xMinYMin slice"
       viewBox={compact ? "112 0 8192 96" : STAGE_BACKDROP_VIEW_BOX}
@@ -244,7 +236,8 @@ function NightlySkyArt({ compact = false }: { compact?: boolean }) {
 
   return (
     <svg
-      className="stage-art stage-nightly h-full w-full"
+      data-stage-art="nightly"
+      className="h-full w-full"
       fill="none"
       preserveAspectRatio="xMinYMin slice"
       viewBox={compact ? "96 0 8192 96" : STAGE_BACKDROP_VIEW_BOX}
@@ -358,7 +351,8 @@ function DevBlueprintArt({ compact = false }: { compact?: boolean }) {
 
   return (
     <svg
-      className="stage-art stage-blueprint h-full w-full"
+      data-stage-art="blueprint"
+      className="h-full w-full"
       fill="none"
       preserveAspectRatio="xMinYMin slice"
       viewBox={compact ? "64 0 8192 96" : STAGE_BACKDROP_VIEW_BOX}

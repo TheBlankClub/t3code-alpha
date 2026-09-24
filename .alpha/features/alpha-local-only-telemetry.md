@@ -3,7 +3,7 @@ id: alpha-local-only-telemetry
 status: active
 risk: red
 introduced_by: alpha-local-only-telemetry
-last_reconciled_with: b2b43bef73447c483ceae486890cb79f01c369cb
+last_reconciled_with: f26ee083fe41720207fb10616359500dcecc19d3
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -44,6 +44,8 @@ traces, metrics, or logs to third-party telemetry services.
   accurate public privacy disclosure.
 
 # Reconciliation notes
+
+- 2026-09-24, upstream `f26ee083fe41720207fb10616359500dcecc19d3`: `unaffected`. Diagnostics appearance changes leave outbound telemetry guards unchanged.
 
 - 2026-09-24, upstream `b2b43bef73447c483ceae486890cb79f01c369cb`: `mechanical-conflict`. Adopted the OpenTelemetry kill switch and warnings. Alpha still ignores remote endpoints, including when an environment override enables the upstream SDK.
 
