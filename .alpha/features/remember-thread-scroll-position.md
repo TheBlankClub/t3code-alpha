@@ -3,7 +3,7 @@ id: remember-thread-scroll-position
 status: partial
 risk: green
 introduced_by: 31e67d13ce42c0989a4698f9140c3bea4aba9731
-last_reconciled_with: 1de563c1491c7d82563e4553bf5bf689ce6adbb9
+last_reconciled_with: b2b43bef73447c483ceae486890cb79f01c369cb
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -37,6 +37,8 @@ Return users to the place where they stopped reading when they switch away from 
   live-follow, new-content, and missing-row behavior.
 
 # Reconciliation notes
+
+- 2026-09-24, upstream `b2b43bef73447c483ceae486890cb79f01c369cb`: `partially-upstreamed`. Adopted direction-aware nested scrolling. Retained New messages, missing-row fallback, and live-follow safeguards.
 
 - 2026-09-21, upstream `1de563c1491c7d82563e4553bf5bf689ce6adbb9`: `unaffected`. Adopted upstream resting-composer scroll changes. Retained New messages, missing-row fallback, and live-follow safeguards.
 

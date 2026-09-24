@@ -3,7 +3,7 @@ id: alpha-update-channel
 status: active
 risk: red
 introduced_by: alpha-update-channel
-last_reconciled_with: 1de563c1491c7d82563e4553bf5bf689ce6adbb9
+last_reconciled_with: b2b43bef73447c483ceae486890cb79f01c369cb
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -69,6 +69,8 @@ automatic updater.
   cross-platform source and export support.
 
 # Reconciliation notes
+
+- 2026-09-24, upstream `b2b43bef73447c483ceae486890cb79f01c369cb`: `unaffected`. The mobile update controls inherit the Alpha channel and repository from shared release helpers. Desktop automatic updates remain disabled.
 
 - 2026-09-21, upstream `1de563c1491c7d82563e4553bf5bf689ce6adbb9`: `unaffected`. The new preview IPC and recording settings preserve the fixed Alpha channel and disabled automatic desktop updates.
 

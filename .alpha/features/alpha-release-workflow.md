@@ -3,7 +3,7 @@ id: alpha-release-workflow
 status: active
 risk: red
 introduced_by: alpha-release-workflow
-last_reconciled_with: 1de563c1491c7d82563e4553bf5bf689ce6adbb9
+last_reconciled_with: b2b43bef73447c483ceae486890cb79f01c369cb
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -90,6 +90,8 @@ upstream's official release, hosted-web, AUR, or npm publication paths.
   release destination without touching official distribution channels.
 
 # Reconciliation notes
+
+- 2026-09-24, upstream `b2b43bef73447c483ceae486890cb79f01c369cb`: `unaffected`. Upstream release test sharding remains behind official-repository gates. Alpha release destinations and signing policy remain unchanged.
 
 - 2026-09-21, upstream `1de563c1491c7d82563e4553bf5bf689ce6adbb9`: `unaffected`. Upstream does not change release automation. Updated the record for the macOS and Linux single-package release flow already present in 8adbe8ccd.
 

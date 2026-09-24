@@ -5,6 +5,7 @@ import {
   OtlpProtocol,
   type SignalExport,
 } from "@t3tools/shared/observability";
+import * as OtelEnvironment from "@t3tools/shared/otelEnvironment";
 import { parsePersistedServerObservabilitySettings } from "@t3tools/shared/serverSettings";
 import { DesktopBackendBootstrap, PortSchema } from "@t3tools/contracts";
 import * as Config from "effect/Config";
@@ -387,6 +388,8 @@ export const resolveServerConfig = (
     );
     const logLevel = Option.getOrElse(cliLogLevel, () => env.logLevel);
 
+    const otel = yield* OtelEnvironment.load;
+
     // T3 Code's own OTLP variables name no signal, so the one answer they give
     // is the answer for all three.
     const signalExport: SignalExport = {
@@ -402,23 +405,29 @@ export const resolveServerConfig = (
       traceBatchWindowMs: env.traceBatchWindowMs,
       traceMaxBytes: env.traceMaxBytes,
       traceMaxFiles: env.traceMaxFiles,
-      otlpTracesUrl: ALPHA_DISTRIBUTION.outboundTelemetryEnabled
-        ? (env.otlpTracesUrl ??
-          bootstrap?.otlpTracesUrl ??
-          persistedObservabilitySettings.otlpTracesUrl)
-        : undefined,
-      otlpMetricsUrl: ALPHA_DISTRIBUTION.outboundTelemetryEnabled
-        ? (env.otlpMetricsUrl ??
-          bootstrap?.otlpMetricsUrl ??
-          persistedObservabilitySettings.otlpMetricsUrl)
-        : undefined,
-      otlpLogsUrl: ALPHA_DISTRIBUTION.outboundTelemetryEnabled
-        ? (env.otlpLogsUrl ?? bootstrap?.otlpLogsUrl ?? persistedObservabilitySettings.otlpLogsUrl)
-        : undefined,
+      otlpTracesUrl:
+        ALPHA_DISTRIBUTION.outboundTelemetryEnabled && !otel.disabled
+          ? (env.otlpTracesUrl ??
+            bootstrap?.otlpTracesUrl ??
+            persistedObservabilitySettings.otlpTracesUrl)
+          : undefined,
+      otlpMetricsUrl:
+        ALPHA_DISTRIBUTION.outboundTelemetryEnabled && !otel.disabled
+          ? (env.otlpMetricsUrl ??
+            bootstrap?.otlpMetricsUrl ??
+            persistedObservabilitySettings.otlpMetricsUrl)
+          : undefined,
+      otlpLogsUrl:
+        ALPHA_DISTRIBUTION.outboundTelemetryEnabled && !otel.disabled
+          ? (env.otlpLogsUrl ??
+            bootstrap?.otlpLogsUrl ??
+            persistedObservabilitySettings.otlpLogsUrl)
+          : undefined,
       otlpTracesExport: signalExport,
       otlpMetricsExport: signalExport,
       otlpLogsExport: signalExport,
       otlpServiceName: env.otlpServiceName,
+      otelEnvironment: otel,
       mode,
       port,
       cwd,

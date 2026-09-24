@@ -3,15 +3,17 @@ id: alpha-server-package
 status: active
 risk: red
 introduced_by: alpha-server-package
-last_reconciled_with: 1de563c1491c7d82563e4553bf5bf689ce6adbb9
+last_reconciled_with: b2b43bef73447c483ceae486890cb79f01c369cb
 upstream_issue: null
 upstream_pr: null
 surfaces:
   - server
   - desktop
   - web
+  - mobile
   - packaging
 tests:
+  - vp test run apps/mobile/src/features/settings/environment-maintenance.test.ts
   - vp test run apps/server/scripts/cli.test.ts apps/server/src/device/sshDeviceScript.test.ts
   - vp test run packages/ssh/src/command.test.ts packages/ssh/src/tunnel.test.ts
   - vp test run apps/server/src/cloud/pinnedRuntime.test.ts apps/server/src/cloud/selfUpdate.test.ts apps/server/src/serviceLauncher.test.ts apps/server/src/cloud/bootService.test.ts apps/server/src/cli/invocation.test.ts apps/server/src/cli/service.test.ts apps/server/src/bin.test.ts apps/server/src/cloud/http.test.ts
@@ -69,6 +71,8 @@ official T3 Code without publishing to or executing the upstream `t3` package.
   commands, and background-service registration.
 
 # Reconciliation notes
+
+- 2026-09-24, upstream `b2b43bef73447c483ceae486890cb79f01c369cb`: `unaffected`. Mobile environment updates use the shared Alpha release lookup. SSH bootstrap retains Alpha archive, binary, and state identities.
 
 - 2026-09-21, upstream `1de563c1491c7d82563e4553bf5bf689ce6adbb9`: `mechanical-conflict`. Moved SSH device tools and host records to `~/.t3-alpha/device` before adopting upstream tool cleanup. Existing `~/.t3/device` state remains untouched; Alpha installs its tools separately. Updated the record for the single-package installer already present in 8adbe8ccd.
 

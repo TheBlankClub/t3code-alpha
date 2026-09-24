@@ -3,7 +3,7 @@ id: alpha-upstream-sync-automation
 status: active
 risk: red
 introduced_by: alpha-upstream-sync-automation
-last_reconciled_with: 1de563c1491c7d82563e4553bf5bf689ce6adbb9
+last_reconciled_with: b2b43bef73447c483ceae486890cb79f01c369cb
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -35,6 +35,7 @@ Alpha-only feature is unaffected.
 - Candidates with failed CI remain open with a blocker issue and never auto-merge or trigger a
   release.
 - Fork CI runs on standard GitHub-hosted runners and validates pushes to `alpha` plus pull requests.
+- Fork CI omits the mobile native static-analysis job and its change detector.
 - Sync mutations use a narrowly installed GitHub App so automation-created pull requests trigger
   CI without per-run approval.
 
@@ -58,6 +59,8 @@ Alpha-only feature is unaffected.
   semantic feature reconciliation, visible conflict escalation, and configurable runner pools.
 
 # Reconciliation notes
+
+- 2026-09-24, upstream `b2b43bef73447c483ceae486890cb79f01c369cb`: `unaffected`. Retained the authorized removal of mobile native static analysis from fork CI. Upstream release workflow changes do not alter sync gates.
 
 - 2026-09-21, upstream `1de563c1491c7d82563e4553bf5bf689ce6adbb9`: `unaffected`. Upstream does not change Alpha sync automation or its CI gates.
 
