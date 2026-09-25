@@ -3,7 +3,7 @@ id: restore-reverted-message-to-composer
 status: active
 risk: amber
 introduced_by: a47276a40
-last_reconciled_with: e5a46d6c5d00b89afba5274a94d42428c8d79763
+last_reconciled_with: 7a12aff471ffe2b22b9fee495b04b32c43f45a37
 upstream_issue: pingdotgg/t3code#5685
 upstream_pr: pingdotgg/t3code#6044
 surfaces:
