@@ -281,3 +281,5 @@ upstream's official release, hosted-web, AUR, or npm publication paths.
   reconciliation candidate. Required PR CI remained the merge gate.
 - 2026-09-20, upstream `0ff87f251dafb32703d5f531e7b248ad0a581ee2`: `auto-merged`; Git produced a conflict-free
   reconciliation candidate. Required PR CI remained the merge gate.
+- 2026-09-25, upstream `7a12aff471ffe2b22b9fee495b04b32c43f45a37`: `auto-merged`; Git produced a conflict-free
+  reconciliation candidate. Required PR CI remained the merge gate.
