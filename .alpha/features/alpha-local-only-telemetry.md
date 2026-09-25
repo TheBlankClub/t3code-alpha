@@ -3,7 +3,7 @@ id: alpha-local-only-telemetry
 status: active
 risk: red
 introduced_by: alpha-local-only-telemetry
-last_reconciled_with: f26ee083fe41720207fb10616359500dcecc19d3
+last_reconciled_with: e5a46d6c5d00b89afba5274a94d42428c8d79763
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -44,6 +44,8 @@ traces, metrics, or logs to third-party telemetry services.
   accurate public privacy disclosure.
 
 # Reconciliation notes
+
+- 2026-09-25, upstream `e5a46d6c5d00b89afba5274a94d42428c8d79763`: `mechanical-conflict`. Adopted OTEL resource-attribute parsing while retaining Alpha guards for desktop, server, and relay exporters, including scheduled relay cleanup.
 
 - 2026-09-24, upstream `f26ee083fe41720207fb10616359500dcecc19d3`: `unaffected`. Diagnostics appearance changes leave outbound telemetry guards unchanged.
 

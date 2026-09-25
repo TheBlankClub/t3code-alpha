@@ -3,7 +3,7 @@ id: alpha-server-package
 status: active
 risk: red
 introduced_by: alpha-server-package
-last_reconciled_with: f26ee083fe41720207fb10616359500dcecc19d3
+last_reconciled_with: e5a46d6c5d00b89afba5274a94d42428c8d79763
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -71,6 +71,8 @@ official T3 Code without publishing to or executing the upstream `t3` package.
   commands, and background-service registration.
 
 # Reconciliation notes
+
+- 2026-09-25, upstream `e5a46d6c5d00b89afba5274a94d42428c8d79763`: `persistence-sensitive`. Retained Alpha package, binary, service, and state identities with upstream tunnel recovery, update restart markers, and provider usage readers. Migration 054 adds per-thread auto-settle opt-out.
 
 - 2026-09-24, upstream `f26ee083fe41720207fb10616359500dcecc19d3`: `unaffected`. Authentication and settings appearance changes preserve Alpha package and update identities.
 

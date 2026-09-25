@@ -5,6 +5,7 @@ import {
   makeTraceSink,
   otlpSerializationLayer,
 } from "@t3tools/shared/observability";
+import * as OtelEnvironment from "@t3tools/shared/otelEnvironment";
 import * as Effect from "effect/Effect";
 import * as Layer from "effect/Layer";
 import * as References from "effect/References";
@@ -96,6 +97,9 @@ export const ObservabilityLive = Layer.unwrap(
     return otelWarningsLayer.pipe(
       Layer.provideMerge(
         Layer.mergeAll(ServerLoggerLive, traceReferencesLayer, tracerLayer, metricsLayer),
+      ),
+      Layer.provide(
+        OtelEnvironment.layerResourceAttributes(config.otelEnvironment.resourceAttributes),
       ),
     );
   }),

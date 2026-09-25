@@ -3,7 +3,7 @@ id: alpha-upstream-sync-automation
 status: active
 risk: red
 introduced_by: alpha-upstream-sync-automation
-last_reconciled_with: f26ee083fe41720207fb10616359500dcecc19d3
+last_reconciled_with: e5a46d6c5d00b89afba5274a94d42428c8d79763
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -59,6 +59,8 @@ Alpha-only feature is unaffected.
   semantic feature reconciliation, visible conflict escalation, and configurable runner pools.
 
 # Reconciliation notes
+
+- 2026-09-25, upstream `e5a46d6c5d00b89afba5274a94d42428c8d79763`: `unaffected`. Sync workflow gates and the omitted mobile native static-analysis job are unchanged.
 
 - 2026-09-24, upstream `f26ee083fe41720207fb10616359500dcecc19d3`: `unaffected`. Incoming web appearance and linked pull-request label changes do not alter this feature.
 

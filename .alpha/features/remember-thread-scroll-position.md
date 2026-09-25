@@ -3,7 +3,7 @@ id: remember-thread-scroll-position
 status: partial
 risk: green
 introduced_by: 31e67d13ce42c0989a4698f9140c3bea4aba9731
-last_reconciled_with: f26ee083fe41720207fb10616359500dcecc19d3
+last_reconciled_with: e5a46d6c5d00b89afba5274a94d42428c8d79763
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -37,6 +37,8 @@ Return users to the place where they stopped reading when they switch away from 
   live-follow, new-content, and missing-row behavior.
 
 # Reconciliation notes
+
+- 2026-09-25, upstream `e5a46d6c5d00b89afba5274a94d42428c8d79763`: `unaffected`. The new shell-command callback preserves reading positions, new-content indication, and the missing-row fallback to the live edge.
 
 - 2026-09-24, upstream `f26ee083fe41720207fb10616359500dcecc19d3`: `unaffected`. Timeline changes affect appearance and icon placement only. Alpha reading-position behavior remains unchanged.
 

@@ -3,7 +3,7 @@ id: alpha-release-workflow
 status: active
 risk: red
 introduced_by: alpha-release-workflow
-last_reconciled_with: f26ee083fe41720207fb10616359500dcecc19d3
+last_reconciled_with: e5a46d6c5d00b89afba5274a94d42428c8d79763
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -90,6 +90,8 @@ upstream's official release, hosted-web, AUR, or npm publication paths.
   release destination without touching official distribution channels.
 
 # Reconciliation notes
+
+- 2026-09-25, upstream `e5a46d6c5d00b89afba5274a94d42428c8d79763`: `mechanical-conflict`. Adopted the packaged boot entry and Linux deb build support. Alpha still publishes only its arm64 desktop DMG and existing CLI archives.
 
 - 2026-09-24, upstream `f26ee083fe41720207fb10616359500dcecc19d3`: `unaffected`. Incoming web appearance and linked pull-request label changes do not alter this feature.
 

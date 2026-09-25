@@ -3,7 +3,7 @@ id: alpha-distribution-identity
 status: active
 risk: red
 introduced_by: alpha-distribution-identity
-last_reconciled_with: f26ee083fe41720207fb10616359500dcecc19d3
+last_reconciled_with: e5a46d6c5d00b89afba5274a94d42428c8d79763
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -65,6 +65,8 @@ identity.
   can express every invariant through that upstream model without bespoke runtime code.
 
 # Reconciliation notes
+
+- 2026-09-25, upstream `e5a46d6c5d00b89afba5274a94d42428c8d79763`: `mechanical-conflict`. The packaged boot entry enables the compile cache under t3code-alpha. Alpha state roots, renderer protocol, and desktop identities remain isolated.
 
 - 2026-09-24, upstream `f26ee083fe41720207fb10616359500dcecc19d3`: `unaffected`. Incoming web appearance and linked pull-request label changes do not alter this feature.
 

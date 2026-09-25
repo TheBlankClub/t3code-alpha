@@ -3,7 +3,7 @@ id: alpha-update-channel
 status: active
 risk: red
 introduced_by: alpha-update-channel
-last_reconciled_with: f26ee083fe41720207fb10616359500dcecc19d3
+last_reconciled_with: e5a46d6c5d00b89afba5274a94d42428c8d79763
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -69,6 +69,8 @@ automatic updater.
   cross-platform source and export support.
 
 # Reconciliation notes
+
+- 2026-09-25, upstream `e5a46d6c5d00b89afba5274a94d42428c8d79763`: `mechanical-conflict`. Retained Alpha artwork and disabled automatic updates, including Linux deb installs. Adopted upstream update restart handling.
 
 - 2026-09-24, upstream `f26ee083fe41720207fb10616359500dcecc19d3`: `mechanical-conflict`. Removed the unused backdrop focus-ring helper and adopted data attributes for Alpha artwork. Alpha artwork, fixed update track, and disabled automatic updates remain unchanged.
 

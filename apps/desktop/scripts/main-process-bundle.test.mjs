@@ -1,3 +1,4 @@
+import * as NodeChildProcess from "node:child_process";
 import * as NodeFSP from "node:fs/promises";
 import * as NodeOS from "node:os";
 import * as NodePath from "node:path";
@@ -104,6 +105,73 @@ void import("./linux.ts").then(({ result }) => process.emit("ready", result));`,
     }
     assert.deepEqual(workers, [42, 42, 42, 42]);
     assert.deepEqual(startups, [42]);
+  } finally {
+    await NodeFSP.rm(directory, { recursive: true, force: true });
+  }
+});
+
+it("loads the emitted packaged boot entry and backend cache preload", async () => {
+  const directory = await NodeFSP.mkdtemp(NodePath.join(NodeOS.tmpdir(), "t3-desktop-boot-"));
+  try {
+    const entries = new Set(["src/boot.ts", "src/compileCache.ts"]);
+    assert.ok(Array.isArray(desktopConfig.pack));
+    for (const packConfig of desktopConfig.pack) {
+      if (!Array.isArray(packConfig.entry)) continue;
+      if (!packConfig.entry.some((entry) => entries.has(entry))) continue;
+      await build({
+        ...packConfig,
+        config: false,
+        cwd: new URL("../", import.meta.url).pathname,
+        outDir: NodePath.join(directory, "dist-electron"),
+        tsconfig: false,
+        sourcemap: false,
+        onSuccess: undefined,
+        logLevel: "silent",
+      });
+    }
+    const outputDirectory = NodePath.join(directory, "dist-electron");
+    const fixture = `console.log(require('node:module').getCompileCacheDir() || 'uncached');`;
+    await NodeFSP.writeFile(NodePath.join(outputDirectory, "main.cjs"), fixture);
+    await NodeFSP.writeFile(
+      NodePath.join(outputDirectory, "backend.mjs"),
+      `import { getCompileCacheDir } from 'node:module'; console.log(getCompileCacheDir() || 'uncached');`,
+    );
+    for (const disabled of [false, true]) {
+      for (const args of [
+        [NodePath.join(outputDirectory, "boot.cjs")],
+        [
+          "--require",
+          NodePath.join(outputDirectory, "compileCache.cjs"),
+          NodePath.join(outputDirectory, "backend.mjs"),
+        ],
+      ]) {
+        const child = NodeChildProcess.spawnSync(process.execPath, args, {
+          encoding: "utf8",
+          env: {
+            ...process.env,
+            APPIMAGE: "",
+            NODE_COMPILE_CACHE: undefined,
+            NODE_DISABLE_COMPILE_CACHE: disabled ? "1" : undefined,
+            XDG_CACHE_HOME: directory,
+            TMPDIR: directory,
+            TEMP: directory,
+            TMP: directory,
+          },
+        });
+        assert.equal(child.status, 0, child.stderr);
+        if (disabled) {
+          assert.equal(child.stdout.trim(), "uncached");
+        } else {
+          const cacheRoot = await NodeFSP.realpath(directory);
+          assert.ok(
+            (await NodeFSP.realpath(child.stdout.trim())).startsWith(
+              NodePath.join(cacheRoot, "t3code-alpha", "compile-cache") + NodePath.sep,
+            ),
+            child.stdout,
+          );
+        }
+      }
+    }
   } finally {
     await NodeFSP.rm(directory, { recursive: true, force: true });
   }

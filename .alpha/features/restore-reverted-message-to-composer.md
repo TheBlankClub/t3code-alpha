@@ -3,7 +3,7 @@ id: restore-reverted-message-to-composer
 status: active
 risk: amber
 introduced_by: a47276a40
-last_reconciled_with: f26ee083fe41720207fb10616359500dcecc19d3
+last_reconciled_with: e5a46d6c5d00b89afba5274a94d42428c8d79763
 upstream_issue: pingdotgg/t3code#5685
 upstream_pr: pingdotgg/t3code#6044
 surfaces:
@@ -42,6 +42,8 @@ Let users edit and resend a reverted prompt instead of recreating its text and i
   complete when individual attachments fail or exceed the composer limit.
 
 # Reconciliation notes
+
+- 2026-09-25, upstream `e5a46d6c5d00b89afba5274a94d42428c8d79763`: `unaffected`. Composer and timeline changes preserve draft stashing, context filtering, attachment soft failures, and checkpoint bounds.
 
 - 2026-09-24, upstream `f26ee083fe41720207fb10616359500dcecc19d3`: `unaffected`. Composer and timeline appearance changes preserve draft stashing, reverted prompt recovery, and soft attachment failures.
 
