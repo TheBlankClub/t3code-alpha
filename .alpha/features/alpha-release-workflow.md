@@ -61,9 +61,8 @@ upstream's official release, hosted-web, AUR, or npm publication paths.
 # Current delta
 
 - `.github/workflows/release-alpha.yml` adapts the upstream release build graph to standard GitHub
-  hosted runners and fork-owned release destinations, with CI-success, stale-SHA, duplicate-tag,
-  and failure-escalation gates. Preflight only resolves release metadata; it does not re-verify the
-  source commit.
+  hosted runners and fork-owned release destinations, with CI-success, stale-SHA, and duplicate-tag
+  gates. Preflight only resolves release metadata; it does not re-verify the source commit.
 - macOS jobs import the private release identity into an ephemeral Keychain with an explicit
   `/usr/bin/codesign` ACL, register that Keychain in the user search list so `codesign` can resolve
   the identity on macOS 15 runners, grant the named key Apple's non-interactive signing partitions,

@@ -5,8 +5,10 @@
 - `upstream/main` is the canonical product baseline.
 - `alpha` is the release integration branch owned by TheBlankClub.
 - Feature branches contain one Alpha concern and merge into `alpha`.
-- Upstream reconciliation runs every six hours on one automation branch and merges into `alpha`
-  only after a conflict-free Git merge, an evidence-backed journal entry, and required CI.
+- Upstream reconciliation is invoked externally and maintains one open sync pull request into
+  `alpha`. Merge only after conflict resolution, an evidence-backed journal entry, and required CI.
+- The repository's scheduled sync and finalizer workflows are retired. Do not restore their
+  automatic branch writes or blocker-issue reporting during reconciliation.
 - Semantic overlap with the current Alpha delta or a protected surface is advisory in automated
   sync pull requests. Git conflicts, failed CI, and changed candidate heads remain hard blockers.
 - Do not rebase or force-push released `alpha` history. Merge ancestry makes provenance and release

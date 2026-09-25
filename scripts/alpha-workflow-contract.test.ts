@@ -12,40 +12,15 @@ function readWorkflow(name: string): Record<string, unknown> {
   ) as Record<string, unknown>;
 }
 
-function serializedWorkflow(name: string): string {
-  return JSON.stringify(readWorkflow(name));
-}
-
 function rawWorkflow(name: string): string {
   return NodeFS.readFileSync(NodePath.join(repoRoot, ".github", "workflows", name), "utf8");
 }
 
 describe("Alpha workflow contracts", () => {
-  it("checks upstream every six hours and prepares only conflict-free candidates", () => {
-    const workflow = readWorkflow("sync-upstream.yml") as {
-      readonly on: { readonly schedule: ReadonlyArray<{ readonly cron: string }> };
-    };
-    const serialized = JSON.stringify(workflow);
-
-    assert.deepStrictEqual(workflow.on.schedule, [{ cron: "37 2,8,14,20 * * *" }]);
-    assert.include(serialized, "classify-alpha-sync.ts");
-    assert.include(serialized, "git merge --no-ff --no-edit upstream/main");
-    assert.include(serialized, "git merge --abort");
-    assert.include(serialized, "alpha-auto-sync");
-    assert.include(serialized, "alpha-semantic-overlap");
-    assert.notInclude(serialized, "Report review-required upstream overlap");
-    assert.notInclude(serialized, "steps.classify.outputs.safe == 'true'");
-    assert.notInclude(serialized, "gh pr merge");
-  });
-
-  it("journals a tested safe candidate before enabling its merge", () => {
-    const serialized = serializedWorkflow("finalize-upstream-sync.yml");
-
-    assert.include(serialized, "record-alpha-safe-sync.ts journal");
-    assert.include(serialized, "github.event.workflow_run.conclusion == 'success'");
-    assert.include(serialized, "--match-head-commit");
-    assert.include(serialized, "--auto");
-    assert.notInclude(serialized, "--admin");
+  it("keeps the retired upstream sync workflows disabled", () => {
+    for (const name of ["sync-upstream.yml", "finalize-upstream-sync.yml"]) {
+      assert.isFalse(NodeFS.existsSync(NodePath.join(repoRoot, ".github", "workflows", name)));
+    }
   });
 
   it("releases only a current, successful, and previously untagged Alpha CI head", () => {
@@ -73,7 +48,8 @@ describe("Alpha workflow contracts", () => {
     assert.include(serialized, "git tag --points-at");
     assert.include(serialized, 'repositories":"t3code-alpha');
     assert.notInclude(serialized, "homebrew-tap");
-    assert.include(serialized, "Alpha release is blocked");
+    assert.notInclude(serialized, "gh issue");
+    assert.notProperty(readWorkflow("release-alpha.yml").jobs, "report_status");
   });
 
   it("keeps upstream desktop publishing workflows out of the Alpha repository", () => {
@@ -88,7 +64,7 @@ describe("Alpha workflow contracts", () => {
   it("publishes the arm64 DMG and every supported Alpha CLI archive", () => {
     const workflow = readWorkflow("release-alpha.yml") as {
       readonly jobs: Record<
-        "build" | "build_cli_archives" | "publish_cli" | "report_status" | "release",
+        "build" | "build_cli_archives" | "publish_cli" | "release",
         {
           readonly needs: ReadonlyArray<string>;
           readonly if: string;
@@ -127,7 +103,6 @@ describe("Alpha workflow contracts", () => {
     // time, so npm must publish only after that release exists.
     assert.include([...jobs.publish_cli.needs], "release");
     assert.notInclude([...jobs.release.needs], "publish_cli");
-    assert.includeMembers([...jobs.report_status.needs], ["build", "build_cli_archives"]);
     const raw = rawWorkflow("release-alpha.yml");
     assert.include(raw, "--prebuilt-dir npm-prebuilt");
     // One npm package that downloads its executable from the release, so the

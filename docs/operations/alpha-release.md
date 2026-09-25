@@ -75,9 +75,8 @@ Add its credentials only to `TheBlankClub/t3code-alpha` as repository Actions se
 - `ALPHA_AUTOMATION_APP_ID`
 - `ALPHA_AUTOMATION_APP_PRIVATE_KEY`
 
-The six-hour upstream sync uses the installation token to update its merge branch, manage its pull
-request, journal conflict-free candidates, auto-merge them after required CI, and report blockers. The
-release workflow preflight verifies that the App can mint a token scoped to `t3code-alpha` before
+The scheduled upstream sync and finalizer workflows are retired. The release workflow preflight
+still verifies that the App can mint a token scoped to `t3code-alpha` before
 building or publishing anything. `homebrew-tap` needs no cross-repository token: its own scheduled
 workflow reads the public Alpha prerelease feed and commits the audited cask with its repository
 `GITHUB_TOKEN`.

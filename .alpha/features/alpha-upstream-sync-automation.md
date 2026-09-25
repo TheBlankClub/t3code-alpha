@@ -1,6 +1,6 @@
 ---
 id: alpha-upstream-sync-automation
-status: active
+status: partial
 risk: red
 introduced_by: alpha-upstream-sync-automation
 last_reconciled_with: e5a46d6c5d00b89afba5274a94d42428c8d79763
@@ -10,55 +10,39 @@ surfaces:
   - ci
   - operations
 tests:
-  - actionlint .github/workflows/sync-upstream.yml .github/workflows/finalize-upstream-sync.yml .github/workflows/ci.yml .github/workflows/mobile-fingerprint-check.yml
+  - actionlint .github/workflows/ci.yml .github/workflows/mobile-fingerprint-check.yml
   - vp test run scripts/alpha-workflow-contract.test.ts scripts/classify-alpha-sync.test.ts scripts/record-alpha-safe-sync.test.ts
 ---
 
 # Intent
 
-Detect upstream changes every six hours and automatically integrate conflict-free, CI-validated
-merge-ancestry candidates. Report semantic overlap without making unverified claims that an
-Alpha-only feature is unaffected.
+Keep upstream reconciliation under an external agent's control while retaining fork-owned CI.
+The repository's scheduled sync, finalizer, and sync blocker-issue automation are retired.
 
 # Behavioral invariants
 
-- Sync candidates always start from the current `alpha` branch and merge official
-  `pingdotgg/t3code` `main` with a merge commit.
-- Incoming paths are compared with the current Alpha delta and protected surfaces. The pull request
-  reports and labels semantic overlap, but overlap does not block a conflict-free candidate.
-- A conflict-free merge updates one reusable automation branch and pull request, records active
-  features as auto-merged, and becomes eligible for automatic merge only after required CI.
-- A textual merge conflict creates or updates a visible blocker issue containing the exact Alpha
-  base, upstream commit, and conflicted paths.
-- A successful first CI pass causes the finalizer to append a journal entry tied to the tested
-  candidate and CI run. A second CI pass over that journaled head is required before auto-merge.
-- Candidates with failed CI remain open with a blocker issue and never auto-merge or trigger a
-  release.
+- Reconciliation preserves upstream merge ancestry and active Alpha behavior under the
+  `maintain-alpha-fork` policy.
+- The retired workflows do not write `automation/upstream-main`, enable auto-merge, or create
+  blocker issues. Do not restore them during upstream reconciliation.
 - Fork CI runs on standard GitHub-hosted runners and validates pushes to `alpha` plus pull requests.
 - Fork CI omits the mobile native static-analysis job and its change detector.
-- Sync mutations use a narrowly installed GitHub App so automation-created pull requests trigger
-  CI without per-run approval.
 
 # Current delta
 
-- `.github/workflows/sync-upstream.yml` performs scheduled divergence checks and maintains the
-  `automation/upstream-main` sync PR.
-- `.github/workflows/finalize-upstream-sync.yml` journals tested conflict-free candidates and
-  enables their
-  merge only after the journaled head also passes CI.
-- `.alpha/auto-sync-policy.json` and `scripts/classify-alpha-sync.ts` define the advisory semantic
-  overlap report.
-- The fork's core CI and mobile fingerprint check use public GitHub-hosted runner labels rather
-  than upstream's repository-specific Blacksmith runners.
-- The local `maintain-alpha-fork` skill remains the authority for semantic conflict resolution and
-  retirement decisions.
+- `.github/workflows/sync-upstream.yml` and `.github/workflows/finalize-upstream-sync.yml` are removed.
+- The fork's core CI and mobile fingerprint check retain public GitHub-hosted runner labels.
+- `.alpha/auto-sync-policy.json`, classification helpers, and the local `maintain-alpha-fork` skill
+  remain available for reconciliation. They do not schedule work.
 
 # Retirement conditions
 
-- Retire the workflow if upstream provides a fork-safe integration mechanism with merge ancestry,
-  semantic feature reconciliation, visible conflict escalation, and configurable runner pools.
+- Retire the remaining CI delta when upstream supports the fork's runner and validation policy.
 
 # Reconciliation notes
+
+- 2026-09-26, maintainer request: retired the scheduled sync, finalizer, and sync blocker-issue
+  automation. Retained CI and local reconciliation tooling.
 
 - 2026-09-25, upstream `e5a46d6c5d00b89afba5274a94d42428c8d79763`: `unaffected`. Sync workflow gates and the omitted mobile native static-analysis job are unchanged.
 
