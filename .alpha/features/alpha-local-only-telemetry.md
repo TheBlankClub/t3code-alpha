@@ -3,7 +3,7 @@ id: alpha-local-only-telemetry
 status: active
 risk: red
 introduced_by: alpha-local-only-telemetry
-last_reconciled_with: e5a46d6c5d00b89afba5274a94d42428c8d79763
+last_reconciled_with: 7a12aff471ffe2b22b9fee495b04b32c43f45a37
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -155,4 +155,6 @@ traces, metrics, or logs to third-party telemetry services.
 - 2026-09-13, upstream `df7ccc8fd01f5d2a1d8ec21bef8f9c59398fe913`: `auto-merged`; Git produced a conflict-free
   reconciliation candidate. Required PR CI remained the merge gate.
 - 2026-09-20, upstream `0ff87f251dafb32703d5f531e7b248ad0a581ee2`: `auto-merged`; Git produced a conflict-free
+  reconciliation candidate. Required PR CI remained the merge gate.
+- 2026-09-25, upstream `7a12aff471ffe2b22b9fee495b04b32c43f45a37`: `auto-merged`; Git produced a conflict-free
   reconciliation candidate. Required PR CI remained the merge gate.
