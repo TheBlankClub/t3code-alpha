@@ -3,7 +3,7 @@ id: project-action-terminal-startup
 status: active
 risk: amber
 introduced_by: 438019e36
-last_reconciled_with: a21b42cec478b093cdc50cc2105b5368ea8b3546
+last_reconciled_with: 95030dc674883f0f2a7fd034b32ce742c8cf55d0
 upstream_issue: pingdotgg/t3code#6337
 upstream_pr: pingdotgg/t3code#6338
 surfaces:
@@ -170,3 +170,4 @@ is still initializing.
 - 2026-09-25, upstream `7a12aff471ffe2b22b9fee495b04b32c43f45a37`: `auto-merged`; Git produced a conflict-free
   reconciliation candidate. Required PR CI remained the merge gate.
 - 2026-09-26, upstream `a21b42cec478b093cdc50cc2105b5368ea8b3546`: `unaffected`. Hidden terminal drawers read the shell only. Initial-command acknowledgement and the older-server fallback remain.
+- 2026-09-26, upstream `95030dc674883f0f2a7fd034b32ce742c8cf55d0`: `unaffected`. The `node-pty` prebuild bump does not change the initial-command handshake or the older-server fallback.

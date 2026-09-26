@@ -3,7 +3,7 @@ id: remember-thread-scroll-position
 status: partial
 risk: green
 introduced_by: 31e67d13ce42c0989a4698f9140c3bea4aba9731
-last_reconciled_with: a21b42cec478b093cdc50cc2105b5368ea8b3546
+last_reconciled_with: 95030dc674883f0f2a7fd034b32ce742c8cf55d0
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -81,3 +81,4 @@ Return users to the place where they stopped reading when they switch away from 
   reconciliation candidate. Required PR CI remained the merge gate.
 - 2026-09-26, upstream `ed809f7ad274ebccdfbf029ccfd7ff2582fd486a`: `unaffected`. Incoming changes do not alter this feature.
 - 2026-09-26, upstream `a21b42cec478b093cdc50cc2105b5368ea8b3546`: `unaffected`. Chat width and hidden-terminal memory leave reading positions, New messages, and live-follow safeguards in place.
+- 2026-09-26, upstream `95030dc674883f0f2a7fd034b32ce742c8cf55d0`: `unaffected`. Queued-message sending labels do not change reading positions, New messages, or live-follow safeguards.

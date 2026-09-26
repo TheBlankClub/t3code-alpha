@@ -3,7 +3,7 @@ id: alpha-local-only-telemetry
 status: active
 risk: red
 introduced_by: alpha-local-only-telemetry
-last_reconciled_with: a21b42cec478b093cdc50cc2105b5368ea8b3546
+last_reconciled_with: 95030dc674883f0f2a7fd034b32ce742c8cf55d0
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -162,3 +162,4 @@ traces, metrics, or logs to third-party telemetry services.
   reconciliation candidate. Required PR CI remained the merge gate.
 - 2026-09-25, upstream `7a12aff471ffe2b22b9fee495b04b32c43f45a37`: `auto-merged`; Git produced a conflict-free
   reconciliation candidate. Required PR CI remained the merge gate.
+- 2026-09-26, upstream `95030dc674883f0f2a7fd034b32ce742c8cf55d0`: `mechanical-conflict`. Adopted the untraced browser-trace proxy, streamed trace-file reads, and truncated trace attributes. Browser OTLP forwarding still returns no upstream requests while `outboundTelemetryEnabled` is false. Local traces and logs stay available.
