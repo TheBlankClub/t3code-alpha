@@ -467,6 +467,44 @@ describe("DesktopObservability", () => {
     );
   });
 
+  it.effect("ignores a logs endpoint even when OTEL resource attributes rename the service", () => {
+    const requests: Array<ExportedRequest> = [];
+    return Effect.gen(function* () {
+      const fileSystem = yield* FileSystem.FileSystem;
+      const baseDir = yield* fileSystem.makeTempDirectoryScoped({
+        prefix: "t3-desktop-observability-test-",
+      });
+      const environmentLayer = makeEnvironmentLayer(baseDir, true, {
+        T3CODE_OTLP_LOGS_URL: "https://collector.example.com/v1/logs",
+      });
+
+      yield* Effect.scoped(
+        Effect.logInfo("desktop service name").pipe(
+          Effect.provide(DesktopObservability.layer.pipe(Layer.provideMerge(environmentLayer))),
+        ),
+      );
+
+      assert.lengthOf(requests, 0);
+    }).pipe(
+      Effect.scoped,
+      Effect.provide(
+        Layer.mergeAll(
+          NodeServices.layer,
+          collectorLayer(requests),
+          ConfigProvider.layer(
+            ConfigProvider.fromEnv({
+              env: {
+                OTEL_SERVICE_NAME: "renamed",
+                OTEL_RESOURCE_ATTRIBUTES:
+                  "service.name=renamed,service.namespace=renamed,deployment.environment.name=development",
+              },
+            }),
+          ),
+        ),
+      ),
+    );
+  });
+
   it.effect("exports nothing to Settings for logs an unusable OTEL endpoint claimed", () => {
     const requests: Array<ExportedRequest> = [];
     return Effect.gen(function* () {

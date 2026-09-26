@@ -3,7 +3,7 @@ id: alpha-homebrew-upgrades
 status: active
 risk: red
 introduced_by: alpha-homebrew-upgrades
-last_reconciled_with: ed809f7ad274ebccdfbf029ccfd7ff2582fd486a
+last_reconciled_with: a21b42cec478b093cdc50cc2105b5368ea8b3546
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -194,3 +194,4 @@ Developer account or a separate package-hosting service.
 - 2026-09-25, upstream `7a12aff471ffe2b22b9fee495b04b32c43f45a37`: `auto-merged`; Git produced a conflict-free
   reconciliation candidate. Required PR CI remained the merge gate.
 - 2026-09-26, upstream `ed809f7ad274ebccdfbf029ccfd7ff2582fd486a`: `unaffected`. Incoming changes do not alter this feature.
+- 2026-09-26, upstream `a21b42cec478b093cdc50cc2105b5368ea8b3546`: `unaffected`. Homebrew upgrade behavior is unchanged.

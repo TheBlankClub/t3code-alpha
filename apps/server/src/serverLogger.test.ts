@@ -1,6 +1,7 @@
 import * as NodePath from "@effect/platform-node/NodePath";
 import { assert, describe, it } from "@effect/vitest";
 import * as NodeOS from "node:os";
+import * as ConfigProvider from "effect/ConfigProvider";
 import * as Effect from "effect/Effect";
 import * as Layer from "effect/Layer";
 import * as Path from "effect/Path";
@@ -57,7 +58,6 @@ const configLayer = (overrides: Partial<ServerConfig.ServerConfig["Service"]>) =
         otlpTracesExport: DEFAULT_SIGNAL_EXPORT,
         otlpMetricsExport: DEFAULT_SIGNAL_EXPORT,
         otlpLogsExport: DEFAULT_SIGNAL_EXPORT,
-        otlpServiceName: "t3-server",
         otelEnvironment: OtelEnvironment.none,
         cwd: baseDir,
         baseDir,
@@ -141,6 +141,28 @@ describe("ServerLoggerLive", () => {
       const requests = yield* logThrough({
         otlpLogsUrl: "https://collector.example.com/v1/logs",
       });
+
+      assert.lengthOf(requests, 0);
+    }),
+  );
+
+  it.effect("ignores a logs endpoint even when OTEL resource attributes rename the service", () =>
+    Effect.gen(function* () {
+      const requests = yield* logThrough({
+        otlpLogsUrl: "https://collector.example.com/v1/logs",
+      }).pipe(
+        Effect.provide(
+          ConfigProvider.layer(
+            ConfigProvider.fromEnv({
+              env: {
+                OTEL_SERVICE_NAME: "renamed",
+                OTEL_RESOURCE_ATTRIBUTES:
+                  "service.name=renamed,service.namespace=renamed,deployment.environment.name=development",
+              },
+            }),
+          ),
+        ),
+      );
 
       assert.lengthOf(requests, 0);
     }),
