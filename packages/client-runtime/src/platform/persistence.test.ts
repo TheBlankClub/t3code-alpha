@@ -30,6 +30,8 @@ const sampleDecoded = <S extends Schema.Constraint>(schema: S) =>
 const encodeSnapshot = Schema.encodeEffect(OrchestrationShellSnapshot);
 
 describe("encodeShellSnapshotForCache", () => {
+  // Effect's default 5s budget is too small once this generator shares a CI
+  // runner with the rest of the client suite. The equality check is unchanged.
   it.effect("matches the Schema encoding of a generated snapshot", () =>
     Effect.gen(function* () {
       const threads = yield* sampleDecoded(OrchestrationThreadShell);
@@ -51,5 +53,6 @@ describe("encodeShellSnapshotForCache", () => {
       expect(projects.length).toBeGreaterThan(0);
       expect(yield* encodeShellSnapshotForCache(snapshot)).toEqual(yield* encodeSnapshot(snapshot));
     }),
+    30_000,
   );
 });
