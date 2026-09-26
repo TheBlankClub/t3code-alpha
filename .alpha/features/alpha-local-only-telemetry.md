@@ -3,7 +3,7 @@ id: alpha-local-only-telemetry
 status: active
 risk: red
 introduced_by: alpha-local-only-telemetry
-last_reconciled_with: ed809f7ad274ebccdfbf029ccfd7ff2582fd486a
+last_reconciled_with: a21b42cec478b093cdc50cc2105b5368ea8b3546
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -44,6 +44,8 @@ traces, metrics, or logs to third-party telemetry services.
   accurate public privacy disclosure.
 
 # Reconciliation notes
+
+- 2026-09-26, upstream `a21b42cec478b093cdc50cc2105b5368ea8b3546`: `mechanical-conflict`. Adopted fixed service names (`t3code-server`, `t3code-desktop`, `t3code-web`), event-loop and heap diagnostics, and the trace summary command. Server logs, desktop export, and browser trace forwarding still send nothing while `outboundTelemetryEnabled` is false, including when an OTLP URL or `OTEL_SERVICE_NAME` is set. Local traces and logs stay available.
 
 - 2026-09-26, upstream `ed809f7ad274ebccdfbf029ccfd7ff2582fd486a`: `mechanical-conflict`. Adopted standard OTEL endpoint, header, and protocol parsing in shared environment resolution, desktop endpoint selection, and WSL forwarding. Server config and desktop export still return no remote endpoints while `outboundTelemetryEnabled` is false, including when `T3CODE_OTLP_*` or `OTEL_EXPORTER_OTLP_*` is set. Local traces and logs stay available.
 

@@ -3,7 +3,7 @@ id: alpha-server-package
 status: active
 risk: red
 introduced_by: alpha-server-package
-last_reconciled_with: ed809f7ad274ebccdfbf029ccfd7ff2582fd486a
+last_reconciled_with: a21b42cec478b093cdc50cc2105b5368ea8b3546
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -220,3 +220,4 @@ official T3 Code without publishing to or executing the upstream `t3` package.
   reconciliation candidate. Required PR CI remained the merge gate.
 - 2026-09-25, upstream `7a12aff471ffe2b22b9fee495b04b32c43f45a37`: `auto-merged`; Git produced a conflict-free
   reconciliation candidate. Required PR CI remained the merge gate.
+- 2026-09-26, upstream `a21b42cec478b093cdc50cc2105b5368ea8b3546`: `unaffected`. Package, binary, home, and service identities are unchanged. The Cursor keyring still loads through `createRequire`.
