@@ -3,7 +3,7 @@ id: newest-agents-first
 status: active
 risk: green
 introduced_by: newest-agents-first
-last_reconciled_with: a21b42cec478b093cdc50cc2105b5368ea8b3546
+last_reconciled_with: 95030dc674883f0f2a7fd034b32ce742c8cf55d0
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -161,3 +161,4 @@ users scroll past older agents.
   reconciliation candidate. Required PR CI remained the merge gate.
 - 2026-09-26, upstream `ed809f7ad274ebccdfbf029ccfd7ff2582fd486a`: `unaffected`. Incoming changes do not alter this feature.
 - 2026-09-26, upstream `a21b42cec478b093cdc50cc2105b5368ea8b3546`: `unaffected`. Direct agents still sort newest first by first observation.
+- 2026-09-26, upstream `95030dc674883f0f2a7fd034b32ce742c8cf55d0`: `unaffected`. Settled-thread ordering is separate from direct-agent `firstSeenAt` sorting. Newest-first agent rows stay stable across activity updates.

@@ -3,7 +3,7 @@ id: alpha-release-workflow
 status: active
 risk: red
 introduced_by: alpha-release-workflow
-last_reconciled_with: a21b42cec478b093cdc50cc2105b5368ea8b3546
+last_reconciled_with: 95030dc674883f0f2a7fd034b32ce742c8cf55d0
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -285,3 +285,5 @@ upstream's official release, hosted-web, AUR, or npm publication paths.
   reconciliation candidate. Required PR CI remained the merge gate.
 - 2026-09-26, upstream `ed809f7ad274ebccdfbf029ccfd7ff2582fd486a`: `unaffected`. Incoming changes do not alter this feature.
 - 2026-09-26, upstream `a21b42cec478b093cdc50cc2105b5368ea8b3546`: `unaffected`. Release workflow files are unchanged.
+- 2026-09-26, upstream `95030dc674883f0f2a7fd034b32ce742c8cf55d0`: `auto-merged`; Git produced a conflict-free
+  reconciliation candidate. Required PR CI remained the merge gate.
