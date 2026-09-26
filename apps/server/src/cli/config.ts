@@ -397,6 +397,34 @@ export const resolveServerConfig = (
       headers: env.otlpHeaders,
       exportIntervalMs: env.otlpExportIntervalMs,
     };
+    // Alpha ignores every configured endpoint, including standard OTEL variables.
+    const traces = ALPHA_DISTRIBUTION.outboundTelemetryEnabled
+      ? OtelEnvironment.resolveSignalEndpoint(
+          otel,
+          "traces",
+          { url: env.otlpTracesUrl, export: signalExport },
+          bootstrap?.otlpTracesUrl,
+          persistedObservabilitySettings.otlpTracesUrl,
+        )
+      : undefined;
+    const metrics = ALPHA_DISTRIBUTION.outboundTelemetryEnabled
+      ? OtelEnvironment.resolveSignalEndpoint(
+          otel,
+          "metrics",
+          { url: env.otlpMetricsUrl, export: signalExport },
+          bootstrap?.otlpMetricsUrl,
+          persistedObservabilitySettings.otlpMetricsUrl,
+        )
+      : undefined;
+    const logs = ALPHA_DISTRIBUTION.outboundTelemetryEnabled
+      ? OtelEnvironment.resolveSignalEndpoint(
+          otel,
+          "logs",
+          { url: env.otlpLogsUrl, export: signalExport },
+          bootstrap?.otlpLogsUrl,
+          persistedObservabilitySettings.otlpLogsUrl,
+        )
+      : undefined;
 
     const config: ServerConfig.ServerConfig["Service"] = {
       logLevel,
@@ -405,27 +433,12 @@ export const resolveServerConfig = (
       traceBatchWindowMs: env.traceBatchWindowMs,
       traceMaxBytes: env.traceMaxBytes,
       traceMaxFiles: env.traceMaxFiles,
-      otlpTracesUrl:
-        ALPHA_DISTRIBUTION.outboundTelemetryEnabled && !otel.disabled
-          ? (env.otlpTracesUrl ??
-            bootstrap?.otlpTracesUrl ??
-            persistedObservabilitySettings.otlpTracesUrl)
-          : undefined,
-      otlpMetricsUrl:
-        ALPHA_DISTRIBUTION.outboundTelemetryEnabled && !otel.disabled
-          ? (env.otlpMetricsUrl ??
-            bootstrap?.otlpMetricsUrl ??
-            persistedObservabilitySettings.otlpMetricsUrl)
-          : undefined,
-      otlpLogsUrl:
-        ALPHA_DISTRIBUTION.outboundTelemetryEnabled && !otel.disabled
-          ? (env.otlpLogsUrl ??
-            bootstrap?.otlpLogsUrl ??
-            persistedObservabilitySettings.otlpLogsUrl)
-          : undefined,
-      otlpTracesExport: signalExport,
-      otlpMetricsExport: signalExport,
-      otlpLogsExport: signalExport,
+      otlpTracesUrl: traces?.url,
+      otlpMetricsUrl: metrics?.url,
+      otlpLogsUrl: logs?.url,
+      otlpTracesExport: traces?.export ?? signalExport,
+      otlpMetricsExport: metrics?.export ?? signalExport,
+      otlpLogsExport: logs?.export ?? signalExport,
       otlpServiceName: env.otlpServiceName,
       otelEnvironment: otel,
       mode,

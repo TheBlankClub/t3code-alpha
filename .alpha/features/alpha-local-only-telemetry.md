@@ -3,7 +3,7 @@ id: alpha-local-only-telemetry
 status: active
 risk: red
 introduced_by: alpha-local-only-telemetry
-last_reconciled_with: 7a12aff471ffe2b22b9fee495b04b32c43f45a37
+last_reconciled_with: ed809f7ad274ebccdfbf029ccfd7ff2582fd486a
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -44,6 +44,8 @@ traces, metrics, or logs to third-party telemetry services.
   accurate public privacy disclosure.
 
 # Reconciliation notes
+
+- 2026-09-26, upstream `ed809f7ad274ebccdfbf029ccfd7ff2582fd486a`: `mechanical-conflict`. Adopted standard OTEL endpoint, header, and protocol parsing in shared environment resolution, desktop endpoint selection, and WSL forwarding. Server config and desktop export still return no remote endpoints while `outboundTelemetryEnabled` is false, including when `T3CODE_OTLP_*` or `OTEL_EXPORTER_OTLP_*` is set. Local traces and logs stay available.
 
 - 2026-09-25, upstream `e5a46d6c5d00b89afba5274a94d42428c8d79763`: `mechanical-conflict`. Adopted OTEL resource-attribute parsing while retaining Alpha guards for desktop, server, and relay exporters, including scheduled relay cleanup.
 

@@ -3,7 +3,7 @@ id: alpha-server-package
 status: active
 risk: red
 introduced_by: alpha-server-package
-last_reconciled_with: 7a12aff471ffe2b22b9fee495b04b32c43f45a37
+last_reconciled_with: ed809f7ad274ebccdfbf029ccfd7ff2582fd486a
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -71,6 +71,8 @@ official T3 Code without publishing to or executing the upstream `t3` package.
   commands, and background-service registration.
 
 # Reconciliation notes
+
+- 2026-09-26, upstream `ed809f7ad274ebccdfbf029ccfd7ff2582fd486a`: `partially-upstreamed`. Upstream `f5bd2fddb` now loads `@napi-rs/keyring` through `createRequire`, which satisfies the standalone CLI import invariant. Alpha package, binary, home, and service identities are unchanged.
 
 - 2026-09-25, upstream `e5a46d6c5d00b89afba5274a94d42428c8d79763`: `persistence-sensitive`. Retained Alpha package, binary, service, and state identities with upstream tunnel recovery, update restart markers, and provider usage readers. Migration 054 adds per-thread auto-settle opt-out.
 
