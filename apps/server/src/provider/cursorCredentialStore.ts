@@ -1,9 +1,9 @@
 import * as NodeModule from "node:module";
 
+const CACHE_MS = 5 * 60_000;
+
 // Native packages must load from disk through require in the standalone CLI.
 const requireForKeyring = NodeModule.createRequire(import.meta.url);
-
-const CACHE_MS = 5 * 60_000;
 
 /** Share one Keychain request across usage history and limits in this server process. */
 export function makeCachedCursorAccessTokenReader(
