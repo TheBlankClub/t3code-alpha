@@ -3,7 +3,7 @@ id: antigravity-path-canonicalization
 status: active
 risk: amber
 introduced_by: antigravity-path-canonicalization
-last_reconciled_with: c9a0e8a119271765196dec38ef91395713da4213
+last_reconciled_with: de251fc2971a884cb5b1305ba4daf309dc8cccb0
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -119,4 +119,6 @@ session workspace.
 - 2026-09-26, upstream `a21b42cec478b093cdc50cc2105b5368ea8b3546`: `unaffected`. Editor discovery no longer treats `agy` as the IDE. Canonical executable paths and symlink escape checks are unchanged.
 - 2026-09-26, upstream `95030dc674883f0f2a7fd034b32ce742c8cf55d0`: `unaffected`. Unsupported files can be inspected by saved path. Nearest-parent canonicalization and symlink escape checks are unchanged.
 - 2026-09-27, upstream `c9a0e8a119271765196dec38ef91395713da4213`: `auto-merged`; Git produced a conflict-free
+  reconciliation candidate. Required PR CI remained the merge gate.
+- 2026-09-27, upstream `de251fc2971a884cb5b1305ba4daf309dc8cccb0`: `auto-merged`; Git produced a conflict-free
   reconciliation candidate. Required PR CI remained the merge gate.
