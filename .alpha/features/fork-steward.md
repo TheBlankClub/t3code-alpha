@@ -3,7 +3,7 @@ id: fork-steward
 status: active
 risk: green
 introduced_by: alpha-foundation
-last_reconciled_with: c9a0e8a119271765196dec38ef91395713da4213
+last_reconciled_with: de251fc2971a884cb5b1305ba4daf309dc8cccb0
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -182,4 +182,6 @@ retiring fork code when upstream provides an equivalent or better implementation
 - 2026-09-26, upstream `95030dc674883f0f2a7fd034b32ce742c8cf55d0`: `auto-merged`; Git produced a conflict-free
   reconciliation candidate. Required PR CI remained the merge gate.
 - 2026-09-27, upstream `c9a0e8a119271765196dec38ef91395713da4213`: `auto-merged`; Git produced a conflict-free
+  reconciliation candidate. Required PR CI remained the merge gate.
+- 2026-09-27, upstream `de251fc2971a884cb5b1305ba4daf309dc8cccb0`: `auto-merged`; Git produced a conflict-free
   reconciliation candidate. Required PR CI remained the merge gate.

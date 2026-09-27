@@ -3,7 +3,7 @@ id: alpha-server-package
 status: active
 risk: red
 introduced_by: alpha-server-package
-last_reconciled_with: c9a0e8a119271765196dec38ef91395713da4213
+last_reconciled_with: de251fc2971a884cb5b1305ba4daf309dc8cccb0
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -223,3 +223,5 @@ official T3 Code without publishing to or executing the upstream `t3` package.
 - 2026-09-26, upstream `a21b42cec478b093cdc50cc2105b5368ea8b3546`: `unaffected`. Package, binary, home, and service identities are unchanged. The Cursor keyring still loads through `createRequire`.
 - 2026-09-26, upstream `95030dc674883f0f2a7fd034b32ce742c8cf55d0`: `mechanical-conflict`. Adopted `node-pty` `^1.2.0-beta.15`. Package, binary, home, and service identities are unchanged. `node-pty` and `@napi-rs/keyring` still load through `createRequire`.
 - 2026-09-27, upstream `c9a0e8a119271765196dec38ef91395713da4213`: `mechanical-conflict`. The Windows WSL runtime check still requires `t3-alpha` and now accepts a source-built or prebuilt Linux `node-pty`. Package, binary, home, and service identities are unchanged. `node-pty` and `@napi-rs/keyring` still load through `createRequire`.
+- 2026-09-27, upstream `de251fc2971a884cb5b1305ba4daf309dc8cccb0`: `auto-merged`; Git produced a conflict-free
+  reconciliation candidate. Required PR CI remained the merge gate.
