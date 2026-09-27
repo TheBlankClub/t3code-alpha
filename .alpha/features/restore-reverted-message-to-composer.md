@@ -3,7 +3,7 @@ id: restore-reverted-message-to-composer
 status: active
 risk: amber
 introduced_by: a47276a40
-last_reconciled_with: 95030dc674883f0f2a7fd034b32ce742c8cf55d0
+last_reconciled_with: c9a0e8a119271765196dec38ef91395713da4213
 upstream_issue: pingdotgg/t3code#5685
 upstream_pr: pingdotgg/t3code#6044
 surfaces:
@@ -182,3 +182,5 @@ Let users edit and resend a reverted prompt instead of recreating its text and i
 - 2026-09-26, upstream `ed809f7ad274ebccdfbf029ccfd7ff2582fd486a`: `unaffected`. Incoming changes do not alter this feature.
 - 2026-09-26, upstream `a21b42cec478b093cdc50cc2105b5368ea8b3546`: `unaffected`. The composer width change preserves draft stashing, context exclusion, and soft attachment failures.
 - 2026-09-26, upstream `95030dc674883f0f2a7fd034b32ce742c8cf55d0`: `unaffected`. Queued sends moved to `QueuedMessageSender`. Draft stashing, sent-only context exclusion, soft attachment failures, and checkpoint bounds remain.
+- 2026-09-27, upstream `c9a0e8a119271765196dec38ef91395713da4213`: `auto-merged`; Git produced a conflict-free
+  reconciliation candidate. Required PR CI remained the merge gate.
