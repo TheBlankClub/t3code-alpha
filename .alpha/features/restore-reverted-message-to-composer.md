@@ -3,7 +3,7 @@ id: restore-reverted-message-to-composer
 status: active
 risk: amber
 introduced_by: a47276a40
-last_reconciled_with: de251fc2971a884cb5b1305ba4daf309dc8cccb0
+last_reconciled_with: d15210cd3da79f9a1a495a6309d912d76362a046
 upstream_issue: pingdotgg/t3code#5685
 upstream_pr: pingdotgg/t3code#6044
 surfaces:
@@ -185,4 +185,6 @@ Let users edit and resend a reverted prompt instead of recreating its text and i
 - 2026-09-27, upstream `c9a0e8a119271765196dec38ef91395713da4213`: `auto-merged`; Git produced a conflict-free
   reconciliation candidate. Required PR CI remained the merge gate.
 - 2026-09-27, upstream `de251fc2971a884cb5b1305ba4daf309dc8cccb0`: `auto-merged`; Git produced a conflict-free
+  reconciliation candidate. Required PR CI remained the merge gate.
+- 2026-09-28, upstream `d15210cd3da79f9a1a495a6309d912d76362a046`: `auto-merged`; Git produced a conflict-free
   reconciliation candidate. Required PR CI remained the merge gate.

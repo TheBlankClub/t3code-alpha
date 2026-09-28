@@ -3,7 +3,7 @@ id: remember-thread-scroll-position
 status: partial
 risk: green
 introduced_by: 31e67d13ce42c0989a4698f9140c3bea4aba9731
-last_reconciled_with: de251fc2971a884cb5b1305ba4daf309dc8cccb0
+last_reconciled_with: d15210cd3da79f9a1a495a6309d912d76362a046
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -84,4 +84,6 @@ Return users to the place where they stopped reading when they switch away from 
 - 2026-09-26, upstream `95030dc674883f0f2a7fd034b32ce742c8cf55d0`: `unaffected`. Queued-message sending labels do not change reading positions, New messages, or live-follow safeguards.
 - 2026-09-27, upstream `c9a0e8a119271765196dec38ef91395713da4213`: `unaffected`. Reasoning-toggle padding does not change reading positions, New messages, or live-follow safeguards.
 - 2026-09-27, upstream `de251fc2971a884cb5b1305ba4daf309dc8cccb0`: `auto-merged`; Git produced a conflict-free
+  reconciliation candidate. Required PR CI remained the merge gate.
+- 2026-09-28, upstream `d15210cd3da79f9a1a495a6309d912d76362a046`: `auto-merged`; Git produced a conflict-free
   reconciliation candidate. Required PR CI remained the merge gate.
