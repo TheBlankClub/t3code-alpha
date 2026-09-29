@@ -3,7 +3,7 @@ id: alpha-server-package
 status: active
 risk: red
 introduced_by: alpha-server-package
-last_reconciled_with: d15210cd3da79f9a1a495a6309d912d76362a046
+last_reconciled_with: b21f3b71913370a1a650a61fd9082f992d40e657
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -227,3 +227,4 @@ official T3 Code without publishing to or executing the upstream `t3` package.
   reconciliation candidate. Required PR CI remained the merge gate.
 - 2026-09-28, upstream `d15210cd3da79f9a1a495a6309d912d76362a046`: `auto-merged`; Git produced a conflict-free
   reconciliation candidate. Required PR CI remained the merge gate.
+- 2026-09-29, upstream `b21f3b71913370a1a650a61fd9082f992d40e657`: `unaffected`. The Windows node-pty patch and startup fix keep `createRequire` for node-pty and `@napi-rs/keyring`. Alpha package, binary, home, and service identities are unchanged.

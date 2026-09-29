@@ -3,7 +3,7 @@ id: fork-steward
 status: active
 risk: green
 introduced_by: alpha-foundation
-last_reconciled_with: d15210cd3da79f9a1a495a6309d912d76362a046
+last_reconciled_with: b21f3b71913370a1a650a61fd9082f992d40e657
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -187,3 +187,4 @@ retiring fork code when upstream provides an equivalent or better implementation
   reconciliation candidate. Required PR CI remained the merge gate.
 - 2026-09-28, upstream `d15210cd3da79f9a1a495a6309d912d76362a046`: `auto-merged`; Git produced a conflict-free
   reconciliation candidate. Required PR CI remained the merge gate.
+- 2026-09-29, upstream `b21f3b71913370a1a650a61fd9082f992d40e657`: `unaffected`. Incoming Linux URL-handler icons, Windows PTY startup, Sonnet 5.5, T3 Connect removal copy, and shortcut modifier updates do not change this feature.
