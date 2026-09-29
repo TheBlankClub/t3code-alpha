@@ -3,7 +3,7 @@ id: alpha-distribution-identity
 status: active
 risk: red
 introduced_by: alpha-distribution-identity
-last_reconciled_with: b21f3b71913370a1a650a61fd9082f992d40e657
+last_reconciled_with: d2c9281b8112dc3b2991642c4bdb985e4b08b9bb
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -229,3 +229,5 @@ identity.
 - 2026-09-28, upstream `d15210cd3da79f9a1a495a6309d912d76362a046`: `auto-merged`; Git produced a conflict-free
   reconciliation candidate. Required PR CI remained the merge gate.
 - 2026-09-29, upstream `b21f3b71913370a1a650a61fd9082f992d40e657`: `mechanical-conflict`. Adopted Linux URL-handler icons and MIME cache refresh. Packaged entries still use `t3code-alpha.desktop`, scheme `t3code-alpha`, and display name `T3 Code Alpha`. Focused desktop handler tests passed.
+- 2026-09-29, upstream `d2c9281b8112dc3b2991642c4bdb985e4b08b9bb`: `auto-merged`; Git produced a conflict-free
+  reconciliation candidate. Required PR CI remained the merge gate.
