@@ -3,7 +3,7 @@ id: alpha-distribution-identity
 status: active
 risk: red
 introduced_by: alpha-distribution-identity
-last_reconciled_with: d2c9281b8112dc3b2991642c4bdb985e4b08b9bb
+last_reconciled_with: 916ec94f93da686303f878d506a760efd13506c1
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -55,6 +55,8 @@ identity.
 - Upstream's source-asset desktop launcher model resolves its non-development icon from Alpha's
   canonical artwork while retaining Alpha's bundle identifier and URL protocol.
 - The server recognizes `t3code-alpha://app` as a desktop renderer origin.
+- Packaged ChatGPT sign-in handoff links and desktop return URLs use `t3code-alpha`.
+  Development keeps `t3code-dev`.
 - `migrate:nightly-to-alpha` provides a backup-first, SQLite-consistent migration with explicit
   switch and clone identity policies; origin-scoped Chromium profiles remain isolated.
 
@@ -231,3 +233,4 @@ identity.
 - 2026-09-29, upstream `b21f3b71913370a1a650a61fd9082f992d40e657`: `mechanical-conflict`. Adopted Linux URL-handler icons and MIME cache refresh. Packaged entries still use `t3code-alpha.desktop`, scheme `t3code-alpha`, and display name `T3 Code Alpha`. Focused desktop handler tests passed.
 - 2026-09-29, upstream `d2c9281b8112dc3b2991642c4bdb985e4b08b9bb`: `auto-merged`; Git produced a conflict-free
   reconciliation candidate. Required PR CI remained the merge gate.
+- 2026-09-30, upstream `916ec94f93da686303f878d506a760efd13506c1`: `mechanical-conflict`. Adopted the 0.0.44 workspace baseline. Packaged ChatGPT handoff and return URLs use t3code-alpha; development stays t3code-dev. App, protocol, state, package, and service identities remain isolated.
