@@ -3,7 +3,7 @@ id: project-action-terminal-startup
 status: active
 risk: amber
 introduced_by: 438019e36
-last_reconciled_with: 916ec94f93da686303f878d506a760efd13506c1
+last_reconciled_with: c2fa9fc911daeac97df4760f95fc57dca42b84c8
 upstream_issue: pingdotgg/t3code#6337
 upstream_pr: pingdotgg/t3code#6338
 surfaces:
@@ -181,3 +181,5 @@ is still initializing.
 - 2026-09-29, upstream `d2c9281b8112dc3b2991642c4bdb985e4b08b9bb`: `auto-merged`; Git produced a conflict-free
   reconciliation candidate. Required PR CI remained the merge gate.
 - 2026-09-30, upstream `916ec94f93da686303f878d506a760efd13506c1`: `unaffected`. Terminal startup behavior is unchanged.
+- 2026-09-30, upstream `c2fa9fc911daeac97df4760f95fc57dca42b84c8`: `auto-merged`; Git produced a conflict-free
+  reconciliation candidate. Required PR CI remained the merge gate.
