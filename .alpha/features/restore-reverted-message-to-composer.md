@@ -3,7 +3,7 @@ id: restore-reverted-message-to-composer
 status: active
 risk: amber
 introduced_by: a47276a40
-last_reconciled_with: d2c9281b8112dc3b2991642c4bdb985e4b08b9bb
+last_reconciled_with: 916ec94f93da686303f878d506a760efd13506c1
 upstream_issue: pingdotgg/t3code#5685
 upstream_pr: pingdotgg/t3code#6044
 surfaces:
@@ -191,3 +191,4 @@ Let users edit and resend a reverted prompt instead of recreating its text and i
 - 2026-09-29, upstream `b21f3b71913370a1a650a61fd9082f992d40e657`: `unaffected`. Incoming Linux URL-handler icons, Windows PTY startup, Sonnet 5.5, T3 Connect removal copy, and shortcut modifier updates do not change this feature.
 - 2026-09-29, upstream `d2c9281b8112dc3b2991642c4bdb985e4b08b9bb`: `auto-merged`; Git produced a conflict-free
   reconciliation candidate. Required PR CI remained the merge gate.
+- 2026-09-30, upstream `916ec94f93da686303f878d506a760efd13506c1`: `unaffected`. Draft stash and restore behavior in ChatView remains.

@@ -3,7 +3,7 @@ id: remember-thread-scroll-position
 status: partial
 risk: green
 introduced_by: 31e67d13ce42c0989a4698f9140c3bea4aba9731
-last_reconciled_with: d2c9281b8112dc3b2991642c4bdb985e4b08b9bb
+last_reconciled_with: 916ec94f93da686303f878d506a760efd13506c1
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -90,3 +90,4 @@ Return users to the place where they stopped reading when they switch away from 
 - 2026-09-29, upstream `b21f3b71913370a1a650a61fd9082f992d40e657`: `unaffected`. Incoming Linux URL-handler icons, Windows PTY startup, Sonnet 5.5, T3 Connect removal copy, and shortcut modifier updates do not change this feature.
 - 2026-09-29, upstream `d2c9281b8112dc3b2991642c4bdb985e4b08b9bb`: `auto-merged`; Git produced a conflict-free
   reconciliation candidate. Required PR CI remained the merge gate.
+- 2026-09-30, upstream `916ec94f93da686303f878d506a760efd13506c1`: `unaffected`. Scroll restore, missing-row fallback, and live-follow last-row recording remain after upstream's user-input question rows.

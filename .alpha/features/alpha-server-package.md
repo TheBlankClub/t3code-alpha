@@ -3,7 +3,7 @@ id: alpha-server-package
 status: active
 risk: red
 introduced_by: alpha-server-package
-last_reconciled_with: d2c9281b8112dc3b2991642c4bdb985e4b08b9bb
+last_reconciled_with: 916ec94f93da686303f878d506a760efd13506c1
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -230,3 +230,4 @@ official T3 Code without publishing to or executing the upstream `t3` package.
 - 2026-09-29, upstream `b21f3b71913370a1a650a61fd9082f992d40e657`: `unaffected`. The Windows node-pty patch and startup fix keep `createRequire` for node-pty and `@napi-rs/keyring`. Alpha package, binary, home, and service identities are unchanged.
 - 2026-09-29, upstream `d2c9281b8112dc3b2991642c4bdb985e4b08b9bb`: `auto-merged`; Git produced a conflict-free
   reconciliation candidate. Required PR CI remained the merge gate.
+- 2026-09-30, upstream `916ec94f93da686303f878d506a760efd13506c1`: `mechanical-conflict`. Adopted version 0.0.44 and kept the Alpha description, TheBlankClub repository, and t3-alpha bin. Codex managed auth adds no file-backed ESM imports. node-pty and @napi-rs/keyring still load through createRequire.

@@ -3,7 +3,7 @@ id: alpha-homebrew-upgrades
 status: active
 risk: red
 introduced_by: alpha-homebrew-upgrades
-last_reconciled_with: d2c9281b8112dc3b2991642c4bdb985e4b08b9bb
+last_reconciled_with: 916ec94f93da686303f878d506a760efd13506c1
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -206,3 +206,4 @@ Developer account or a separate package-hosting service.
 - 2026-09-29, upstream `b21f3b71913370a1a650a61fd9082f992d40e657`: `unaffected`. Incoming Linux URL-handler icons, Windows PTY startup, Sonnet 5.5, T3 Connect removal copy, and shortcut modifier updates do not change this feature.
 - 2026-09-29, upstream `d2c9281b8112dc3b2991642c4bdb985e4b08b9bb`: `auto-merged`; Git produced a conflict-free
   reconciliation candidate. Required PR CI remained the merge gate.
+- 2026-09-30, upstream `916ec94f93da686303f878d506a760efd13506c1`: `unaffected`. The arm64 cask, pinned certificate, and Homebrew upgrade path are unchanged.
