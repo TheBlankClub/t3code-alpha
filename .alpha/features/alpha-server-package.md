@@ -3,7 +3,7 @@ id: alpha-server-package
 status: active
 risk: red
 introduced_by: alpha-server-package
-last_reconciled_with: 6b286ae8a20ef2e18fa70b09e92f66edd859128b
+last_reconciled_with: 921cb3c8bc772309ccab4c422b091d0a91497a49
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -235,3 +235,4 @@ official T3 Code without publishing to or executing the upstream `t3` package.
   reconciliation candidate. Required PR CI remained the merge gate.
 - 2026-10-01, upstream `6b286ae8a20ef2e18fa70b09e92f66edd859128b`: `auto-merged`; Git produced a conflict-free
   reconciliation candidate. Required PR CI remained the merge gate.
+- 2026-10-01, upstream `921cb3c8bc772309ccab4c422b091d0a91497a49`: `mechanical-conflict`. The publish command still uploads one t3code-alpha tarball with stdin inherited and --prebuilt-dir. Platform archives stage concurrently into the existing flat output directory. node-pty and @napi-rs/keyring still load through createRequire.

@@ -3,7 +3,7 @@ id: restore-reverted-message-to-composer
 status: active
 risk: amber
 introduced_by: a47276a40
-last_reconciled_with: 6b286ae8a20ef2e18fa70b09e92f66edd859128b
+last_reconciled_with: 921cb3c8bc772309ccab4c422b091d0a91497a49
 upstream_issue: pingdotgg/t3code#5685
 upstream_pr: pingdotgg/t3code#6044
 surfaces:
@@ -196,3 +196,4 @@ Let users edit and resend a reverted prompt instead of recreating its text and i
   reconciliation candidate. Required PR CI remained the merge gate.
 - 2026-10-01, upstream `6b286ae8a20ef2e18fa70b09e92f66edd859128b`: `auto-merged`; Git produced a conflict-free
   reconciliation candidate. Required PR CI remained the merge gate.
+- 2026-10-01, upstream `921cb3c8bc772309ccab4c422b091d0a91497a49`: `unaffected`. Screen-reader composer suggestions landed beside the existing restore behavior.

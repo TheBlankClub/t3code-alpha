@@ -3,7 +3,7 @@ id: alpha-release-workflow
 status: active
 risk: red
 introduced_by: alpha-release-workflow
-last_reconciled_with: 6b286ae8a20ef2e18fa70b09e92f66edd859128b
+last_reconciled_with: 921cb3c8bc772309ccab4c422b091d0a91497a49
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -301,3 +301,4 @@ upstream's official release, hosted-web, AUR, or npm publication paths.
   reconciliation candidate. Required PR CI remained the merge gate.
 - 2026-10-01, upstream `6b286ae8a20ef2e18fa70b09e92f66edd859128b`: `auto-merged`; Git produced a conflict-free
   reconciliation candidate. Required PR CI remained the merge gate.
+- 2026-10-01, upstream `921cb3c8bc772309ccab4c422b091d0a91497a49`: `mechanical-conflict`. Adopted the earlier Vercel build, concurrent official npm publish, and Windows job split behind the pingdotgg repository gate. The Alpha release workflow, signing identity, and single-package publish are unchanged.
