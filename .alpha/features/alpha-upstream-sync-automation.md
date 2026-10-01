@@ -3,7 +3,7 @@ id: alpha-upstream-sync-automation
 status: partial
 risk: red
 introduced_by: alpha-upstream-sync-automation
-last_reconciled_with: 6b286ae8a20ef2e18fa70b09e92f66edd859128b
+last_reconciled_with: 921cb3c8bc772309ccab4c422b091d0a91497a49
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -202,3 +202,4 @@ The repository's scheduled sync, finalizer, and sync blocker-issue automation ar
   reconciliation candidate. Required PR CI remained the merge gate.
 - 2026-10-01, upstream `6b286ae8a20ef2e18fa70b09e92f66edd859128b`: `auto-merged`; Git produced a conflict-free
   reconciliation candidate. Required PR CI remained the merge gate.
+- 2026-10-01, upstream `921cb3c8bc772309ccab4c422b091d0a91497a49`: `mechanical-conflict`. Adopted split lint, typecheck, build, and test jobs plus six duration-balanced server shards. Runners stay ubuntu-24.04, push stays on alpha, and mobile native static analysis stays omitted. Retired sync workflows stay removed.
