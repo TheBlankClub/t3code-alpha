@@ -3,7 +3,7 @@ id: restore-reverted-message-to-composer
 status: active
 risk: amber
 introduced_by: a47276a40
-last_reconciled_with: c2fa9fc911daeac97df4760f95fc57dca42b84c8
+last_reconciled_with: 6b286ae8a20ef2e18fa70b09e92f66edd859128b
 upstream_issue: pingdotgg/t3code#5685
 upstream_pr: pingdotgg/t3code#6044
 surfaces:
@@ -193,4 +193,6 @@ Let users edit and resend a reverted prompt instead of recreating its text and i
   reconciliation candidate. Required PR CI remained the merge gate.
 - 2026-09-30, upstream `916ec94f93da686303f878d506a760efd13506c1`: `unaffected`. Draft stash and restore behavior in ChatView remains.
 - 2026-09-30, upstream `c2fa9fc911daeac97df4760f95fc57dca42b84c8`: `auto-merged`; Git produced a conflict-free
+  reconciliation candidate. Required PR CI remained the merge gate.
+- 2026-10-01, upstream `6b286ae8a20ef2e18fa70b09e92f66edd859128b`: `auto-merged`; Git produced a conflict-free
   reconciliation candidate. Required PR CI remained the merge gate.
