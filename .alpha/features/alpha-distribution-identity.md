@@ -3,7 +3,7 @@ id: alpha-distribution-identity
 status: active
 risk: red
 introduced_by: alpha-distribution-identity
-last_reconciled_with: c2fa9fc911daeac97df4760f95fc57dca42b84c8
+last_reconciled_with: 6b286ae8a20ef2e18fa70b09e92f66edd859128b
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -236,3 +236,4 @@ identity.
 - 2026-09-30, upstream `916ec94f93da686303f878d506a760efd13506c1`: `mechanical-conflict`. Adopted the 0.0.44 workspace baseline. Packaged ChatGPT handoff and return URLs use t3code-alpha; development stays t3code-dev. App, protocol, state, package, and service identities remain isolated.
 - 2026-09-30, upstream `c2fa9fc911daeac97df4760f95fc57dca42b84c8`: `auto-merged`; Git produced a conflict-free
   reconciliation candidate. Required PR CI remained the merge gate.
+- 2026-10-01, upstream `6b286ae8a20ef2e18fa70b09e92f66edd859128b`: `mechanical-conflict`. Adopted upstream's process-backed WSL busy-runtime fixtures and kept Alpha paths: `$HOME/.t3-alpha/wsl-runtime` and the `t3-alpha` entry. App, protocol, state, package, and service identities remain isolated.

@@ -3,7 +3,7 @@ id: alpha-homebrew-upgrades
 status: active
 risk: red
 introduced_by: alpha-homebrew-upgrades
-last_reconciled_with: c2fa9fc911daeac97df4760f95fc57dca42b84c8
+last_reconciled_with: 6b286ae8a20ef2e18fa70b09e92f66edd859128b
 upstream_issue: null
 upstream_pr: null
 surfaces:
@@ -208,4 +208,6 @@ Developer account or a separate package-hosting service.
   reconciliation candidate. Required PR CI remained the merge gate.
 - 2026-09-30, upstream `916ec94f93da686303f878d506a760efd13506c1`: `unaffected`. The arm64 cask, pinned certificate, and Homebrew upgrade path are unchanged.
 - 2026-09-30, upstream `c2fa9fc911daeac97df4760f95fc57dca42b84c8`: `auto-merged`; Git produced a conflict-free
+  reconciliation candidate. Required PR CI remained the merge gate.
+- 2026-10-01, upstream `6b286ae8a20ef2e18fa70b09e92f66edd859128b`: `auto-merged`; Git produced a conflict-free
   reconciliation candidate. Required PR CI remained the merge gate.
