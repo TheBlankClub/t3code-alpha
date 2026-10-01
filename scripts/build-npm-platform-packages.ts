@@ -460,24 +460,24 @@ export const buildNpmPlatformPackages = Effect.fn("buildNpmPlatformPackages")(fu
   }
 
   yield* fs.makeDirectory(input.outputDir, { recursive: true });
-  const outputs: Array<NpmPackageOutput> = [];
-  for (const { key, archive } of archives) {
-    outputs.push(
-      yield* stagePlatformPackage({
-        key,
-        archive,
-        outputDir: input.outputDir,
-        version: input.version,
-      }),
-    );
-  }
-  outputs.push(
+  // Each archive stages in its own scratch dir, so all of them unpack and
+  // compress at once. Sequentially this took about 45s for five archives.
+  // Output stays flat under outputDir: t3code-alpha-<platform>.tgz plus the
+  // t3code-alpha launcher. Alpha does not publish the upstream @t3code scope.
+  const platformOutputs = yield* Effect.forEach(
+    archives,
+    ({ key, archive }) =>
+      stagePlatformPackage({ key, archive, outputDir: input.outputDir, version: input.version }),
+    { concurrency: "unbounded" },
+  );
+  const outputs = [
+    ...platformOutputs,
     yield* stageLauncherPackage({
       outputDir: input.outputDir,
       version: input.version,
       platformKeys: archives.map((entry) => entry.key),
     }),
-  );
+  ];
 
   for (const output of outputs) {
     yield* Effect.log(`[npm-packages] Wrote ${output.packageDir} and ${output.tarball}`);

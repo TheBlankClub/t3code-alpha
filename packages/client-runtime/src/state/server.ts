@@ -1107,6 +1107,7 @@ export function createServerEnvironmentAtoms<R, E>(
             environmentId,
             input.instanceId ?? null,
             input.cwd ?? null,
+            input.fresh ?? false,
             input.refreshModels ?? false,
           ]),
       },
